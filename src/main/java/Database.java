@@ -20,11 +20,12 @@ public class Database {
             createPowerTable();
         }
 
-
         int noOfFans = TableCreationChecks.getFans(hal.getSensors());
         if (noOfFans >= 1) {
             createSensorsTable(noOfFans);
         }
+
+        closeDatabaseConnection();
     }
 
     // Establish connection to the sqlite database/ Create if its doesn't exist
@@ -50,7 +51,6 @@ public class Database {
                             "BATTERYPERCENTAGE INTEGER        NOT NULL)";
             powerTableStatement.executeUpdate(sql);
             powerTableStatement.close();
-            connection.close();
         } catch (Exception e) {
             log.error("Failed to create Power Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
@@ -76,10 +76,17 @@ public class Database {
                             "(TIMESTAMP INTEGER PRIMARY KEY   NOT NULL," + fanColumnStatement +")";
             senorsTableStatement.executeUpdate(sql);
             senorsTableStatement.close();
-            connection.close();
         } catch (Exception e) {
             log.error("Failed to create Sensor Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
+        }
+    }
+
+    private void closeDatabaseConnection() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            log.error("Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
