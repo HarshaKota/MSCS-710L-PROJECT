@@ -1,6 +1,7 @@
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.hardware.PowerSource;
+import oshi.hardware.Sensors;
 
 import java.util.Arrays;
 
@@ -18,5 +19,13 @@ class TableCreationChecks {
             }
         }
         return true;
+    }
+
+    // Check if the system has fans
+    static int getFans(Sensors sensors) {
+
+        int fanArray[] = sensors.getFanSpeeds();
+
+        return fanArray.length;
     }
 }
