@@ -16,6 +16,9 @@ public class Database {
 
         establishDatabaseConnection();
 
+        if (TableCreationChecks.getBatteryPercentage(hal.getPowerSources())) {
+            createPowerTable();
+        }
     }
 
     // Establish connection to the sqlite database/ Create if its doesn't exist
@@ -26,6 +29,24 @@ public class Database {
         } catch (Exception e) {
             log.error("Failed to connect to the database " + e.getClass().getName() + ": " + e.getMessage());
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    // Create a Power Sources table
+    private void createPowerTable(){
+
+        try {
+            Statement powerTableStatement = connection.createStatement();
+            String sql =
+                    "CREATE TABLE IF NOT EXISTS POWER " +
+                            "(TIMESTAMP INTEGER PRIMARY KEY   NOT NULL," +
+                            "BATTERYPERCENTAGE INTEGER        NOT NULL)";
+            powerTableStatement.executeUpdate(sql);
+            powerTableStatement.close();
+            connection.close();
+        } catch (Exception e) {
+            log.error("Failed to create Power Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
     }
