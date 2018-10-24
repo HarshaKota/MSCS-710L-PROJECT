@@ -25,6 +25,8 @@ public class Database {
             createSensorsTable(noOfFans);
         }
 
+        createMemoryTable();
+
         closeDatabaseConnection();
     }
 
@@ -70,14 +72,32 @@ public class Database {
         fanColumnStatement.append(fanStatement0).append(noOfFans).append(fanStatement1);
 
         try {
-            Statement senorsTableStatement = connection.createStatement();
+            Statement sensorsTableStatement = connection.createStatement();
             String sql =
                     "CREATE TABLE IF NOT EXISTS SENSORS " +
                             "(TIMESTAMP INTEGER PRIMARY KEY   NOT NULL," + fanColumnStatement +")";
-            senorsTableStatement.executeUpdate(sql);
-            senorsTableStatement.close();
+            sensorsTableStatement.executeUpdate(sql);
+            sensorsTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create Sensor Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    // Create a Memory table
+    private void createMemoryTable(){
+
+        try {
+            Statement memoryTableStatement = connection.createStatement();
+            String sql =
+                    "CREATE TABLE IF NOT EXISTS MEMORY " +
+                            "(TIMESTAMP INTEGER PRIMARY KEY   NOT NULL," +
+                            "MEMORYUSED REAL                  NOT NULL," +
+                            "SWAPUSED   REAL                  NOT NULL)";
+            memoryTableStatement.executeUpdate(sql);
+            memoryTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to create Memory Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
     }
