@@ -89,5 +89,4 @@ public class Database {
             log.error("Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
-
 }
