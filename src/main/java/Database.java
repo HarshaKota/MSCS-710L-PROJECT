@@ -26,6 +26,7 @@ public class Database {
         }
 
         createMemoryTable();
+        createProcessesTable();
 
         closeDatabaseConnection();
     }
@@ -98,6 +99,26 @@ public class Database {
             memoryTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create Memory Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    // Create a Processes table
+    private void createProcessesTable(){
+
+        try {
+            Statement processesTableStatement = connection.createStatement();
+            String sql =
+                    "CREATE TABLE IF NOT EXISTS PROCESSES " +
+                            "(TIMESTAMP       INTEGER      NOT NULL," +
+                            "PROCESSNAME      VARCHAR      NOT NULL," +
+                            "CPUPERCENTAGE    REAL         NOT NULL," +
+                            "MEMORYPERCENTAGE REAL         NOT NULL," +
+                            "PRIMARY KEY(TIMESTAMP, PROCESSNAME))";
+            processesTableStatement.executeUpdate(sql);
+            processesTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to create Processes Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
     }
