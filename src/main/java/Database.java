@@ -51,7 +51,8 @@ public class Database {
             String sql =
                     "CREATE TABLE IF NOT EXISTS POWER " +
                             "(TIMESTAMP INTEGER PRIMARY KEY   NOT NULL," +
-                            "BATTERYPERCENTAGE INTEGER        NOT NULL)";
+                            "POWERSTATUS INTEGER              NOT NULL," +
+                            "BATTERYPERCENTAGE REAL           NOT NULL)";
             powerTableStatement.executeUpdate(sql);
             powerTableStatement.close();
         } catch (Exception e) {
