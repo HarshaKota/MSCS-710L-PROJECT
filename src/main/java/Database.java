@@ -123,6 +123,25 @@ public class Database {
         }
     }
 
+    // Create a ProcessorInfo table
+    private void createProcessorInfoTable(){
+
+        try {
+            Statement processorInfoTableStatement = connection.createStatement();
+            String sql =
+                    "CREATE TABLE IF NOT EXISTS PROCESSORINFO " +
+                            "(TIMESTAMP     INTEGER  PRIMARY KEY    NOT NULL," +
+                            "NOOFPROCESSES  INTEGER                 NOT NULL," +
+                            "NOOFTHREADS    INTEGER                 NOT NULL)" ;
+            processorInfoTableStatement.executeUpdate(sql);
+            processorInfoTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to create ProcessorInfo Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    // Close the connection to the sqlite database
     private void closeDatabaseConnection() {
         try {
             connection.close();
