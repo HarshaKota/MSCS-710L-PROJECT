@@ -1,5 +1,6 @@
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import oshi.hardware.CentralProcessor;
 import oshi.hardware.PowerSource;
 import oshi.hardware.Sensors;
 
@@ -27,5 +28,11 @@ class TableCreationChecks {
         int fanArray[] = sensors.getFanSpeeds();
 
         return fanArray.length;
+    }
+
+    // Check how many Logical CPUs the system has
+    static int getLogicalCPUs(CentralProcessor processor) {
+
+        return processor.getLogicalProcessorCount();
     }
 }

@@ -25,9 +25,12 @@ public class Database {
             createSensorsTable(noOfFans);
         }
 
+        int noOfLogicalCPUs = TableCreationChecks.getLogicalCPUs(hal.getProcessor());
+
         createMemoryTable();
         createProcessesTable();
         createProcessorInfoTable();
+        createCPUTable(noOfLogicalCPUs);
         closeDatabaseConnection();
     }
 
@@ -145,6 +148,36 @@ public class Database {
         }
     }
 
+    // Create a CPU table
+    private void createCPUTable(int noOfLogicalCPUs){
+
+        StringBuilder processorLoadColumnStatement = new StringBuilder();
+        String processorLoadColumnStatement0 = "PROCESSOR";
+        String processorLoadColumnStatement1 = "LOAD REAL NOT NULL";
+
+        for (int i=1; i<noOfLogicalCPUs; i++) {
+            processorLoadColumnStatement.append(processorLoadColumnStatement0).append(i).append(processorLoadColumnStatement1).append(",");
+        }
+        processorLoadColumnStatement.append(processorLoadColumnStatement0).append(noOfLogicalCPUs).append(processorLoadColumnStatement1);
+
+        try {
+            Statement cpuTableStatement = connection.createStatement();
+            String sql =
+                    "CREATE TABLE IF NOT EXISTS CPU " +
+                            "(TIMESTAMP     INTEGER  PRIMARY KEY    NOT NULL," +
+                            "UPTIME         INTEGER                 NOT NULL," +
+                            "USERLOAD       REAL                    NOT NULL," +
+                            "SYSTEMLOAD     REAL                    NOT NULL," +
+                            "IDLELOAD       REAL                    NOT NULL," +
+                            "AVERAGECPULOAD REAL                    NOT NULL," +
+                            processorLoadColumnStatement + ")" ;
+            cpuTableStatement.executeUpdate(sql);
+            cpuTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to create CPU Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
     // Close the connection to the sqlite database
     private void closeDatabaseConnection() {
         try {
