@@ -16,7 +16,7 @@ public class Database {
 
         establishDatabaseConnection();
 
-        if (TableCreationChecks.getBatteryPercentage(hal.getPowerSources())) {
+        if (TableCreationChecks.checkBatteryTable(hal.getPowerSources())) {
             createPowerTable();
         }
 
@@ -30,7 +30,9 @@ public class Database {
         createProcessorInfoTable();
 
         int noOfLogicalCPUs = TableCreationChecks.getLogicalCPUs(hal.getProcessor());
-        createCPUTable(noOfLogicalCPUs);
+        if(TableCreationChecks.checkCPUTable(hal.getProcessor())){
+            createCPUTable(noOfLogicalCPUs);
+        }
 
         closeDatabaseConnection();
     }

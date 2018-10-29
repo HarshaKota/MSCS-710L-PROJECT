@@ -11,13 +11,25 @@ class TableCreationChecks {
     private static final Logger log = LogManager.getLogger(TableCreationChecks.class);
 
     // Check if the system has a battery
-    static boolean getBatteryPercentage(PowerSource[] powerSources) {
+    static boolean checkBatteryTable(PowerSource[] powerSources) {
 
         for (PowerSource pSource : powerSources) {
             if (powerSources.length < 0) {
                 log.error(powerSources.length + " " + Arrays.toString(powerSources));
                 return false;
             }
+        }
+        return true;
+    }
+
+    // Check how many Logical CPUs the system has
+    static Boolean checkCPUTable(CentralProcessor processor) {
+
+        int noOfLogicalCPUs = processor.getLogicalProcessorCount();
+
+        if (noOfLogicalCPUs <= 0) {
+            log.error(noOfLogicalCPUs);
+            return false;
         }
         return true;
     }
