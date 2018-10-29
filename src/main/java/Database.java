@@ -27,7 +27,7 @@ public class Database {
 
         createMemoryTable();
         createProcessesTable();
-
+        createProcessorInfoTable();
         closeDatabaseConnection();
     }
 
@@ -77,7 +77,10 @@ public class Database {
             Statement sensorsTableStatement = connection.createStatement();
             String sql =
                     "CREATE TABLE IF NOT EXISTS SENSORS " +
-                            "(TIMESTAMP INTEGER PRIMARY KEY   NOT NULL," + fanColumnStatement +")";
+                            "(TIMESTAMP             INTEGER PRIMARY KEY   NOT NULL," +
+                            "CPUTEMPERATURECELCIUS  REAL                  NOT NULL," +
+                            "CPUVOLTAGE             REAL                  NOT NULL," +
+                            fanColumnStatement +")";
             sensorsTableStatement.executeUpdate(sql);
             sensorsTableStatement.close();
         } catch (Exception e) {
