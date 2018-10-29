@@ -170,7 +170,7 @@ public class Database {
                             "USERLOAD       REAL                    NOT NULL," +
                             "SYSTEMLOAD     REAL                    NOT NULL," +
                             "IDLELOAD       REAL                    NOT NULL," +
-                            processorLoadColumnStatement +
+                            processorLoadColumnStatement + "," +
                             "AVERAGECPULOAD REAL                    NOT NULL)";
             cpuTableStatement.executeUpdate(sql);
             cpuTableStatement.close();
