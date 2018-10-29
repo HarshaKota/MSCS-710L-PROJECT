@@ -25,12 +25,13 @@ public class Database {
             createSensorsTable(noOfFans);
         }
 
-        int noOfLogicalCPUs = TableCreationChecks.getLogicalCPUs(hal.getProcessor());
-
         createMemoryTable();
         createProcessesTable();
         createProcessorInfoTable();
+
+        int noOfLogicalCPUs = TableCreationChecks.getLogicalCPUs(hal.getProcessor());
         createCPUTable(noOfLogicalCPUs);
+
         closeDatabaseConnection();
     }
 
@@ -169,8 +170,8 @@ public class Database {
                             "USERLOAD       REAL                    NOT NULL," +
                             "SYSTEMLOAD     REAL                    NOT NULL," +
                             "IDLELOAD       REAL                    NOT NULL," +
-                            "AVERAGECPULOAD REAL                    NOT NULL," +
-                            processorLoadColumnStatement + ")" ;
+                            processorLoadColumnStatement +
+                            "AVERAGECPULOAD REAL                    NOT NULL)";
             cpuTableStatement.executeUpdate(sql);
             cpuTableStatement.close();
         } catch (Exception e) {
