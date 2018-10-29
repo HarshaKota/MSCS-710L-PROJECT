@@ -10,8 +10,8 @@ class TableCreationChecks {
 
     private static final Logger log = LogManager.getLogger(TableCreationChecks.class);
 
-    // Check if the system has a battery
-    static boolean checkBatteryTable(PowerSource[] powerSources) {
+    // Check if the Power Table has any errors.
+    static boolean checkPowerTable(PowerSource[] powerSources) {
 
         for (PowerSource pSource : powerSources) {
             if (powerSources.length < 0) {
@@ -22,7 +22,7 @@ class TableCreationChecks {
         return true;
     }
 
-    // Check how many Logical CPUs the system has
+    // Check if CPU Table has any errors
     static Boolean checkCPUTable(CentralProcessor processor) {
 
         int noOfLogicalCPUs = processor.getLogicalProcessorCount();
@@ -32,6 +32,13 @@ class TableCreationChecks {
             return false;
         }
         return true;
+    }
+
+    // Check if Sensor Table has any errors.
+    static Boolean checkSensorsTable(Sensors sensors) {
+
+        int fanArray[] = sensors.getFanSpeeds();
+        return fanArray.length > 0;
     }
 
     // Check if the system has fans
