@@ -34,7 +34,8 @@ public class Database {
         createMemoryTable();
         createProcessesTable();
         createProcessorInfoTable();
-
+        createDiskTable();
+        createNetworkTable();
 
         closeDatabaseConnection();
     }
@@ -198,6 +199,26 @@ public class Database {
             diskTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create Disk Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    // Create a Network table
+    private void createNetworkTable(){
+
+        try {
+            Statement networkTableStatement = connection.createStatement();
+            String sql =
+                    "CREATE TABLE IF NOT EXISTS NETWORK " +
+                            "(TIMESTAMP              INTEGER      NOT NULL," +
+                            "NOOFPACKETSRECEIVED     REAL         NOT NULL," +
+                            "NOOFPACKETSTRANSMITTED  REAL         NOT NULL," +
+                            "SIZERECEIVED            REAL         NOT NULL," +
+                            "SIZETRANSMITTED         REAL         NOT NULL)";
+            networkTableStatement.executeUpdate(sql);
+            networkTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to create Network Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
     }
