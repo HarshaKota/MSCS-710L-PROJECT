@@ -22,14 +22,19 @@ public class Database {
             createSensorsTable(noOfFans);
         }
 
-        createMemoryTable();
-        createProcessesTable();
-        createProcessorInfoTable();
-
         int noOfLogicalCPUs = TableCreationChecks.getLogicalCPUs(hal.getProcessor());
         if(TableCreationChecks.checkCPUTable(hal.getProcessor())){
             createCPUTable(noOfLogicalCPUs);
         }
+
+        if(TableCreationChecks.checkPowerTable(hal.getPowerSources())){
+            createPowerTable();
+        }
+
+        createMemoryTable();
+        createProcessesTable();
+        createProcessorInfoTable();
+
 
         closeDatabaseConnection();
     }
@@ -178,6 +183,25 @@ public class Database {
             System.exit(0);
         }
     }
+
+    // Create a Disk table
+    private void createDiskTable(){
+
+        try {
+            Statement diskTableStatement = connection.createStatement();
+            String sql =
+                    "CREATE TABLE IF NOT EXISTS DISK " +
+                            "(TIMESTAMP         INTEGER      NOT NULL," +
+                            "AVAILABLEDISKSPACE REAL         NOT NULL," +
+                            "TOTALDISKSPACE     REAL         NOT NULL)";
+            diskTableStatement.executeUpdate(sql);
+            diskTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to create Disk Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
     // Close the connection to the sqlite database
     private void closeDatabaseConnection() {
         try {

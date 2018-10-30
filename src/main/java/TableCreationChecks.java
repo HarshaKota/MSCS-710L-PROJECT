@@ -38,7 +38,11 @@ class TableCreationChecks {
     static Boolean checkSensorsTable(Sensors sensors) {
 
         int fanArray[] = sensors.getFanSpeeds();
-        return fanArray.length > 0;
+
+        if(fanArray.length <= 0){
+            return false;
+        }
+        return true;
     }
 
     // Check if the system has fans
