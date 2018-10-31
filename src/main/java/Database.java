@@ -225,14 +225,18 @@ public class Database {
 
     // Insert values into Power Table
     private void insertIntoPowerTable(double[] array){
+        StringBuilder insertIntoStatement = new StringBuilder();
+
+        for (int i=0; i<array.length - 2; i++) {
+            insertIntoStatement.append(array[i]).append(", ");
+        }
+        insertIntoStatement.append(array[array.length - 1]);
 
         try {
             Statement insertIntoPowerTableStatement = connection.createStatement();
             String sql =
                     "INSERT INTO POWER (TIMESTAMP, POWERSTATUS, BATTERYPERCENTAGE)" +
-                            "VALUES (" + array[0] +
-                            "," + array[1] +
-                            "," + array[2] + ")";
+                            "VALUES (" + insertIntoStatement + ")";
             insertIntoPowerTableStatement.executeUpdate(sql);
             insertIntoPowerTableStatement.close();
         } catch (Exception e) {
