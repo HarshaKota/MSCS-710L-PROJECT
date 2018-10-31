@@ -223,6 +223,24 @@ public class Database {
         }
     }
 
+    // Insert values into Power Table
+    private void insertIntoPowerTable(double[] array){
+
+        try {
+            Statement insertIntoPowerTableStatement = connection.createStatement();
+            String sql =
+                    "INSERT INTO POWER (TIMESTAMP, POWERSTATUS, BATTERYPERCENTAGE)" +
+                            "VALUES (" + array[0] +
+                            "," + array[1] +
+                            "," + array[2] + ")";
+            insertIntoPowerTableStatement.executeUpdate(sql);
+            insertIntoPowerTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
     // Close the connection to the sqlite database
     private void closeDatabaseConnection() {
         try {
