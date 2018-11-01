@@ -105,9 +105,9 @@ public class Database {
             Statement memoryTableStatement = connection.createStatement();
             String sql =
                     "CREATE TABLE IF NOT EXISTS MEMORY " +
-                            "(TIMESTAMP INTEGER PRIMARY KEY   NOT NULL," +
-                            "MEMORYUSED REAL                  NOT NULL," +
-                            "SWAPUSED   REAL                  NOT NULL)";
+                            "(TIMESTAMP      INTEGER PRIMARY KEY   NOT NULL," +
+                            "AVAILABLEMEMORY REAL                  NOT NULL," +
+                            "TOTALMEMORY     REAL                  NOT NULL)";
             memoryTableStatement.executeUpdate(sql);
             memoryTableStatement.close();
         } catch (Exception e) {
