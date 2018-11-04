@@ -2,6 +2,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.SystemInfo;
 import oshi.hardware.*;
+
 import java.util.concurrent.CountDownLatch;
 
 public class MetricCollector {
@@ -9,6 +10,7 @@ public class MetricCollector {
     private static final Logger log = LogManager.getLogger(UI.class);
     private static int noOfCallsTogetPower = 0;
     private static int noOfCallsTogetCPU = 0;
+    private static int noOfCallsTogetSensors = 0;
 
 
     // Collects Power Info
@@ -96,6 +98,39 @@ public class MetricCollector {
         CountDownLatch latch = mainLatch;
         latch.countDown();
         System.out.println("Count: "+latch.getCount()+" getCPU calls: "+noOfCallsTogetCPU); //Sysout
+
+
+    }
+
+    // Collects Sensors Info
+    //
+    //
+    // Returns sensorsStructure
+    public static void getSensors(CountDownLatch mainLatch, Sensors sensors) {
+        noOfCallsTogetSensors++;
+
+        // Set up the System Info and Hardware Info Objects
+        SystemInfo si = new SystemInfo();
+        HardwareAbstractionLayer hal = si.getHardware();
+
+        MetricCollectionStructures.sensorsStructure sS= new MetricCollectionStructures.sensorsStructure();
+
+        sS.setTimestamp(System.currentTimeMillis());
+        sS.setCpuTemperature((float) sensors.getCpuTemperature());
+        if (TableCreationChecks.getCpuVoltage(hal.getSensors()) != 999.0) {
+            sS.setCpuVolatage((float) sensors.getCpuVoltage());
+        }
+        if (TableCreationChecks.getFans(hal.getSensors()) > 0) {
+            sS.setFans(sensors.getFanSpeeds());
+        }
+
+        // Insert into the sensorTable
+        Database db = new Database();
+        db.insertIntoSensorsTable(sS);
+
+        CountDownLatch latch = mainLatch;
+        latch.countDown();
+        System.out.println("Count: "+latch.getCount()+" getSensors calls: "+noOfCallsTogetSensors); //Sysout
 
 
     }
