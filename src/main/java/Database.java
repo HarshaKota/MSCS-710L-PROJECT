@@ -224,19 +224,13 @@ public class Database {
     }
 
     // Insert values into Power Table
-    private void insertIntoPowerTable(double[] array){
-        StringBuilder insertIntoStatement = new StringBuilder();
-
-        for (int i=0; i<array.length - 2; i++) {
-            insertIntoStatement.append(array[i]).append(", ");
-        }
-        insertIntoStatement.append(array[array.length - 1]);
-
+    public void insertIntoPowerTable(MetricCollectionStructures.powerStructure pS){
         try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
             Statement insertIntoPowerTableStatement = connection.createStatement();
             String sql =
-                    "INSERT INTO POWER (TIMESTAMP, POWERSTATUS, BATTERYPERCENTAGE)" +
-                            "VALUES (" + insertIntoStatement + ")";
+                    "INSERT INTO POWER VALUES ("+pS.getTimestamp()+"," +pS.getPowerStatus()+"," +pS.getBatteryPercentage() + ")";
             insertIntoPowerTableStatement.executeUpdate(sql);
             insertIntoPowerTableStatement.close();
         } catch (Exception e) {
