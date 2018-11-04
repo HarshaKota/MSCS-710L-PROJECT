@@ -9,32 +9,29 @@ public class Database {
 
     private Connection connection = null;
     private final Logger log = LogManager.getLogger(Database.class);
+    private static SystemInfo si;
+    private static HardwareAbstractionLayer hal;
 
     public Database() {
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
+        si = new SystemInfo();
+        hal = si.getHardware();
 
         establishDatabaseConnection();
 
+        createSensorsTable();
 
-        int noOfFans = TableCreationChecks.getFans(hal.getSensors());
-        if (TableCreationChecks.checkSensorsTable(hal.getSensors())) {
-            createSensorsTable(noOfFans);
-        }
+        createPowerTable();
 
-        int noOfLogicalCPUs = TableCreationChecks.getLogicalCPUs(hal.getProcessor());
-        if(TableCreationChecks.checkCPUTable(hal.getProcessor())){
-            createCPUTable(noOfLogicalCPUs);
-        }
-
-        if(TableCreationChecks.checkPowerTable(hal.getPowerSources())){
-            createPowerTable();
-        }
+        createCPUTable();
 
         createMemoryTable();
+
         createProcessesTable();
+
         createProcessorInfoTable();
+
         createDiskTable();
+
         createNetworkTable();
 
         closeDatabaseConnection();
@@ -55,40 +52,61 @@ public class Database {
     // Create a Power Sources table
     private void createPowerTable(){
 
-        try {
-            Statement powerTableStatement = connection.createStatement();
-            String sql =
-                    "CREATE TABLE IF NOT EXISTS POWER " +
-                            "(TIMESTAMP INTEGER PRIMARY KEY   NOT NULL," +
-                            "POWERSTATUS INTEGER              NOT NULL," +
-                            "BATTERYPERCENTAGE REAL           NOT NULL)";
-            powerTableStatement.executeUpdate(sql);
-            powerTableStatement.close();
-        } catch (Exception e) {
-            log.error("Failed to create Power Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+        if(TableCreationChecks.checkPowerTable(hal.getPowerSources())) {
+
+            try {
+                Statement powerTableStatement = connection.createStatement();
+                String sql =
+                        "CREATE TABLE IF NOT EXISTS POWER " +
+                                "(TIMESTAMP INTEGER PRIMARY KEY   NOT NULL," +
+                                "POWERSTATUS INTEGER              NOT NULL," +
+                                "BATTERYPERCENTAGE REAL           NOT NULL)";
+                powerTableStatement.executeUpdate(sql);
+                powerTableStatement.close();
+            } catch (Exception e) {
+                log.error("Failed to create Power Table " + e.getClass().getName() + ": " + e.getMessage());
+                System.exit(0);
+            }
+        } else {
+            log.warn("There is no battery in this system. Power statistics will be unavailable");
         }
     }
 
     // Create a new Sensors table
-    private void createSensorsTable(int noOfFans){
+    private void createSensorsTable(){
 
+        // Builds the fan column
+        int noOfFans = TableCreationChecks.getFans(hal.getSensors());
         StringBuilder fanColumnStatement = new StringBuilder();
-        String fanStatement0 = "FAN";
-        String fanStatement1 = " REAL NOT NULL";
 
-        for (int i=1; i<noOfFans; i++) {
-            fanColumnStatement.append(fanStatement0).append(i).append(fanStatement1).append(",");
+        if (noOfFans > 0) {
+            String fanStatement0 = "FAN";
+            String fanStatement1 = " REAL NOT NULL";
+
+            for (int i = 1; i < noOfFans; i++) {
+                fanColumnStatement.append(fanStatement0).append(i).append(fanStatement1).append(",");
+            }
+            fanColumnStatement.append(fanStatement0).append(noOfFans).append(fanStatement1);
         }
-        fanColumnStatement.append(fanStatement0).append(noOfFans).append(fanStatement1);
 
+        // Builds the cpu voltage column
+        double cpuVoltage = TableCreationChecks.getCpuVoltage(hal.getSensors());
+        StringBuilder cpuVoltageColumn = new StringBuilder();
+
+        if (cpuVoltage > 0.0) {
+            String cpuVoltageStatement0 = "CPUVOLTAGE";
+            String cpuVoltageStatement1 = " REAL NOT NULL";
+            cpuVoltageColumn.append(cpuVoltageStatement0).append(cpuVoltageStatement1);
+        }
+
+        // Create the table
         try {
             Statement sensorsTableStatement = connection.createStatement();
             String sql =
                     "CREATE TABLE IF NOT EXISTS SENSORS " +
                             "(TIMESTAMP             INTEGER PRIMARY KEY   NOT NULL," +
                             "CPUTEMPERATURECELCIUS  REAL                  NOT NULL," +
-                            "CPUVOLTAGE             REAL                  NOT NULL," +
+                            cpuVoltageColumn +
                             fanColumnStatement +")";
             sensorsTableStatement.executeUpdate(sql);
             sensorsTableStatement.close();
@@ -155,7 +173,9 @@ public class Database {
     }
 
     // Create a CPU table
-    private void createCPUTable(int noOfLogicalCPUs){
+    private void createCPUTable(){
+
+        int noOfLogicalCPUs = TableCreationChecks.getLogicalCPUs(hal.getProcessor());
 
         StringBuilder processorLoadColumnStatement = new StringBuilder();
         String processorLoadColumnStatement0 = "PROCESSOR";
