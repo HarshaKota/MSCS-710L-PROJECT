@@ -25,7 +25,7 @@ public class Main {
             try {
                 SystemInfo si = new SystemInfo();
                 final HardwareAbstractionLayer hal = si.getHardware();
-                final CountDownLatch mainLatch = new CountDownLatch(1);
+                final CountDownLatch mainLatch = new CountDownLatch(2);
 
                 //Starts the getPower method to collect info for powerTable
                 new Thread(new Runnable() {
@@ -34,8 +34,19 @@ public class Main {
                         MetricCollector.getPower(mainLatch, hal.getPowerSources());
                     }
                 }).start();
+
+                //Starts the getCpu method to collect info for cpuTable
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MetricCollector.getCPU(mainLatch, hal.getProcessor());
+                    }
+                }).start();
+
                 mainLatch.await();
+                System.out.println("----->Started to count down 5 seconds"); //Sysout
                 Thread.sleep(5000);
+                System.out.println("<-----Finished countdown of 5 seconds"); //Sysout
             } catch(Exception e){
                 e.printStackTrace();
                 log.error("Failed to Setup the latch and concurrent method calls");
