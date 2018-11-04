@@ -175,7 +175,6 @@ public class Database {
                             "USERLOAD       REAL                    NOT NULL," +
                             "SYSTEMLOAD     REAL                    NOT NULL," +
                             "IDLELOAD       REAL                    NOT NULL," +
-                            "AVERAGECPULOAD REAL                    NOT NULL," +
                             processorLoadColumnStatement + ")";
             cpuTableStatement.executeUpdate(sql);
             cpuTableStatement.close();
@@ -239,6 +238,30 @@ public class Database {
         }
     }
 
+    // Insert values into CPU Table
+    public void insertIntoCpuTable(MetricCollectionStructures.cpuStructure cS) {
+        StringBuilder processorData = new StringBuilder();
+
+        for (int i=0; i<cS.processorLoad.size()-1; i++) {
+            processorData.append(cS.processorLoad.get(i)).append(",");
+        }
+        processorData.append(cS.processorLoad.get(cS.processorLoad.size()-1));
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
+            Statement insertIntoCpuTableStatement = connection.createStatement();
+            String sql =
+                    "INSERT INTO CPU VALUES ("+cS.getTimestamp()+"," +cS.getUptime()+"," +cS.getUserLoad()+","
+                            +cS.getSystemLoad()+"," +cS.getIdelLoad()+"," + processorData + ")";
+            insertIntoCpuTableStatement.executeUpdate(sql);
+            insertIntoCpuTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to insert into CPU Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
     // Close the connection to the sqlite database
     private void closeDatabaseConnection() {
         try {
@@ -247,4 +270,5 @@ public class Database {
             log.error("Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
+
 }
