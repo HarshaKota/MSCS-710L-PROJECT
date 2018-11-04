@@ -80,8 +80,8 @@ public class Database {
         StringBuilder fanColumnStatement = new StringBuilder();
 
         if (noOfFans > 0) {
-            String fanStatement0 = "FAN";
-            String fanStatement1 = " REAL NOT NULL";
+            String fanStatement0 = ",FAN";
+            String fanStatement1 = " INTEGER NOT NULL";
 
             for (int i = 1; i < noOfFans; i++) {
                 fanColumnStatement.append(fanStatement0).append(i).append(fanStatement1).append(",");
@@ -93,8 +93,8 @@ public class Database {
         double cpuVoltage = TableCreationChecks.getCpuVoltage(hal.getSensors());
         StringBuilder cpuVoltageColumn = new StringBuilder();
 
-        if (cpuVoltage > 0.0) {
-            String cpuVoltageStatement0 = "CPUVOLTAGE";
+        if (cpuVoltage != 999.0) {
+            String cpuVoltageStatement0 = ",CPUVOLTAGE";
             String cpuVoltageStatement1 = " REAL NOT NULL";
             cpuVoltageColumn.append(cpuVoltageStatement0).append(cpuVoltageStatement1);
         }
@@ -105,7 +105,7 @@ public class Database {
             String sql =
                     "CREATE TABLE IF NOT EXISTS SENSORS " +
                             "(TIMESTAMP             INTEGER PRIMARY KEY   NOT NULL," +
-                            "CPUTEMPERATURECELCIUS  REAL                  NOT NULL," +
+                            "CPUTEMPERATURECELCIUS  REAL                  NOT NULL" +
                             cpuVoltageColumn +
                             fanColumnStatement +")";
             sensorsTableStatement.executeUpdate(sql);
@@ -252,6 +252,7 @@ public class Database {
                     "INSERT INTO POWER VALUES ("+pS.getTimestamp()+"," +pS.getPowerStatus()+"," +pS.getBatteryPercentage() + ")";
             insertIntoPowerTableStatement.executeUpdate(sql);
             insertIntoPowerTableStatement.close();
+            connection.close();
         } catch (Exception e) {
             log.error("Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
@@ -276,8 +277,39 @@ public class Database {
                             +cS.getSystemLoad()+"," +cS.getIdelLoad()+"," + processorData + ")";
             insertIntoCpuTableStatement.executeUpdate(sql);
             insertIntoCpuTableStatement.close();
+            connection.close();
         } catch (Exception e) {
             log.error("Failed to insert into CPU Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    // Insert values into Sensors Table
+    public void insertIntoSensorsTable(MetricCollectionStructures.sensorsStructure sS) {
+
+
+        StringBuilder fans = new StringBuilder();
+        if (sS.getFans().length > 0) {
+            for (int i = 0; i < sS.getFans().length - 1; i++) {
+                fans.append(sS.fans[i]).append(",");
+            }
+            fans.append(sS.fans[sS.getFans().length - 1]);
+        }
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
+            Statement insertIntoSensorsTableStatement = connection.createStatement();
+            String sql =
+                    "INSERT INTO SENSORS VALUES ("+sS.getTimestamp()+"," +sS.getCpuTemperature() +
+                            (sS.getCpuVolatage()==999.0 ? "" : ",") +
+                            (sS.getCpuVolatage()==999.0 ? "" : (sS.getCpuVolatage())+",") +
+                            fans + ")";
+            insertIntoSensorsTableStatement.executeUpdate(sql);
+            insertIntoSensorsTableStatement.close();
+            connection.close();
+        } catch (Exception e) {
+            log.error("Failed to insert into Sensors Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
     }
