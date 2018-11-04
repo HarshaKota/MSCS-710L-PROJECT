@@ -10,6 +10,17 @@ class TableCreationChecks {
 
     private static final Logger log = LogManager.getLogger(TableCreationChecks.class);
 
+    /*                  CPU Table                   */
+
+    // Check how many Logical CPUs the system has
+    static int getLogicalCPUs(CentralProcessor processor) {
+
+        return processor.getLogicalProcessorCount();
+    }
+
+
+    /*                  Power Table                   */
+
     // Check if the Power Table has any errors.
     static boolean checkPowerTable(PowerSource[] powerSources) {
 
@@ -22,28 +33,8 @@ class TableCreationChecks {
         return true;
     }
 
-    // Check if CPU Table has any errors
-    static Boolean checkCPUTable(CentralProcessor processor) {
 
-        int noOfLogicalCPUs = processor.getLogicalProcessorCount();
-
-        if (noOfLogicalCPUs <= 0) {
-            log.error(noOfLogicalCPUs);
-            return false;
-        }
-        return true;
-    }
-
-    // Check if Sensor Table has any errors.
-    static Boolean checkSensorsTable(Sensors sensors) {
-
-        int fanArray[] = sensors.getFanSpeeds();
-
-        if(fanArray.length <= 0){
-            return false;
-        }
-        return true;
-    }
+    /*                  Sensors  Table                   */
 
     // Check if the system has fans
     static int getFans(Sensors sensors) {
@@ -53,9 +44,13 @@ class TableCreationChecks {
         return fanArray.length;
     }
 
-    // Check how many Logical CPUs the system has
-    static int getLogicalCPUs(CentralProcessor processor) {
+    static double getCpuVoltage(Sensors sensors) {
+        double noValue = 999.0;
 
-        return processor.getLogicalProcessorCount();
+        if (sensors.getCpuVoltage() > 0.0) {
+            return sensors.getCpuVoltage();
+        }
+
+        return noValue;
     }
 }
