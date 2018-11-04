@@ -25,9 +25,9 @@ public class Main {
             try {
                 SystemInfo si = new SystemInfo();
                 final HardwareAbstractionLayer hal = si.getHardware();
-                final CountDownLatch mainLatch = new CountDownLatch(2);
+                final CountDownLatch mainLatch = new CountDownLatch(3);
 
-                //Starts the getPower method to collect info for powerTable
+                //Starts the getPower method to collect info for Power Table
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -35,11 +35,19 @@ public class Main {
                     }
                 }).start();
 
-                //Starts the getCpu method to collect info for cpuTable
+                //Starts the getCpu method to collect info for CPU Table
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         MetricCollector.getCPU(mainLatch, hal.getProcessor());
+                    }
+                }).start();
+
+                //Starts the getSensors method to collect info for Sensors Table
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MetricCollector.getSensors(mainLatch, hal.getSensors());
                     }
                 }).start();
 
