@@ -2,19 +2,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
-import java.util.concurrent.CountDownLatch;
+
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    public static AtomicBoolean applicationOpen = new AtomicBoolean(true);
+    static AtomicBoolean applicationOpen = new AtomicBoolean(true);
 
     public static void main(String[] args) {
 
         // Create the database
-        Database db = new Database();
+        final Database dbObject = new Database();
 
         // Start the UI
         UI ui = new UI();
@@ -25,49 +26,75 @@ public class Main {
             try {
                 SystemInfo si = new SystemInfo();
                 final HardwareAbstractionLayer hal = si.getHardware();
-                final CountDownLatch mainLatch = new CountDownLatch(5);
 
-                //Starts the getPower method to collect info for Power Table
-                new Thread(new Runnable() {
+                Callable<MetricCollectionStructures.powerStructure> power = new Callable<MetricCollectionStructures.powerStructure>() {
                     @Override
-                    public void run() {
-                        MetricCollector.getPower(mainLatch, hal.getPowerSources());
+                    public MetricCollectionStructures.powerStructure call() {
+                        return MetricCollector.getPower(hal.getPowerSources());
                     }
-                }).start();
+                };
 
-                //Starts the getCpu method to collect info for CPU Table
-                new Thread(new Runnable() {
+                Callable<MetricCollectionStructures.cpuStructure> cpu = new Callable<MetricCollectionStructures.cpuStructure>() {
                     @Override
-                    public void run() {
-                        MetricCollector.getCPU(mainLatch, hal.getProcessor());
+                    public MetricCollectionStructures.cpuStructure call() {
+                        return MetricCollector.getCPU(hal.getProcessor());
                     }
-                }).start();
+                };
 
-                //Starts the getSensors method to collect info for Sensors Table
-                new Thread(new Runnable() {
+                Callable<MetricCollectionStructures.sensorsStructure> sensors = new Callable<MetricCollectionStructures.sensorsStructure>() {
                     @Override
-                    public void run() {
-                        MetricCollector.getSensors(mainLatch, hal.getSensors());
+                    public MetricCollectionStructures.sensorsStructure call() {
+                        return MetricCollector.getSensors(hal.getSensors());
                     }
-                }).start();
+                };
 
-                //Starts the getMemory method to collect info for Memory Table
-                new Thread(new Runnable() {
+                Callable<MetricCollectionStructures.memoryStructure> memory = new Callable<MetricCollectionStructures.memoryStructure>() {
                     @Override
-                    public void run() {
-                        MetricCollector.getMemory(mainLatch, hal.getMemory());
+                    public MetricCollectionStructures.memoryStructure call() {
+                        return MetricCollector.getMemory(hal.getMemory());
                     }
-                }).start();
+                };
 
-                //Starts the getNetwork method to collect info for Network Table
-                new Thread(new Runnable() {
+                Callable<MetricCollectionStructures.networkStructure> network = new Callable<MetricCollectionStructures.networkStructure>() {
                     @Override
-                    public void run() {
-                        MetricCollector.getNetwork(mainLatch, hal.getNetworkIFs());
+                    public MetricCollectionStructures.networkStructure call() {
+                        return MetricCollector.getNetwork(hal.getNetworkIFs());
                     }
-                }).start();
+                };
 
-                mainLatch.await();
+                ExecutorService service = Executors.newFixedThreadPool(5);
+
+                Future<MetricCollectionStructures.powerStructure> powerFuture = service.submit(power);
+                Future<MetricCollectionStructures.cpuStructure> cpuFuture = service.submit(cpu);
+                Future<MetricCollectionStructures.sensorsStructure> sensorsFuture = service.submit(sensors);
+                Future<MetricCollectionStructures.memoryStructure> memoryFuture = service.submit(memory);
+                Future<MetricCollectionStructures.networkStructure> networkFuture = service.submit(network);
+
+                MetricCollectionStructures.powerStructure powerStructure;
+                MetricCollectionStructures.cpuStructure cpuStructure;
+                MetricCollectionStructures.sensorsStructure sensorsStructure;
+                MetricCollectionStructures.memoryStructure memoryStructure;
+                MetricCollectionStructures.networkStructure networkStructure;
+
+                try {
+                    powerStructure = powerFuture.get();
+                    cpuStructure = cpuFuture.get();
+                    sensorsStructure = sensorsFuture.get();
+                    memoryStructure = memoryFuture.get();
+                    networkStructure = networkFuture.get();
+
+                    dbObject.insertIntoPowerTable(powerStructure);
+                    dbObject.insertIntoCpuTable(cpuStructure);
+                    dbObject.insertIntoSensorsTable(sensorsStructure);
+                    dbObject.insertIntoMemoryTable(memoryStructure);
+                    dbObject.insertIntoNetworkTable(networkStructure);
+
+                } catch (InterruptedException e) {
+                    log.error("Future Interrupted " + e.getClass().getName() + ": " + e.getMessage());
+                } catch (ExecutionException e) {
+                    log.error("Future Execution Failed" + e.getClass().getName() + ": " + e.getMessage());
+                }
+
                 System.out.println("----->Started to count down 5 seconds"); //Sysout
                 Thread.sleep(5000);
                 System.out.println("<-----Finished countdown of 5 seconds"); //Sysout
