@@ -230,10 +230,10 @@ public class Database {
             String sql =
                     "CREATE TABLE IF NOT EXISTS NETWORK " +
                             "(TIMESTAMP              INTEGER      NOT NULL," +
-                            "NOOFPACKETSRECEIVED     REAL         NOT NULL," +
-                            "NOOFPACKETSTRANSMITTED  REAL         NOT NULL," +
-                            "SIZERECEIVED            REAL         NOT NULL," +
-                            "SIZETRANSMITTED         REAL         NOT NULL)";
+                            "NOOFPACKETSRECEIVED     INTEGER         NOT NULL," +
+                            "NOOFPACKETSSENT         INTEGER         NOT NULL," +
+                            "SIZERECEIVED            TEXT         NOT NULL," +
+                            "SIZESENT                TEXT         NOT NULL)";
             networkTableStatement.executeUpdate(sql);
             networkTableStatement.close();
         } catch (Exception e) {
@@ -332,6 +332,25 @@ public class Database {
         }
     }
 
+    // Insert values into Network Table
+    public void insertIntoNetworkTable(MetricCollectionStructures.networkStructure nS) {
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
+            Statement insertIntoNetworkTableStatement = connection.createStatement();
+            String sql =
+                    "INSERT INTO NETWORK VALUES ("+nS.getTimestamp()+"," +nS.getPacketsReceived()+","
+                            + nS.getPacketsSent()+"," +"'"+nS.getSizeReceived()+"'"+"," +"'"+nS.getSizeSent()+"'" +")";
+            insertIntoNetworkTableStatement.executeUpdate(sql);
+            insertIntoNetworkTableStatement.close();
+            connection.close();
+        } catch (Exception e) {
+            log.error("Failed to insert into Network Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
     // Close the connection to the sqlite database
     private void closeDatabaseConnection() {
         try {
@@ -340,5 +359,4 @@ public class Database {
             log.error("Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
-
 }
