@@ -20,7 +20,7 @@ public class MetricCollector {
     //      1 - charging
     //      0 - discharging
     // Returns powerStructure
-    public static void getPower(CountDownLatch mainLatch, PowerSource[] powerSources) {
+    static MetricCollectionStructures.powerStructure getPower(PowerSource[] powerSources) {
         noOfCallsTogetPower++;
 
         // Set up the System Info and Hardware Info Objects
@@ -44,20 +44,16 @@ public class MetricCollector {
             }
         }
 
-        // Insert into powerTable
-        Database db = new Database();
-        db.insertIntoPowerTable(pS);
+        System.out.println(String.format("%1$20s  %2$d", "getPower calls:", noOfCallsTogetPower)); //Sysout
 
-        CountDownLatch latch = mainLatch;
-        latch.countDown();
-        System.out.println("Count: "+latch.getCount()+" getPower calls: "+noOfCallsTogetPower); //Sysout
+        return pS;
     }
 
     // Collects CPU Info
     //
     //
     // Returns cpuStructure
-    public static void getCPU(CountDownLatch mainLatch, CentralProcessor processor) {
+    static MetricCollectionStructures.cpuStructure getCPU(CentralProcessor processor) {
         noOfCallsTogetCPU++;
 
         long[] prevTicks = processor.getSystemCpuLoadTicks();
@@ -90,22 +86,16 @@ public class MetricCollector {
             cS.setProcessorLoad(Math.round((eachLoad * 100)*10.0)/10.0);
         }
 
-        // Insert into the cpuTable
-        Database db = new Database();
-        db.insertIntoCpuTable(cS);
+        System.out.println(String.format("%1$20s  %2$d", "getCPU calls:", noOfCallsTogetCPU)); //Sysout
 
-        CountDownLatch latch = mainLatch;
-        latch.countDown();
-        System.out.println("Count: "+latch.getCount()+" getCPU calls: "+noOfCallsTogetCPU); //Sysout
-
-
+        return cS;
     }
 
     // Collects Sensors Info
     //
     //
     // Returns sensorsStructure
-    public static void getSensors(CountDownLatch mainLatch, Sensors sensors) {
+    static MetricCollectionStructures.sensorsStructure getSensors(Sensors sensors) {
         noOfCallsTogetSensors++;
 
         // Set up the System Info and Hardware Info Objects
@@ -123,22 +113,16 @@ public class MetricCollector {
             sS.setFans(sensors.getFanSpeeds());
         }
 
-        // Insert into the sensorTable
-        Database db = new Database();
-        db.insertIntoSensorsTable(sS);
+        System.out.println(String.format("%1$20s  %2$d", "getSensors calls:", noOfCallsTogetSensors)); //Sysout
 
-        CountDownLatch latch = mainLatch;
-        latch.countDown();
-        System.out.println("Count: "+latch.getCount()+" getSensors calls: "+noOfCallsTogetSensors); //Sysout
-
-
+        return sS;
     }
 
     // Collects Memory Info
     //
     //
     // Returns memoryStructure
-    public static void getMemory(CountDownLatch mainLatch, GlobalMemory memory) {
+    static MetricCollectionStructures.memoryStructure getMemory(GlobalMemory memory) {
         noOfCallsTogetMemory++;
 
         MetricCollectionStructures.memoryStructure mS = new MetricCollectionStructures.memoryStructure();
@@ -151,20 +135,16 @@ public class MetricCollector {
         mS.setUsedMemory(usedMemory);
         mS.setTotalMemory(totalMemory);
 
-        // Insert into the sensorTable
-        Database db = new Database();
-        db.insertIntoMemoryTable(mS);
+        System.out.println(String.format("%1$20s  %2$d", "getMemory calls:", noOfCallsTogetMemory)); //Sysout
 
-        CountDownLatch latch = mainLatch;
-        latch.countDown();
-        System.out.println("Count: "+latch.getCount()+" getMemory calls: "+noOfCallsTogetMemory); //Sysout
+        return mS;
     }
 
     // Collects Network Info
     //
     //
     // Returns networkStructure
-    public static void getNetwork(CountDownLatch mainLatch, NetworkIF[] networkIFS) {
+    static MetricCollectionStructures.networkStructure getNetwork(NetworkIF[] networkIFS) {
         noOfCallsTogetNetwork++;
 
         MetricCollectionStructures.networkStructure nS = new MetricCollectionStructures.networkStructure();
@@ -194,12 +174,8 @@ public class MetricCollector {
         nS.setSizeReceived(sizeReceived);
         nS.setSizeSent(sizeSent);
 
-        // Insert into the Network Table
-        Database db = new Database();
-        db.insertIntoNetworkTable(nS);
+        System.out.println(String.format("%1$20s  %2$d", "getNetwork calls:", noOfCallsTogetNetwork)); //Sysout
 
-        CountDownLatch latch = mainLatch;
-        latch.countDown();
-        System.out.println("Count: "+latch.getCount()+" getNetwork calls: "+noOfCallsTogetNetwork); //Sysout
+        return nS;
     }
 }
