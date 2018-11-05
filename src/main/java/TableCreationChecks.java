@@ -40,7 +40,9 @@ class TableCreationChecks {
     static int getFans(Sensors sensors) {
 
         int fanArray[] = sensors.getFanSpeeds();
-
+        if (fanArray[0] == 0) {
+            return 0;
+        }
         return fanArray.length;
     }
 
