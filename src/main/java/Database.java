@@ -33,8 +33,6 @@ public class Database {
         createDiskTable();
 
         createNetworkTable();
-
-        closeDatabaseConnection();
     }
 
     // Establish connection to the sqlite database/ Create if its doesn't exist
@@ -243,16 +241,13 @@ public class Database {
     }
 
     // Insert values into Power Table
-    public void insertIntoPowerTable(MetricCollectionStructures.powerStructure pS){
+    void insertIntoPowerTable(MetricCollectionStructures.powerStructure pS){
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
             Statement insertIntoPowerTableStatement = connection.createStatement();
             String sql =
                     "INSERT INTO POWER VALUES ("+pS.getTimestamp()+"," +pS.getPowerStatus()+"," +pS.getBatteryPercentage() + ")";
             insertIntoPowerTableStatement.executeUpdate(sql);
             insertIntoPowerTableStatement.close();
-            connection.close();
         } catch (Exception e) {
             log.error("Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
@@ -260,7 +255,7 @@ public class Database {
     }
 
     // Insert values into CPU Table
-    public void insertIntoCpuTable(MetricCollectionStructures.cpuStructure cS) {
+    void insertIntoCpuTable(MetricCollectionStructures.cpuStructure cS) {
         StringBuilder processorData = new StringBuilder();
 
         for (int i=0; i<cS.processorLoad.size()-1; i++) {
@@ -269,15 +264,12 @@ public class Database {
         processorData.append(cS.processorLoad.get(cS.processorLoad.size()-1));
 
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
             Statement insertIntoCpuTableStatement = connection.createStatement();
             String sql =
                     "INSERT INTO CPU VALUES ("+cS.getTimestamp()+"," +cS.getUptime()+"," +cS.getUserLoad()+","
                             +cS.getSystemLoad()+"," +cS.getIdelLoad()+"," + processorData + ")";
             insertIntoCpuTableStatement.executeUpdate(sql);
             insertIntoCpuTableStatement.close();
-            connection.close();
         } catch (Exception e) {
             log.error("Failed to insert into CPU Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
@@ -285,7 +277,7 @@ public class Database {
     }
 
     // Insert values into Sensors Table
-    public void insertIntoSensorsTable(MetricCollectionStructures.sensorsStructure sS) {
+    void insertIntoSensorsTable(MetricCollectionStructures.sensorsStructure sS) {
 
         StringBuilder fans = new StringBuilder();
         if (sS.getFans().length > 0) {
@@ -296,8 +288,6 @@ public class Database {
         }
 
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
             Statement insertIntoSensorsTableStatement = connection.createStatement();
             String sql =
                     "INSERT INTO SENSORS VALUES ("+sS.getTimestamp()+"," +sS.getCpuTemperature() +
@@ -306,7 +296,6 @@ public class Database {
                             fans + ")";
             insertIntoSensorsTableStatement.executeUpdate(sql);
             insertIntoSensorsTableStatement.close();
-            connection.close();
         } catch (Exception e) {
             log.error("Failed to insert into Sensors Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
@@ -314,18 +303,15 @@ public class Database {
     }
 
     // Insert values into Memory Table
-    public void insertIntoMemoryTable(MetricCollectionStructures.memoryStructure mS) {
+    void insertIntoMemoryTable(MetricCollectionStructures.memoryStructure mS) {
 
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
             Statement insertIntoMemoryTableStatement = connection.createStatement();
             String sql =
                     "INSERT INTO MEMORY VALUES ("+mS.getTimestamp()+"," + mS.getUsedMemory()+","
                     + mS.getTotalMemory() + ")";
             insertIntoMemoryTableStatement.executeUpdate(sql);
             insertIntoMemoryTableStatement.close();
-            connection.close();
         } catch (Exception e) {
             log.error("Failed to insert into Memory Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
@@ -333,18 +319,15 @@ public class Database {
     }
 
     // Insert values into Network Table
-    public void insertIntoNetworkTable(MetricCollectionStructures.networkStructure nS) {
+    void insertIntoNetworkTable(MetricCollectionStructures.networkStructure nS) {
 
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
             Statement insertIntoNetworkTableStatement = connection.createStatement();
             String sql =
                     "INSERT INTO NETWORK VALUES ("+nS.getTimestamp()+"," +nS.getPacketsReceived()+","
                             + nS.getPacketsSent()+"," +"'"+nS.getSizeReceived()+"'"+"," +"'"+nS.getSizeSent()+"'" +")";
             insertIntoNetworkTableStatement.executeUpdate(sql);
             insertIntoNetworkTableStatement.close();
-            connection.close();
         } catch (Exception e) {
             log.error("Failed to insert into Network Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
@@ -352,7 +335,7 @@ public class Database {
     }
 
     // Close the connection to the sqlite database
-    private void closeDatabaseConnection() {
+    void closeDatabaseConnection() {
         try {
             connection.close();
         } catch (SQLException e) {
