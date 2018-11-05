@@ -124,7 +124,7 @@ public class Database {
             String sql =
                     "CREATE TABLE IF NOT EXISTS MEMORY " +
                             "(TIMESTAMP      INTEGER PRIMARY KEY   NOT NULL," +
-                            "AVAILABLEMEMORY REAL                  NOT NULL," +
+                            "USEDMEMORY REAL                  NOT NULL," +
                             "TOTALMEMORY     REAL                  NOT NULL)";
             memoryTableStatement.executeUpdate(sql);
             memoryTableStatement.close();
@@ -287,7 +287,6 @@ public class Database {
     // Insert values into Sensors Table
     public void insertIntoSensorsTable(MetricCollectionStructures.sensorsStructure sS) {
 
-
         StringBuilder fans = new StringBuilder();
         if (sS.getFans().length > 0) {
             for (int i = 0; i < sS.getFans().length - 1; i++) {
@@ -302,14 +301,33 @@ public class Database {
             Statement insertIntoSensorsTableStatement = connection.createStatement();
             String sql =
                     "INSERT INTO SENSORS VALUES ("+sS.getTimestamp()+"," +sS.getCpuTemperature() +
-                            (sS.getCpuVolatage()==999.0 ? "" : ",") +
-                            (sS.getCpuVolatage()==999.0 ? "" : (sS.getCpuVolatage())+",") +
+                            (sS.getCpuVoltage()== 999.0 ? "" : ",") +
+                            (sS.getCpuVoltage()==999.0 ? "" : (sS.getCpuVoltage())+",") +
                             fans + ")";
             insertIntoSensorsTableStatement.executeUpdate(sql);
             insertIntoSensorsTableStatement.close();
             connection.close();
         } catch (Exception e) {
             log.error("Failed to insert into Sensors Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    // Insert values into Memory Table
+    public void insertIntoMemoryTable(MetricCollectionStructures.memoryStructure mS) {
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
+            Statement insertIntoMemoryTableStatement = connection.createStatement();
+            String sql =
+                    "INSERT INTO MEMORY VALUES ("+mS.getTimestamp()+"," + mS.getUsedMemory()+","
+                    + mS.getTotalMemory() + ")";
+            insertIntoMemoryTableStatement.executeUpdate(sql);
+            insertIntoMemoryTableStatement.close();
+            connection.close();
+        } catch (Exception e) {
+            log.error("Failed to insert into Memory Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
     }
