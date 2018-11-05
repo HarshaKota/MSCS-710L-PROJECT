@@ -89,6 +89,8 @@ public class Main {
                     dbObject.insertIntoMemoryTable(memoryStructure);
                     dbObject.insertIntoNetworkTable(networkStructure);
 
+                    service.shutdown();
+
                 } catch (InterruptedException e) {
                     log.error("Future Interrupted " + e.getClass().getName() + ": " + e.getMessage());
                 } catch (ExecutionException e) {
@@ -96,7 +98,7 @@ public class Main {
                 }
 
                 System.out.println("----->Started to count down 5 seconds"); //Sysout
-                Thread.sleep(5000);
+                //Thread.sleep(5000);
                 System.out.println("<-----Finished countdown of 5 seconds"); //Sysout
             } catch(Exception e){
                 e.printStackTrace();
@@ -105,7 +107,7 @@ public class Main {
 
         }
 
-
+        dbObject.closeDatabaseConnection();
         System.out.println("End of Main"); //Sysout
     }
 }
