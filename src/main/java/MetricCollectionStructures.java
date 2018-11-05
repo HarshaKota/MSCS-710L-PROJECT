@@ -159,4 +159,51 @@ public class MetricCollectionStructures {
         }
     }
 
+    public static class networkStructure {
+        long timestamp;
+        long packetsReceived;
+        long packetsSent;
+        String sizeReceived;
+        String sizeSent;
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(long timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        public long getPacketsReceived() {
+            return packetsReceived;
+        }
+
+        public void setPacketsReceived(long packetsReceived) {
+            this.packetsReceived = packetsReceived;
+        }
+
+        public long getPacketsSent() {
+            return packetsSent;
+        }
+
+        public void setPacketsSent(long packetsSent) {
+            this.packetsSent = packetsSent;
+        }
+
+        public String getSizeReceived() {
+            return sizeReceived;
+        }
+
+        public void setSizeReceived(String sizeReceived) {
+            this.sizeReceived = sizeReceived;
+        }
+
+        public String getSizeSent() {
+            return sizeSent;
+        }
+
+        public void setSizeSent(String sizeSent) {
+            this.sizeSent = sizeSent;
+        }
+    }
 }
