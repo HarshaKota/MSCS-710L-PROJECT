@@ -1,6 +1,7 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class MetricCollectionStructures {
+class MetricCollectionStructures {
 
     public static class powerStructure {
 
@@ -9,29 +10,38 @@ public class MetricCollectionStructures {
         double batteryPercentage;
 
         // Sets
-        public void setTimestamp(long timestamp) {
+        void setTimestamp(long timestamp) {
             this.timestamp = timestamp;
         }
 
-        public void setPowerStatus(int powerStatus) {
+        void setPowerStatus(int powerStatus) {
             this.powerStatus = powerStatus;
         }
 
-        public void setBatteryPercentage(double batteryPercentage) {
+        void setBatteryPercentage(double batteryPercentage) {
             this.batteryPercentage = batteryPercentage;
         }
 
         // Gets
-        public int getPowerStatus() {
+        int getPowerStatus() {
             return powerStatus;
         }
 
-        public double getBatteryPercentage() {
+        double getBatteryPercentage() {
             return batteryPercentage;
         }
 
-        public long getTimestamp() {
+        long getTimestamp() {
             return timestamp;
+        }
+
+        @Override
+        public String toString() {
+            return "powerStructure{" +
+                    "timestamp=" + timestamp +
+                    ", powerStatus=" + powerStatus +
+                    ", batteryPercentage=" + batteryPercentage +
+                    '}';
         }
     }
 
@@ -43,50 +53,61 @@ public class MetricCollectionStructures {
         double idelLoad;
         ArrayList<Double> processorLoad = new ArrayList<>();
 
-        public long getTimestamp() {
+        long getTimestamp() {
             return timestamp;
         }
 
-        public void setTimestamp(long timestamp) {
+        void setTimestamp(long timestamp) {
             this.timestamp = timestamp;
         }
 
-        public long getUptime() {
+        long getUptime() {
             return uptime;
         }
 
-        public void setUptime(long uptime) {
+        void setUptime(long uptime) {
             this.uptime = uptime;
         }
 
-        public double getUserLoad() {
+        double getUserLoad() {
             return userLoad;
         }
 
-        public void setUserLoad(double userLoad) {
+        void setUserLoad(double userLoad) {
             this.userLoad = userLoad;
         }
 
-        public double getSystemLoad() {
+        double getSystemLoad() {
             return systemLoad;
         }
 
-        public void setSystemLoad(double systemLoad) {
+        void setSystemLoad(double systemLoad) {
             this.systemLoad = systemLoad;
         }
 
-        public double getIdelLoad() {
+        double getIdelLoad() {
             return idelLoad;
         }
 
-        public void setIdelLoad(double idelLoad) {
+        void setIdelLoad(double idelLoad) {
             this.idelLoad = idelLoad;
         }
 
-        public void setProcessorLoad(double processorLoad) {
+        void setProcessorLoad(double processorLoad) {
             this.processorLoad.add(processorLoad);
         }
 
+        @Override
+        public String toString() {
+            return "cpuStructure{" +
+                    "timestamp=" + timestamp +
+                    ", uptime=" + uptime +
+                    ", userLoad=" + userLoad +
+                    ", systemLoad=" + systemLoad +
+                    ", idelLoad=" + idelLoad +
+                    ", processorLoad=" + processorLoad +
+                    '}';
+        }
     }
 
     public static class sensorsStructure {
@@ -95,38 +116,47 @@ public class MetricCollectionStructures {
         double cpuVoltage = 999.0;
         int[] fans = {};
 
-        public long getTimestamp() {
+        long getTimestamp() {
             return timestamp;
         }
 
-        public void setTimestamp(long timestamp) {
+        void setTimestamp(long timestamp) {
             this.timestamp = timestamp;
         }
 
-        public double getCpuTemperature() {
+        double getCpuTemperature() {
             return cpuTemperature;
         }
 
-        public void setCpuTemperature(double cpuTemperature) {
+        void setCpuTemperature(double cpuTemperature) {
             this.cpuTemperature = cpuTemperature;
         }
 
-        public double getCpuVoltage() {
+        double getCpuVoltage() {
             return cpuVoltage;
         }
 
-        public void setCpuVoltage(double cpuVoltage) {
+        void setCpuVoltage(double cpuVoltage) {
             this.cpuVoltage = cpuVoltage;
         }
 
-        public void setFans(int[] fans) {
+        void setFans(int[] fans) {
             this.fans = fans;
         }
 
-        public int[] getFans() {
+        int[] getFans() {
             return fans;
         }
 
+        @Override
+        public String toString() {
+            return "sensorsStructure{" +
+                    "timestamp=" + timestamp +
+                    ", cpuTemperature=" + cpuTemperature +
+                    ", cpuVoltage=" + cpuVoltage +
+                    ", fans=" + Arrays.toString(fans) +
+                    '}';
+        }
     }
 
     public static class memoryStructure {
@@ -134,28 +164,37 @@ public class MetricCollectionStructures {
         double usedMemory;
         double totalMemory;
 
-        public long getTimestamp() {
+        long getTimestamp() {
             return timestamp;
         }
 
-        public void setTimestamp(long timestamp) {
+        void setTimestamp(long timestamp) {
             this.timestamp = timestamp;
         }
 
-        public double getUsedMemory() {
+        double getUsedMemory() {
             return usedMemory;
         }
 
-        public void setUsedMemory(double usedMemory) {
+        void setUsedMemory(double usedMemory) {
             this.usedMemory = usedMemory;
         }
 
-        public double getTotalMemory() {
+        double getTotalMemory() {
             return totalMemory;
         }
 
-        public void setTotalMemory(double totalMemory) {
+        void setTotalMemory(double totalMemory) {
             this.totalMemory = totalMemory;
+        }
+
+        @Override
+        public String toString() {
+            return "memoryStructure{" +
+                    "timestamp=" + timestamp +
+                    ", usedMemory=" + usedMemory +
+                    ", totalMemory=" + totalMemory +
+                    '}';
         }
     }
 
@@ -166,44 +205,56 @@ public class MetricCollectionStructures {
         String sizeReceived;
         String sizeSent;
 
-        public long getTimestamp() {
+        long getTimestamp() {
             return timestamp;
         }
 
-        public void setTimestamp(long timestamp) {
+        void setTimestamp(long timestamp) {
             this.timestamp = timestamp;
         }
 
-        public long getPacketsReceived() {
+        long getPacketsReceived() {
             return packetsReceived;
         }
 
-        public void setPacketsReceived(long packetsReceived) {
+        void setPacketsReceived(long packetsReceived) {
+
             this.packetsReceived = packetsReceived;
         }
 
-        public long getPacketsSent() {
+        long getPacketsSent() {
             return packetsSent;
         }
 
-        public void setPacketsSent(long packetsSent) {
+        void setPacketsSent(long packetsSent) {
             this.packetsSent = packetsSent;
         }
 
-        public String getSizeReceived() {
+        String getSizeReceived() {
             return sizeReceived;
         }
 
-        public void setSizeReceived(String sizeReceived) {
+        void setSizeReceived(String sizeReceived) {
             this.sizeReceived = sizeReceived;
         }
 
-        public String getSizeSent() {
+        String getSizeSent() {
             return sizeSent;
         }
 
-        public void setSizeSent(String sizeSent) {
+        void setSizeSent(String sizeSent) {
             this.sizeSent = sizeSent;
+        }
+
+        @Override
+        public String toString() {
+            return "networkStructure{" +
+                    "timestamp=" + timestamp +
+                    ", packetsReceived=" + packetsReceived +
+                    ", packetsSent=" + packetsSent +
+                    ", sizeReceived='" + sizeReceived + '\'' +
+                    ", sizeSent='" + sizeSent + '\'' +
+                    '}';
         }
     }
 }
