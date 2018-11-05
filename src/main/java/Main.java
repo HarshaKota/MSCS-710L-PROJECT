@@ -25,7 +25,7 @@ public class Main {
             try {
                 SystemInfo si = new SystemInfo();
                 final HardwareAbstractionLayer hal = si.getHardware();
-                final CountDownLatch mainLatch = new CountDownLatch(3);
+                final CountDownLatch mainLatch = new CountDownLatch(4);
 
                 //Starts the getPower method to collect info for Power Table
                 new Thread(new Runnable() {
@@ -48,6 +48,14 @@ public class Main {
                     @Override
                     public void run() {
                         MetricCollector.getSensors(mainLatch, hal.getSensors());
+                    }
+                }).start();
+
+                //Starts the getMemory method to collect info for Memory Table
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MetricCollector.getMemory(mainLatch, hal.getMemory());
                     }
                 }).start();
 
