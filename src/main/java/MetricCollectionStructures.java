@@ -38,10 +38,10 @@ public class MetricCollectionStructures {
     public static class cpuStructure {
         long timestamp;
         long uptime;
-        float userLoad;
-        float systemLoad;
-        float idelLoad;
-        ArrayList<Float> processorLoad = new ArrayList<>();
+        double userLoad;
+        double systemLoad;
+        double idelLoad;
+        ArrayList<Double> processorLoad = new ArrayList<>();
 
         public long getTimestamp() {
             return timestamp;
@@ -59,31 +59,31 @@ public class MetricCollectionStructures {
             this.uptime = uptime;
         }
 
-        public float getUserLoad() {
+        public double getUserLoad() {
             return userLoad;
         }
 
-        public void setUserLoad(float userLoad) {
+        public void setUserLoad(double userLoad) {
             this.userLoad = userLoad;
         }
 
-        public float getSystemLoad() {
+        public double getSystemLoad() {
             return systemLoad;
         }
 
-        public void setSystemLoad(float systemLoad) {
+        public void setSystemLoad(double systemLoad) {
             this.systemLoad = systemLoad;
         }
 
-        public float getIdelLoad() {
+        public double getIdelLoad() {
             return idelLoad;
         }
 
-        public void setIdelLoad(float idelLoad) {
+        public void setIdelLoad(double idelLoad) {
             this.idelLoad = idelLoad;
         }
 
-        public void setProcessorLoad(Float processorLoad) {
+        public void setProcessorLoad(double processorLoad) {
             this.processorLoad.add(processorLoad);
         }
 
@@ -91,8 +91,8 @@ public class MetricCollectionStructures {
 
     public static class sensorsStructure {
         long timestamp;
-        double cpuTemperature = 999.0;
-        double cpuVolatage = 999.0;
+        double cpuTemperature;
+        double cpuVoltage = 999.0;
         int[] fans = {};
 
         public long getTimestamp() {
@@ -111,12 +111,12 @@ public class MetricCollectionStructures {
             this.cpuTemperature = cpuTemperature;
         }
 
-        public double getCpuVolatage() {
-            return cpuVolatage;
+        public double getCpuVoltage() {
+            return cpuVoltage;
         }
 
-        public void setCpuVolatage(double cpuVolatage) {
-            this.cpuVolatage = cpuVolatage;
+        public void setCpuVoltage(double cpuVoltage) {
+            this.cpuVoltage = cpuVoltage;
         }
 
         public void setFans(int[] fans) {
@@ -127,6 +127,36 @@ public class MetricCollectionStructures {
             return fans;
         }
 
+    }
+
+    public static class memoryStructure {
+        long timestamp;
+        double usedMemory;
+        double totalMemory;
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(long timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        public double getUsedMemory() {
+            return usedMemory;
+        }
+
+        public void setUsedMemory(double usedMemory) {
+            this.usedMemory = usedMemory;
+        }
+
+        public double getTotalMemory() {
+            return totalMemory;
+        }
+
+        public void setTotalMemory(double totalMemory) {
+            this.totalMemory = totalMemory;
+        }
     }
 
 }
