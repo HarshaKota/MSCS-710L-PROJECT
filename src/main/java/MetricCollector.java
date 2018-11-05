@@ -2,6 +2,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.SystemInfo;
 import oshi.hardware.*;
+import oshi.util.FormatUtil;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -12,6 +13,7 @@ public class MetricCollector {
     private static int noOfCallsTogetCPU = 0;
     private static int noOfCallsTogetSensors = 0;
     private static int noOfCallsTogetMemory = 0;
+    private static int noOfCallsTogetNetwork = 0;
 
 
     // Collects Power Info
@@ -156,5 +158,48 @@ public class MetricCollector {
         CountDownLatch latch = mainLatch;
         latch.countDown();
         System.out.println("Count: "+latch.getCount()+" getMemory calls: "+noOfCallsTogetMemory); //Sysout
+    }
+
+    // Collects Network Info
+    //
+    //
+    // Returns networkStructure
+    public static void getNetwork(CountDownLatch mainLatch, NetworkIF[] networkIFS) {
+        noOfCallsTogetNetwork++;
+
+        MetricCollectionStructures.networkStructure nS = new MetricCollectionStructures.networkStructure();
+
+        long packetsReceived = 0;
+        long packetsSent = 0;
+        String sizeReceived = "";
+        String sizeSent = "";
+        for (NetworkIF net: networkIFS) {
+            boolean hasData = net.getBytesRecv() > 0 || net.getBytesSent() > 0 || net.getPacketsRecv() > 0
+                    || net.getPacketsSent() > 0;
+            if(hasData) {
+                long oldPacketsReceived = packetsReceived;
+                long oldPacketsSent = packetsSent;
+                packetsReceived = packetsReceived < net.getPacketsRecv() ? net.getPacketsRecv() : packetsReceived;
+                packetsSent = packetsSent < net.getPacketsSent() ? net.getPacketsSent() : packetsSent;
+
+                if (oldPacketsReceived != packetsReceived) {
+                    sizeReceived = FormatUtil.formatBytes(net.getBytesRecv());
+                    sizeSent = FormatUtil.formatBytes(net.getBytesSent());
+                }
+            }
+        }
+        nS.setTimestamp(System.currentTimeMillis());
+        nS.setPacketsReceived(packetsReceived);
+        nS.setPacketsSent(packetsSent);
+        nS.setSizeReceived(sizeReceived);
+        nS.setSizeSent(sizeSent);
+
+        // Insert into the Network Table
+        Database db = new Database();
+        db.insertIntoNetworkTable(nS);
+
+        CountDownLatch latch = mainLatch;
+        latch.countDown();
+        System.out.println("Count: "+latch.getCount()+" getNetwork calls: "+noOfCallsTogetNetwork); //Sysout
     }
 }
