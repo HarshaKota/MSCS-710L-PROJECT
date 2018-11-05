@@ -30,8 +30,6 @@ public class Database {
 
         createProcessorInfoTable();
 
-        createDiskTable();
-
         createNetworkTable();
     }
 
@@ -198,24 +196,6 @@ public class Database {
             cpuTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create CPU Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-    }
-
-    // Create a Disk table
-    private void createDiskTable(){
-
-        try {
-            Statement diskTableStatement = connection.createStatement();
-            String sql =
-                    "CREATE TABLE IF NOT EXISTS DISK " +
-                            "(TIMESTAMP         INTEGER      NOT NULL," +
-                            "AVAILABLEDISKSPACE REAL         NOT NULL," +
-                            "TOTALDISKSPACE     REAL         NOT NULL)";
-            diskTableStatement.executeUpdate(sql);
-            diskTableStatement.close();
-        } catch (Exception e) {
-            log.error("Failed to create Disk Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
     }
