@@ -25,7 +25,7 @@ public class Main {
             try {
                 SystemInfo si = new SystemInfo();
                 final HardwareAbstractionLayer hal = si.getHardware();
-                final CountDownLatch mainLatch = new CountDownLatch(4);
+                final CountDownLatch mainLatch = new CountDownLatch(5);
 
                 //Starts the getPower method to collect info for Power Table
                 new Thread(new Runnable() {
@@ -56,6 +56,14 @@ public class Main {
                     @Override
                     public void run() {
                         MetricCollector.getMemory(mainLatch, hal.getMemory());
+                    }
+                }).start();
+
+                //Starts the getNetwork method to collect info for Network Table
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MetricCollector.getNetwork(mainLatch, hal.getNetworkIFs());
                     }
                 }).start();
 
