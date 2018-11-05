@@ -11,6 +11,7 @@ public class MetricCollector {
     private static int noOfCallsTogetPower = 0;
     private static int noOfCallsTogetCPU = 0;
     private static int noOfCallsTogetSensors = 0;
+    private static int noOfCallsTogetMemory = 0;
 
 
     // Collects Power Info
@@ -37,7 +38,7 @@ public class MetricCollector {
                 pS.setPowerStatus(0);
             }
             for (PowerSource pSource : powerSources) {
-                pS.setBatteryPercentage(Math.round(pSource.getRemainingCapacity() * 100d));
+                pS.setBatteryPercentage(Math.round((pSource.getRemainingCapacity() * 100d)*10.0)/10.0);
             }
         }
 
@@ -56,10 +57,6 @@ public class MetricCollector {
     // Returns cpuStructure
     public static void getCPU(CountDownLatch mainLatch, CentralProcessor processor) {
         noOfCallsTogetCPU++;
-
-        // Set up the System Info and Hardware Info Objects
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
 
         long[] prevTicks = processor.getSystemCpuLoadTicks();
         try {
@@ -83,12 +80,12 @@ public class MetricCollector {
 
         cS.setTimestamp(System.currentTimeMillis());
         cS.setUptime(processor.getSystemUptime());
-        cS.setUserLoad((float) (100d * user / totalCpu));
-        cS.setSystemLoad((float) (100d * sys / totalCpu));
-        cS.setIdelLoad((float) (100d * idle / totalCpu));
+        cS.setUserLoad(Math.round((100d * user / totalCpu)*10.0)/10.0);
+        cS.setSystemLoad(Math.round((100d * sys / totalCpu)*10.0)/10.0);
+        cS.setIdelLoad(Math.round((100d * idle / totalCpu)*10.0)/10.0);
         double[] load = processor.getProcessorCpuLoadBetweenTicks();
         for (double eachLoad : load) {
-            cS.setProcessorLoad((float) (eachLoad * 100));
+            cS.setProcessorLoad(Math.round((eachLoad * 100)*10.0)/10.0);
         }
 
         // Insert into the cpuTable
@@ -116,9 +113,9 @@ public class MetricCollector {
         MetricCollectionStructures.sensorsStructure sS= new MetricCollectionStructures.sensorsStructure();
 
         sS.setTimestamp(System.currentTimeMillis());
-        sS.setCpuTemperature((float) sensors.getCpuTemperature());
+        sS.setCpuTemperature(sensors.getCpuTemperature());
         if (TableCreationChecks.getCpuVoltage(hal.getSensors()) != 999.0) {
-            sS.setCpuVolatage((float) sensors.getCpuVoltage());
+            sS.setCpuVoltage(sensors.getCpuVoltage());
         }
         if (TableCreationChecks.getFans(hal.getSensors()) > 0) {
             sS.setFans(sensors.getFanSpeeds());
@@ -133,5 +130,31 @@ public class MetricCollector {
         System.out.println("Count: "+latch.getCount()+" getSensors calls: "+noOfCallsTogetSensors); //Sysout
 
 
+    }
+
+    // Collects Memory Info
+    //
+    //
+    // Returns memoryStructure
+    public static void getMemory(CountDownLatch mainLatch, GlobalMemory memory) {
+        noOfCallsTogetMemory++;
+
+        MetricCollectionStructures.memoryStructure mS = new MetricCollectionStructures.memoryStructure();
+
+        final long GIBI = 1L << 30;
+        mS.setTimestamp(System.currentTimeMillis());
+        double availableMemory = Math.round((((double)memory.getAvailable()/GIBI)*10.0))/10.0;
+        double totalMemory = Math.round((((double)memory.getTotal()/GIBI)*10.0))/10.0;
+        double usedMemory = totalMemory - availableMemory;
+        mS.setUsedMemory(usedMemory);
+        mS.setTotalMemory(totalMemory);
+
+        // Insert into the sensorTable
+        Database db = new Database();
+        db.insertIntoMemoryTable(mS);
+
+        CountDownLatch latch = mainLatch;
+        latch.countDown();
+        System.out.println("Count: "+latch.getCount()+" getMemory calls: "+noOfCallsTogetMemory); //Sysout
     }
 }
