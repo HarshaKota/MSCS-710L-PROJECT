@@ -2,8 +2,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.SystemInfo;
 import oshi.hardware.*;
+import oshi.software.os.OSProcess;
+import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class MetricCollector {
@@ -14,6 +20,8 @@ public class MetricCollector {
     private static int noOfCallsTogetSensors = 0;
     private static int noOfCallsTogetMemory = 0;
     private static int noOfCallsTogetNetwork = 0;
+    private static int noOfCallsTogetProcesses = 0;
+
 
 
     // Collects Power Info
@@ -177,5 +185,59 @@ public class MetricCollector {
         System.out.println(String.format("%1$20s  %2$d", "getNetwork calls:", noOfCallsTogetNetwork)); //Sysout
 
         return nS;
+    }
+
+    //Collect Process Info
+    //
+    //
+    // Returns processStructure
+    static MetricCollectionStructures.processStructure getProcess(OperatingSystem os, GlobalMemory memory) {
+        noOfCallsTogetProcesses++;
+
+        MetricCollectionStructures.processStructure pS = new MetricCollectionStructures.processStructure();
+
+        List<OSProcess> allProcesses = Arrays.asList(os.getProcesses(10, OperatingSystem.ProcessSort.MEMORY));
+
+        pS.setTimestamp(System.currentTimeMillis());
+        pS.setNoOfProcesses(os.getProcessCount());
+        pS.setNoOfThreads(os.getThreadCount());
+
+        HashMap<String, List<Double>> processesMap = new HashMap<>();
+
+        for (int i = 0; i < allProcesses.size() && i < 10; i++) {
+            OSProcess p = allProcesses.get(i);
+
+            List<Double> isPresent = processesMap.get(p.getName());
+
+            if (isPresent == null) {
+                List<Double> cpuAndMemValues = new ArrayList<>();
+                cpuAndMemValues.add(Math.round((100d * (p.getKernelTime() + p.getUserTime()) / p.getUpTime())*10.0)/10.0);
+                cpuAndMemValues.add(Math.round((100d * p.getResidentSetSize() / memory.getTotal())*10.0)/10.0);
+                processesMap.put(p.getName(), cpuAndMemValues);
+            } else {
+                // In the list
+                double previousVal1 = isPresent.get(0);
+                double previousVal2 = isPresent.get(1);
+
+                // Present rounded values
+                double presentVal1 = Math.round((100d * (p.getKernelTime() + p.getUserTime()) / p.getUpTime())*10.0)/10.0;
+                double presentVal2 = Math.round((100d * p.getResidentSetSize() / memory.getTotal())*10.0)/10.0;
+
+                // Getting the computed rounded values
+                double newCpuValue = Math.round(((previousVal1+presentVal1)/2)*10.0)/10.0;
+                double newMemValue = Math.round(((previousVal2+presentVal2)/2)*10.0)/10.0;
+
+                isPresent.set(0, newCpuValue);
+                isPresent.set(1, newMemValue);
+            }
+
+        }
+
+        pS.setProcessesList(processesMap);
+
+        System.out.println(String.format("%1$20s  %2$d", "getProcess calls:", noOfCallsTogetNetwork)); //Sysout
+
+        return pS;
+
     }
 }
