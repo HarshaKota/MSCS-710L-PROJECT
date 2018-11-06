@@ -2,6 +2,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
+import oshi.software.os.OperatingSystem;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,8 +25,9 @@ public class Main {
 
         while (Main.applicationOpen.get()) {
             try {
-                SystemInfo si = new SystemInfo();
+                final SystemInfo si = new SystemInfo();
                 final HardwareAbstractionLayer hal = si.getHardware();
+                final OperatingSystem os = si.getOperatingSystem();
 
                 Callable<MetricCollectionStructures.powerStructure> power = new Callable<MetricCollectionStructures.powerStructure>() {
                     @Override
@@ -62,19 +64,28 @@ public class Main {
                     }
                 };
 
-                ExecutorService service = Executors.newFixedThreadPool(5);
+                Callable<MetricCollectionStructures.processesStructure> processes = new Callable<MetricCollectionStructures.processesStructure>() {
+                    @Override
+                    public MetricCollectionStructures.processesStructure call() {
+                        return MetricCollector.getProcesses(os, hal.getMemory());
+                    }
+                };
+
+                ExecutorService service = Executors.newFixedThreadPool(6);
 
                 Future<MetricCollectionStructures.powerStructure> powerFuture = service.submit(power);
                 Future<MetricCollectionStructures.cpuStructure> cpuFuture = service.submit(cpu);
                 Future<MetricCollectionStructures.sensorsStructure> sensorsFuture = service.submit(sensors);
                 Future<MetricCollectionStructures.memoryStructure> memoryFuture = service.submit(memory);
                 Future<MetricCollectionStructures.networkStructure> networkFuture = service.submit(network);
+                Future<MetricCollectionStructures.processesStructure> processesFuture = service.submit(processes);
 
                 MetricCollectionStructures.powerStructure powerStructure;
                 MetricCollectionStructures.cpuStructure cpuStructure;
                 MetricCollectionStructures.sensorsStructure sensorsStructure;
                 MetricCollectionStructures.memoryStructure memoryStructure;
                 MetricCollectionStructures.networkStructure networkStructure;
+                MetricCollectionStructures.processesStructure processesStructure;
 
                 try {
                     powerStructure = powerFuture.get();
@@ -82,12 +93,14 @@ public class Main {
                     sensorsStructure = sensorsFuture.get();
                     memoryStructure = memoryFuture.get();
                     networkStructure = networkFuture.get();
+                    processesStructure = processesFuture.get();
 
                     dbObject.insertIntoPowerTable(powerStructure);
                     dbObject.insertIntoCpuTable(cpuStructure);
                     dbObject.insertIntoSensorsTable(sensorsStructure);
                     dbObject.insertIntoMemoryTable(memoryStructure);
                     dbObject.insertIntoNetworkTable(networkStructure);
+                    dbObject.insertIntoProcessTable(processesStructure);
 
                     service.shutdown();
 
@@ -98,7 +111,7 @@ public class Main {
                 }
 
                 System.out.println("----->Started to count down 5 seconds"); //Sysout
-                //Thread.sleep(5000);
+                Thread.sleep(5000);
                 System.out.println("<-----Finished countdown of 5 seconds"); //Sysout
             } catch(Exception e){
                 e.printStackTrace();
