@@ -67,7 +67,7 @@ public class Main {
                 Callable<MetricCollectionStructures.processStructure> processes = new Callable<MetricCollectionStructures.processStructure>() {
                     @Override
                     public MetricCollectionStructures.processStructure call() {
-                        return MetricCollector.getProcesses(os, hal.getMemory());
+                        return MetricCollector.getProcess(os, hal.getMemory());
                     }
                 };
 
