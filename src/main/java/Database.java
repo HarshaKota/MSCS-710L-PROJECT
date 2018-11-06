@@ -317,7 +317,7 @@ public class Database {
     }
 
     // Insert values into the Process and Processes tables
-    void insertIntoProcessTable(MetricCollectionStructures.processesStructure pS) {
+    void insertIntoProcessTable(MetricCollectionStructures.processStructure pS) {
 
         try {
             Statement insertIntoProcessTableStatement = connection.createStatement();
