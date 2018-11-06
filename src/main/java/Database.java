@@ -4,6 +4,8 @@ import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 
 import java.sql.*;
+import java.util.List;
+import java.util.Map;
 
 public class Database {
 
@@ -26,9 +28,9 @@ public class Database {
 
         createMemoryTable();
 
-        createProcessesTable();
+        createProcessInfoTable();
 
-        createProcessorInfoTable();
+        createProcessTable();
 
         createNetworkTable();
     }
@@ -131,12 +133,12 @@ public class Database {
     }
 
     // Create a Processes table
-    private void createProcessesTable(){
+    private void createProcessInfoTable(){
 
         try {
             Statement processesTableStatement = connection.createStatement();
             String sql =
-                    "CREATE TABLE IF NOT EXISTS PROCESSES " +
+                    "CREATE TABLE IF NOT EXISTS PROCESSINFO " +
                             "(TIMESTAMP       INTEGER      NOT NULL," +
                             "PROCESSNAME      VARCHAR      NOT NULL," +
                             "CPUPERCENTAGE    REAL         NOT NULL," +
@@ -145,25 +147,25 @@ public class Database {
             processesTableStatement.executeUpdate(sql);
             processesTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to create Processes Table " + e.getClass().getName() + ": " + e.getMessage());
+            log.error("Failed to create ProcessInfo Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
     }
 
     // Create a ProcessorInfo table
-    private void createProcessorInfoTable(){
+    private void createProcessTable(){
 
         try {
             Statement processorInfoTableStatement = connection.createStatement();
             String sql =
-                    "CREATE TABLE IF NOT EXISTS PROCESSORINFO " +
+                    "CREATE TABLE IF NOT EXISTS PROCESS " +
                             "(TIMESTAMP     INTEGER  PRIMARY KEY    NOT NULL," +
                             "NOOFPROCESSES  INTEGER                 NOT NULL," +
                             "NOOFTHREADS    INTEGER                 NOT NULL)" ;
             processorInfoTableStatement.executeUpdate(sql);
             processorInfoTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to create ProcessorInfo Table " + e.getClass().getName() + ": " + e.getMessage());
+            log.error("Failed to create Process Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
     }
@@ -314,6 +316,39 @@ public class Database {
         }
     }
 
+    // Insert values into the Process and Processes tables
+    void insertIntoProcessTable(MetricCollectionStructures.processesStructure pS) {
+
+        try {
+            Statement insertIntoProcessTableStatement = connection.createStatement();
+            String sql =
+                    "INSERT INTO PROCESS VALUES ("+ pS.getTimestamp()+"," +pS.getNoOfProcesses()+","
+                            +pS.getNoOfThreads() +")";
+            insertIntoProcessTableStatement.executeUpdate(sql);
+            insertIntoProcessTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to insert into Process Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+
+        for (Map.Entry<String, List<Double>> processInfo: pS.processesList.entrySet()) {
+
+            try {
+                Statement insertIntoProcessInfoTableStatement = connection.createStatement();
+                String sql =
+                        "INSERT INTO PROCESSINFO VALUES (" + pS.getTimestamp() + "," + "'"+processInfo.getKey()+"'" +","
+                                +processInfo.getValue().get(0)+"," +processInfo.getValue().get(1) +")";
+                insertIntoProcessInfoTableStatement.executeUpdate(sql);
+                insertIntoProcessInfoTableStatement.close();
+            } catch (Exception e) {
+                log.error("Failed to insert into ProcessInfo Table " + e.getClass().getName() + ": " + e.getMessage());
+                System.exit(0);
+            }
+        }
+
+
+    }
+
     // Close the connection to the sqlite database
     void closeDatabaseConnection() {
         try {
@@ -322,4 +357,5 @@ public class Database {
             log.error("Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
+
 }
