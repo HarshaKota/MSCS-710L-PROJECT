@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 class MetricCollectionStructures {
 
@@ -255,6 +257,41 @@ class MetricCollectionStructures {
                     ", sizeReceived='" + sizeReceived + '\'' +
                     ", sizeSent='" + sizeSent + '\'' +
                     '}';
+        }
+    }
+
+    static class processStructure {
+        long timestamp;
+        long noOfProcesses;
+        long noOfThreads;
+        HashMap<String, List<Double>> processesList;
+
+        long getTimestamp() {
+            return timestamp;
+        }
+
+        void setTimestamp(long timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        double getNoOfProcesses() {
+            return noOfProcesses;
+        }
+
+        void setNoOfProcesses(long noOfProcesses) {
+            this.noOfProcesses = noOfProcesses;
+        }
+
+        double getNoOfThreads() {
+            return noOfThreads;
+        }
+
+        void setNoOfThreads(long noOfThreads) {
+            this.noOfThreads = noOfThreads;
+        }
+
+        void setProcessesList(HashMap<String, List<Double>> processesList) {
+            this.processesList = processesList;
         }
     }
 }
