@@ -64,9 +64,9 @@ public class Main {
                     }
                 };
 
-                Callable<MetricCollectionStructures.processesStructure> processes = new Callable<MetricCollectionStructures.processesStructure>() {
+                Callable<MetricCollectionStructures.processStructure> processes = new Callable<MetricCollectionStructures.processStructure>() {
                     @Override
-                    public MetricCollectionStructures.processesStructure call() {
+                    public MetricCollectionStructures.processStructure call() {
                         return MetricCollector.getProcesses(os, hal.getMemory());
                     }
                 };
@@ -78,14 +78,14 @@ public class Main {
                 Future<MetricCollectionStructures.sensorsStructure> sensorsFuture = service.submit(sensors);
                 Future<MetricCollectionStructures.memoryStructure> memoryFuture = service.submit(memory);
                 Future<MetricCollectionStructures.networkStructure> networkFuture = service.submit(network);
-                Future<MetricCollectionStructures.processesStructure> processesFuture = service.submit(processes);
+                Future<MetricCollectionStructures.processStructure> processesFuture = service.submit(processes);
 
                 MetricCollectionStructures.powerStructure powerStructure;
                 MetricCollectionStructures.cpuStructure cpuStructure;
                 MetricCollectionStructures.sensorsStructure sensorsStructure;
                 MetricCollectionStructures.memoryStructure memoryStructure;
                 MetricCollectionStructures.networkStructure networkStructure;
-                MetricCollectionStructures.processesStructure processesStructure;
+                MetricCollectionStructures.processStructure processesStructure;
 
                 try {
                     powerStructure = powerFuture.get();
