@@ -235,7 +235,7 @@ public class MetricCollector {
 
         pS.setProcessesList(processesMap);
 
-        System.out.println(String.format("%1$20s  %2$d", "getProcess calls:", noOfCallsTogetNetwork)); //Sysout
+        System.out.println(String.format("%1$20s  %2$d", "getProcess calls:", noOfCallsTogetProcesses)); //Sysout
 
         return pS;
 
