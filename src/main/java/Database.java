@@ -33,6 +33,8 @@ public class Database {
         createProcessTable();
 
         createNetworkTable();
+
+        createSessionTable();
     }
 
     // Establish connection to the sqlite database/ Create if its doesn't exist
@@ -56,9 +58,9 @@ public class Database {
                 Statement powerTableStatement = connection.createStatement();
                 String sql =
                         "CREATE TABLE IF NOT EXISTS POWER " +
-                                "(TIMESTAMP INTEGER PRIMARY KEY   NOT NULL," +
-                                "POWERSTATUS INTEGER              NOT NULL," +
-                                "BATTERYPERCENTAGE REAL           NOT NULL)";
+                                "(TIMESTAMP         INTEGER PRIMARY KEY   NOT NULL," +
+                                "POWERSTATUS        INTEGER               NOT NULL," +
+                                "BATTERYPERCENTAGE  REAL                  NOT NULL)";
                 powerTableStatement.executeUpdate(sql);
                 powerTableStatement.close();
             } catch (Exception e) {
@@ -122,7 +124,7 @@ public class Database {
             String sql =
                     "CREATE TABLE IF NOT EXISTS MEMORY " +
                             "(TIMESTAMP      INTEGER PRIMARY KEY   NOT NULL," +
-                            "USEDMEMORY REAL                  NOT NULL," +
+                            "USEDMEMORY      REAL                  NOT NULL," +
                             "TOTALMEMORY     REAL                  NOT NULL)";
             memoryTableStatement.executeUpdate(sql);
             memoryTableStatement.close();
@@ -139,11 +141,11 @@ public class Database {
             Statement processesTableStatement = connection.createStatement();
             String sql =
                     "CREATE TABLE IF NOT EXISTS PROCESSINFO " +
-                            "(TIMESTAMP       INTEGER      NOT NULL," +
-                            "PROCESSNAME      VARCHAR      NOT NULL," +
-                            "CPUPERCENTAGE    REAL         NOT NULL," +
-                            "MEMORYPERCENTAGE REAL         NOT NULL," +
-                            "PRIMARY KEY(TIMESTAMP, PROCESSNAME))";
+                            "(TIMESTAMP         INTEGER      NOT NULL," +
+                            "PROCESSNAME        VARCHAR      NOT NULL," +
+                            "CPUPERCENTAGE      REAL         NOT NULL," +
+                            "MEMORYPERCENTAGE   REAL         NOT NULL," +
+                                               "PRIMARY KEY(TIMESTAMP, PROCESSNAME))";
             processesTableStatement.executeUpdate(sql);
             processesTableStatement.close();
         } catch (Exception e) {
@@ -209,17 +211,35 @@ public class Database {
             Statement networkTableStatement = connection.createStatement();
             String sql =
                     "CREATE TABLE IF NOT EXISTS NETWORK " +
-                            "(TIMESTAMP              INTEGER      NOT NULL," +
-                            "NOOFPACKETSRECEIVED     INTEGER         NOT NULL," +
-                            "NOOFPACKETSSENT         INTEGER         NOT NULL," +
-                            "SIZERECEIVED            TEXT         NOT NULL," +
-                            "SIZESENT                TEXT         NOT NULL)";
+                            "(TIMESTAMP              INTEGER  PRIMARY KEY     NOT NULL," +
+                            "NOOFPACKETSRECEIVED     INTEGER                  NOT NULL," +
+                            "NOOFPACKETSSENT         INTEGER                  NOT NULL," +
+                            "SIZERECEIVED            TEXT                     NOT NULL," +
+                            "SIZESENT                TEXT                     NOT NULL)";
             networkTableStatement.executeUpdate(sql);
             networkTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create Network Table " + e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
+    }
+
+    // Create a Sessions table to hold each user session start and end time
+    private void createSessionTable() {
+
+        try {
+            Statement sessionTableStatement = connection.createStatement();
+            String sql =
+                    "CREATE TABLE IF NOT EXISTS SESSION " +
+                            "(STARTSESSION  INTEGER  PRIMARY KEY      NOT NULL," +
+                            "ENDSESSION     INTEGER                   NULL" +")";
+            sessionTableStatement.executeUpdate(sql);
+            sessionTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to create Session Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+
     }
 
     // Insert values into Power Table
@@ -345,8 +365,41 @@ public class Database {
                 System.exit(0);
             }
         }
+    }
 
+    // Insert the start session time into the session table
+    void insertStartSessionIntoSessionTable(long startSession) {
 
+        try {
+            Statement insertStartSessionIntoSessionTableStatement = connection.createStatement();
+            String sql =
+                    "INSERT INTO SESSION VALUES ("+ startSession +",NULL" +")";
+            insertStartSessionIntoSessionTableStatement.executeUpdate(sql);
+            insertStartSessionIntoSessionTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to insert Start Session Time into Session Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    // Update the session end time of previously inserted startSession time
+    void insertEndSessionIntoSessionTable(long startSession, long endSession) {
+
+        String sql = "UPDATE SESSION SET ENDSESSION = ? WHERE STARTSESSION = ?";
+
+        try {
+
+            PreparedStatement insertEndSessionIntoSessionTableStatement = connection.prepareStatement(sql);
+
+            insertEndSessionIntoSessionTableStatement.setLong(1, endSession);
+            insertEndSessionIntoSessionTableStatement.setLong(2,startSession);
+
+            insertEndSessionIntoSessionTableStatement.executeUpdate();
+            insertEndSessionIntoSessionTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to update the endSession time in Session Table " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
     }
 
     // Close the connection to the sqlite database
@@ -357,5 +410,4 @@ public class Database {
             log.error("Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
-
 }
