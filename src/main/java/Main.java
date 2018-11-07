@@ -23,6 +23,10 @@ public class Main {
         Thread uiThread = new Thread(ui);
         uiThread.start();
 
+        // Record the session start time in the session table
+        final long startSessionTime = MetricCollector.startSession();
+        dbObject.insertStartSessionIntoSessionTable(startSessionTime);
+
         while (Main.applicationOpen.get()) {
             try {
                 final SystemInfo si = new SystemInfo();
@@ -120,7 +124,12 @@ public class Main {
 
         }
 
+        // Record the session end time in the session table
+        final long endSessionTime = MetricCollector.endSession();
+        dbObject.insertEndSessionIntoSessionTable(startSessionTime, endSessionTime);
+
         dbObject.closeDatabaseConnection();
+
         System.out.println("End of Main"); //Sysout
     }
 }
