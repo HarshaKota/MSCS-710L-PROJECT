@@ -21,16 +21,10 @@ class TableCreationChecks {
 
     /*                  Power Table                   */
 
-    // Check if the Power Table has any errors.
+    // Check if the system has any power sources.
     static boolean checkPowerTable(PowerSource[] powerSources) {
 
-        for (PowerSource pSource : powerSources) {
-            if (powerSources.length < 0) {
-                log.error(powerSources.length + " " + Arrays.toString(powerSources));
-                return false;
-            }
-        }
-        return true;
+        return powerSources.length != 0;
     }
 
 
