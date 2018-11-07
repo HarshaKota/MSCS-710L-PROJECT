@@ -187,7 +187,7 @@ public class MetricCollector {
         return nS;
     }
 
-    //Collect Process Info
+    // Collect Process Info
     //
     //
     // Returns processStructure
@@ -239,5 +239,17 @@ public class MetricCollector {
 
         return pS;
 
+    }
+
+    // Record the start of the session
+    static long startSession() {
+
+        return System.currentTimeMillis();
+    }
+
+    // Record the end of the session
+    static long endSession() {
+
+        return System.currentTimeMillis();
     }
 }
