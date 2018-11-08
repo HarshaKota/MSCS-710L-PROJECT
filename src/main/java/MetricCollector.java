@@ -29,32 +29,38 @@ public class MetricCollector {
     //      0 - discharging
     // Returns powerStructure
     static MetricCollectionStructures.powerStructure getPower(PowerSource[] powerSources) {
-        noOfCallsTogetPower++;
 
-        // Set up the System Info and Hardware Info Objects
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
+        if (Main.hasPowerSource) {
+            noOfCallsTogetPower++;
 
-        MetricCollectionStructures.powerStructure pS = new MetricCollectionStructures.powerStructure();
+            // Set up the System Info and Hardware Info Objects
+            SystemInfo si = new SystemInfo();
+            HardwareAbstractionLayer hal = si.getHardware();
 
-        if (TableCreationChecks.checkPowerTable(hal.getPowerSources())) {
+            MetricCollectionStructures.powerStructure pS = new MetricCollectionStructures.powerStructure();
+
             pS.setTimestamp(System.currentTimeMillis());
+
             double timeRemaining = powerSources[0].getTimeRemaining();
+
             // -1d indicates charging
             if (timeRemaining < -1d) {
                 pS.setPowerStatus(1);
-            // 0d indicates discharging
+                // 0d indicates discharging
             } else if (timeRemaining < 0d) {
                 pS.setPowerStatus(0);
             }
+
             for (PowerSource pSource : powerSources) {
-                pS.setBatteryPercentage(Math.round((pSource.getRemainingCapacity() * 100d)*10.0)/10.0);
+                pS.setBatteryPercentage(Math.round((pSource.getRemainingCapacity() * 100d) * 10.0) / 10.0);
             }
+
+            System.out.println(String.format("%1$20s  %2$d", "getPower calls:", noOfCallsTogetPower)); //Sysout
+
+            return pS;
         }
 
-        System.out.println(String.format("%1$20s  %2$d", "getPower calls:", noOfCallsTogetPower)); //Sysout
-
-        return pS;
+        return new MetricCollectionStructures.powerStructure();
     }
 
     // Collects CPU Info

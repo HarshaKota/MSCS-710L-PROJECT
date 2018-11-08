@@ -22,9 +22,13 @@ class TableCreationChecks {
     /*                  Power Table                   */
 
     // Check if the system has any power sources.
-    static boolean checkPowerTable(PowerSource[] powerSources) {
+    static boolean checkPowerSource(PowerSource[] powerSources) {
 
-        return powerSources.length != 0;
+        Main.hasPowerSource = powerSources.length != 0
+                && !powerSources[0].getName().equalsIgnoreCase("Unknown")
+                && powerSources[0].getRemainingCapacity() * 100d != 0.0;
+
+        return Main.hasPowerSource;
     }
 
 
