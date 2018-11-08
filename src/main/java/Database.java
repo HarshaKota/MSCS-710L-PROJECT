@@ -52,7 +52,7 @@ public class Database {
     // Create a Power Sources table
     private void createPowerTable(){
 
-        if(TableCreationChecks.checkPowerTable(hal.getPowerSources())) {
+        if(TableCreationChecks.checkPowerSource(hal.getPowerSources())) {
 
             try {
                 Statement powerTableStatement = connection.createStatement();
@@ -244,15 +244,18 @@ public class Database {
 
     // Insert values into Power Table
     void insertIntoPowerTable(MetricCollectionStructures.powerStructure pS){
-        try {
-            Statement insertIntoPowerTableStatement = connection.createStatement();
-            String sql =
-                    "INSERT INTO POWER VALUES ("+pS.getTimestamp()+"," +pS.getPowerStatus()+"," +pS.getBatteryPercentage() + ")";
-            insertIntoPowerTableStatement.executeUpdate(sql);
-            insertIntoPowerTableStatement.close();
-        } catch (Exception e) {
-            log.error("Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+
+        if (Main.hasPowerSource) {
+            try {
+                Statement insertIntoPowerTableStatement = connection.createStatement();
+                String sql =
+                        "INSERT INTO POWER VALUES (" + pS.getTimestamp() + "," + pS.getPowerStatus() + "," + pS.getBatteryPercentage() + ")";
+                insertIntoPowerTableStatement.executeUpdate(sql);
+                insertIntoPowerTableStatement.close();
+            } catch (Exception e) {
+                log.error("Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
+                System.exit(0);
+            }
         }
     }
 
