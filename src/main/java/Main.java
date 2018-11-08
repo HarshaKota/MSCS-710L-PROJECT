@@ -13,6 +13,12 @@ public class Main {
 
     static AtomicBoolean applicationOpen = new AtomicBoolean(true);
 
+    private final static SystemInfo si = new SystemInfo();
+    private final static HardwareAbstractionLayer hal = si.getHardware();
+    private final static OperatingSystem os = si.getOperatingSystem();
+
+    static boolean hasPowerSource = false;
+
     public static void main(String[] args) {
 
         // Create the database
@@ -29,9 +35,6 @@ public class Main {
 
         while (Main.applicationOpen.get()) {
             try {
-                final SystemInfo si = new SystemInfo();
-                final HardwareAbstractionLayer hal = si.getHardware();
-                final OperatingSystem os = si.getOperatingSystem();
 
                 Callable<MetricCollectionStructures.powerStructure> power = new Callable<MetricCollectionStructures.powerStructure>() {
                     @Override
