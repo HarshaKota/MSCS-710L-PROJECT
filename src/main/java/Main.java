@@ -53,7 +53,7 @@ public class Main {
                 Callable<MetricCollectionStructures.sensorsStructure> sensors = new Callable<MetricCollectionStructures.sensorsStructure>() {
                     @Override
                     public MetricCollectionStructures.sensorsStructure call() {
-                        return MetricCollector.getSensors(hal.getSensors());
+                        return MetricCollector.getSensors(hal, hal.getSensors());
                     }
                 };
 
@@ -108,6 +108,8 @@ public class Main {
                     dbObject.insertIntoMemoryTable(memoryStructure);
                     dbObject.insertIntoNetworkTable(networkStructure);
                     dbObject.insertIntoProcessTable(processesStructure);
+
+                    dbObject.commit();
 
                     service.shutdown();
 
