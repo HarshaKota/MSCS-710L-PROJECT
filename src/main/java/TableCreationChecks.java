@@ -4,8 +4,6 @@ import oshi.hardware.CentralProcessor;
 import oshi.hardware.PowerSource;
 import oshi.hardware.Sensors;
 
-import java.util.Arrays;
-
 class TableCreationChecks {
 
     private static final Logger log = LogManager.getLogger(TableCreationChecks.class);
