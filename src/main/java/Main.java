@@ -36,7 +36,7 @@ public class Main {
         while (Main.applicationOpen.get()) {
             try {
 
-                final long metricCollectedTime = System.currentTimeMillis();
+                final long metricCollectedTime = MetricCollector.startSession();
 
                 Callable<MetricCollectionStructures.powerStructure> power = new Callable<MetricCollectionStructures.powerStructure>() {
                     @Override
