@@ -163,13 +163,12 @@ public class MetricCollector {
             boolean hasData = net.getBytesRecv() > 0 || net.getBytesSent() > 0 || net.getPacketsRecv() > 0
                     || net.getPacketsSent() > 0;
             if(hasData) {
-                long oldPacketsReceived = packetsReceived;
-                long oldPacketsSent = packetsSent;
-                packetsReceived = packetsReceived < net.getPacketsRecv() ? net.getPacketsRecv() : packetsReceived;
-                packetsSent = packetsSent < net.getPacketsSent() ? net.getPacketsSent() : packetsSent;
-
-                if (oldPacketsReceived != packetsReceived) {
+                if (packetsReceived < net.getPacketsRecv()) {
+                    packetsReceived = net.getPacketsRecv();
                     sizeReceived = FormatUtil.formatBytes(net.getBytesRecv());
+                }
+                if (packetsSent < net.getPacketsSent()) {
+                    packetsSent = net.getPacketsSent();
                     sizeSent = FormatUtil.formatBytes(net.getBytesSent());
                 }
             }
