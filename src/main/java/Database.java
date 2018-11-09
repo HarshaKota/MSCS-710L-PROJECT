@@ -35,6 +35,8 @@ public class Database {
         createNetworkTable();
 
         createSessionTable();
+
+        checkSessionTable();
     }
 
     // Establish connection to the sqlite database/ Create if its doesn't exist
@@ -42,10 +44,88 @@ public class Database {
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
+            connection.setAutoCommit(false);
         } catch (Exception e) {
             log.error("Failed to connect to the database " + e.getClass().getName() + ": " + e.getMessage());
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
+        }
+    }
+
+    // Check if the session table is intact with both the startSession and endSession times
+    private void checkSessionTable() {
+
+        // Get the start and end times of the last session inserted into the session table
+            String selectSql = "SELECT * FROM SESSION ORDER BY STARTSESSION DESC LIMIT 1";
+            long startSessionTime = 0;
+            long endSessionTime = 0;
+
+        try {
+            Statement checkSessionTableStatement = connection.createStatement();
+            ResultSet rs = checkSessionTableStatement.executeQuery(selectSql);
+            while(rs.next()) {
+                startSessionTime = rs.getLong("STARTSESSION");
+                endSessionTime = rs.getLong("ENDSESSION");
+            }
+            checkSessionTableStatement.close();
+        } catch (Exception e) {
+            log.error("Failed to fetch the last inserted session time " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+
+        // Check and make sure the timestamp values are the same using 2 different table
+        if (endSessionTime == 0) {
+
+            long sensorLastTimestamp = 0;
+            long memoryLastTimestamp = 0;
+
+            String getLastTimeFromSensorsSql = "SELECT TIMESTAMP FROM SENSORS ORDER BY TIMESTAMP DESC LIMIT 1";
+            String getLastTimeFromMemorySql = "SELECT TIMESTAMP FROM MEMORY ORDER BY TIMESTAMP DESC LIMIT 1";
+
+            try {
+                Statement getEndTimeFromSensorsStatement = connection.createStatement();
+                ResultSet rs = getEndTimeFromSensorsStatement.executeQuery(getLastTimeFromSensorsSql);
+                while(rs.next()) {
+                    sensorLastTimestamp = rs.getLong("TIMESTAMP");
+                }
+                getEndTimeFromSensorsStatement.close();
+            } catch (Exception e) {
+                log.error("Failed to last timestamp from the sensors table " + e.getClass().getName() + ": " + e.getMessage());
+                System.exit(0);
+            }
+
+            try {
+                Statement getEndTimeFromMemoryStatement = connection.createStatement();
+                ResultSet rs = getEndTimeFromMemoryStatement.executeQuery(getLastTimeFromMemorySql);
+                while(rs.next()) {
+                    memoryLastTimestamp = rs.getLong("TIMESTAMP");
+                }
+                getEndTimeFromMemoryStatement.close();
+            } catch (Exception e) {
+                log.error("Failed to last timestamp from the memory table " + e.getClass().getName() + ": " + e.getMessage());
+                System.exit(0);
+            }
+
+            if (sensorLastTimestamp != memoryLastTimestamp) {
+                log.fatal("The 2 tables - sensors and memory have different number of records in them.");
+                System.exit(0);
+            } else {
+                String fixEndSessionTimeSql = "UPDATE SESSION SET ENDSESSION = ? WHERE STARTSESSION = ?";
+                try {
+                    PreparedStatement fixEndSesionTimeStatement = connection.prepareStatement(fixEndSessionTimeSql);
+
+                    fixEndSesionTimeStatement.setLong(1, sensorLastTimestamp);
+                    fixEndSesionTimeStatement.setLong(2, startSessionTime);
+
+                    fixEndSesionTimeStatement.executeUpdate();
+                    fixEndSesionTimeStatement.close();
+                    connection.commit();
+                } catch (Exception e) {
+                    log.error("Failed to fix the endSession time in Session Table " + e.getClass().getName() + ": " + e.getMessage());
+                    System.exit(0);
+                }
+
+            }
         }
     }
 
@@ -404,6 +484,18 @@ public class Database {
             System.exit(0);
         }
     }
+
+    // Commit the metrics collected
+    void commit() {
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            log.error("Failed to commit " + e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
+
 
     // Close the connection to the sqlite database
     void closeDatabaseConnection() {
