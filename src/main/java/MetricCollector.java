@@ -33,10 +33,6 @@ public class MetricCollector {
         if (Main.hasPowerSource) {
             noOfCallsTogetPower++;
 
-            // Set up the System Info and Hardware Info Objects
-            SystemInfo si = new SystemInfo();
-            HardwareAbstractionLayer hal = si.getHardware();
-
             MetricCollectionStructures.powerStructure pS = new MetricCollectionStructures.powerStructure();
 
             pS.setTimestamp(System.currentTimeMillis());
@@ -109,12 +105,8 @@ public class MetricCollector {
     //
     //
     // Returns sensorsStructure
-    static MetricCollectionStructures.sensorsStructure getSensors(Sensors sensors) {
+    static MetricCollectionStructures.sensorsStructure getSensors(HardwareAbstractionLayer hal, Sensors sensors) {
         noOfCallsTogetSensors++;
-
-        // Set up the System Info and Hardware Info Objects
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
 
         MetricCollectionStructures.sensorsStructure sS= new MetricCollectionStructures.sensorsStructure();
 
