@@ -36,45 +36,47 @@ public class Main {
         while (Main.applicationOpen.get()) {
             try {
 
+                final long metricCollectedTime = System.currentTimeMillis();
+
                 Callable<MetricCollectionStructures.powerStructure> power = new Callable<MetricCollectionStructures.powerStructure>() {
                     @Override
                     public MetricCollectionStructures.powerStructure call() {
-                        return MetricCollector.getPower(hal.getPowerSources());
+                        return MetricCollector.getPower(metricCollectedTime, hal.getPowerSources());
                     }
                 };
 
                 Callable<MetricCollectionStructures.cpuStructure> cpu = new Callable<MetricCollectionStructures.cpuStructure>() {
                     @Override
                     public MetricCollectionStructures.cpuStructure call() {
-                        return MetricCollector.getCPU(hal.getProcessor());
+                        return MetricCollector.getCPU(metricCollectedTime, hal.getProcessor());
                     }
                 };
 
                 Callable<MetricCollectionStructures.sensorsStructure> sensors = new Callable<MetricCollectionStructures.sensorsStructure>() {
                     @Override
                     public MetricCollectionStructures.sensorsStructure call() {
-                        return MetricCollector.getSensors(hal, hal.getSensors());
+                        return MetricCollector.getSensors(metricCollectedTime, hal, hal.getSensors());
                     }
                 };
 
                 Callable<MetricCollectionStructures.memoryStructure> memory = new Callable<MetricCollectionStructures.memoryStructure>() {
                     @Override
                     public MetricCollectionStructures.memoryStructure call() {
-                        return MetricCollector.getMemory(hal.getMemory());
+                        return MetricCollector.getMemory(metricCollectedTime, hal.getMemory());
                     }
                 };
 
                 Callable<MetricCollectionStructures.networkStructure> network = new Callable<MetricCollectionStructures.networkStructure>() {
                     @Override
                     public MetricCollectionStructures.networkStructure call() {
-                        return MetricCollector.getNetwork(hal.getNetworkIFs());
+                        return MetricCollector.getNetwork(metricCollectedTime, hal.getNetworkIFs());
                     }
                 };
 
                 Callable<MetricCollectionStructures.processStructure> processes = new Callable<MetricCollectionStructures.processStructure>() {
                     @Override
                     public MetricCollectionStructures.processStructure call() {
-                        return MetricCollector.getProcess(os, hal.getMemory());
+                        return MetricCollector.getProcess(metricCollectedTime, os, hal.getMemory());
                     }
                 };
 
