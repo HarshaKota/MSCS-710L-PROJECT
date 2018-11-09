@@ -28,14 +28,14 @@ public class MetricCollector {
     //      1 - charging
     //      0 - discharging
     // Returns powerStructure
-    static MetricCollectionStructures.powerStructure getPower(PowerSource[] powerSources) {
+    static MetricCollectionStructures.powerStructure getPower(final long metricCollectedTime, PowerSource[] powerSources) {
 
         if (Main.hasPowerSource) {
             noOfCallsTogetPower++;
 
             MetricCollectionStructures.powerStructure pS = new MetricCollectionStructures.powerStructure();
 
-            pS.setTimestamp(System.currentTimeMillis());
+            pS.setTimestamp(metricCollectedTime);
 
             double timeRemaining = powerSources[0].getTimeRemaining();
 
@@ -63,7 +63,7 @@ public class MetricCollector {
     //
     //
     // Returns cpuStructure
-    static MetricCollectionStructures.cpuStructure getCPU(CentralProcessor processor) {
+    static MetricCollectionStructures.cpuStructure getCPU(final long metricCollectedTime, CentralProcessor processor) {
         noOfCallsTogetCPU++;
 
         long[] prevTicks = processor.getSystemCpuLoadTicks();
@@ -86,7 +86,7 @@ public class MetricCollector {
 
         MetricCollectionStructures.cpuStructure cS = new MetricCollectionStructures.cpuStructure();
 
-        cS.setTimestamp(System.currentTimeMillis());
+        cS.setTimestamp(metricCollectedTime);
         cS.setUptime(processor.getSystemUptime());
         cS.setUserLoad(Math.round((100d * user / totalCpu)*10.0)/10.0);
         cS.setSystemLoad(Math.round((100d * sys / totalCpu)*10.0)/10.0);
@@ -105,12 +105,12 @@ public class MetricCollector {
     //
     //
     // Returns sensorsStructure
-    static MetricCollectionStructures.sensorsStructure getSensors(HardwareAbstractionLayer hal, Sensors sensors) {
+    static MetricCollectionStructures.sensorsStructure getSensors(final long metricCollectedTime, HardwareAbstractionLayer hal, Sensors sensors) {
         noOfCallsTogetSensors++;
 
         MetricCollectionStructures.sensorsStructure sS= new MetricCollectionStructures.sensorsStructure();
 
-        sS.setTimestamp(System.currentTimeMillis());
+        sS.setTimestamp(metricCollectedTime);
         sS.setCpuTemperature(sensors.getCpuTemperature());
         if (TableCreationChecks.getCpuVoltage(hal.getSensors()) != 999.0) {
             sS.setCpuVoltage(sensors.getCpuVoltage());
@@ -128,13 +128,13 @@ public class MetricCollector {
     //
     //
     // Returns memoryStructure
-    static MetricCollectionStructures.memoryStructure getMemory(GlobalMemory memory) {
+    static MetricCollectionStructures.memoryStructure getMemory(final long metricCollectedTime, GlobalMemory memory) {
         noOfCallsTogetMemory++;
 
         MetricCollectionStructures.memoryStructure mS = new MetricCollectionStructures.memoryStructure();
 
         final long GIBI = 1L << 30;
-        mS.setTimestamp(System.currentTimeMillis());
+        mS.setTimestamp(metricCollectedTime);
         double availableMemory = Math.round((((double)memory.getAvailable()/GIBI)*10.0))/10.0;
         double totalMemory = Math.round((((double)memory.getTotal()/GIBI)*10.0))/10.0;
         double usedMemory = totalMemory - availableMemory;
@@ -150,7 +150,7 @@ public class MetricCollector {
     //
     //
     // Returns networkStructure
-    static MetricCollectionStructures.networkStructure getNetwork(NetworkIF[] networkIFS) {
+    static MetricCollectionStructures.networkStructure getNetwork(final long metricCollectedTime, NetworkIF[] networkIFS) {
         noOfCallsTogetNetwork++;
 
         MetricCollectionStructures.networkStructure nS = new MetricCollectionStructures.networkStructure();
@@ -174,7 +174,7 @@ public class MetricCollector {
                 }
             }
         }
-        nS.setTimestamp(System.currentTimeMillis());
+        nS.setTimestamp(metricCollectedTime);
         nS.setPacketsReceived(packetsReceived);
         nS.setPacketsSent(packetsSent);
         nS.setSizeReceived(sizeReceived);
@@ -189,14 +189,14 @@ public class MetricCollector {
     //
     //
     // Returns processStructure
-    static MetricCollectionStructures.processStructure getProcess(OperatingSystem os, GlobalMemory memory) {
+    static MetricCollectionStructures.processStructure getProcess(final long metricCollectedTime, OperatingSystem os, GlobalMemory memory) {
         noOfCallsTogetProcesses++;
 
         MetricCollectionStructures.processStructure pS = new MetricCollectionStructures.processStructure();
 
         List<OSProcess> allProcesses = Arrays.asList(os.getProcesses(10, OperatingSystem.ProcessSort.MEMORY));
 
-        pS.setTimestamp(System.currentTimeMillis());
+        pS.setTimestamp(metricCollectedTime);
         pS.setNoOfProcesses(os.getProcessCount());
         pS.setNoOfThreads(os.getThreadCount());
 
