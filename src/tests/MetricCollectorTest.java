@@ -4,6 +4,7 @@ import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.PowerSource;
+import oshi.hardware.Sensors;
 import oshi.software.os.OperatingSystem;
 
 import static org.junit.Assert.*;
@@ -96,5 +97,34 @@ public class MetricCollectorTest {
         assertTrue(cpuS.getIdelLoad() >= 0d && cpuS.getIdelLoad() <= 100d);
     }
 
+    @Test
+    public void getSensors_CPUTemperature() {
+        Sensors s = si.getHardware().getSensors();
+        assertTrue(s.getCpuTemperature() >= 0d && s.getCpuTemperature() <= 100d);
+    }
 
+    @Test
+    public void getSensors_CPUVoltage() {
+        Sensors s = si.getHardware().getSensors();
+        assertTrue(s.getCpuVoltage() >= 0);
+    }
+
+    @Test
+    public void getSensors_Fans() {
+        Sensors s = si.getHardware().getSensors();
+        int[] speeds = s.getFanSpeeds();
+        for (int speed : speeds) {
+            assertTrue(speed >= 0);
+        }
+    }
+
+    @Test
+    public void getSensors_OnSuccess() {
+        MetricCollectionStructures.sensorsStructure sensorS = MetricCollector.getSensors(timestamp, hal, hal.getSensors());
+        assertNotNull(sensorS);
+        assertTrue(sensorS.getTimestamp() > 0);
+        assertTrue(sensorS.getCpuTemperature() >= 0d);
+        assertTrue(sensorS.getCpuVoltage() >= 0d);
+        assertTrue(sensorS.getFans().length > 0 || sensorS.getFans().length == 0);
+    }
 }
