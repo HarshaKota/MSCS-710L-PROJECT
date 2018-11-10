@@ -2,6 +2,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import oshi.SystemInfo;
 import oshi.hardware.*;
+import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
 
 import static org.junit.Assert.*;
@@ -175,5 +176,71 @@ public class MetricCollectorTest {
         assertTrue(networkS.getPacketsSent() >= 0);
         assertTrue(!networkS.getSizeReceived().equals(""));
         assertTrue(!networkS.getSizeSent().equals(""));
+    }
+
+
+    @Test
+    public void getProcess_ThreadCound() {
+        assertTrue(os.getThreadCount() >= 1);
+    }
+
+    @Test
+    public void getProcess_ProcessCount() {
+        assertTrue(os.getProcessCount() >= 1);
+    }
+
+    @Test
+    public void getProcess_Sort() {
+        assertTrue(os.getProcesses(0, null).length > 0);
+        OSProcess[] processes = os.getProcesses(5, null);
+        assertNotNull(processes);
+        assertTrue(processes.length > 0);
+    }
+
+    @Test
+    public void getProcess_GetName() {
+        OSProcess proc = os.getProcess(os.getProcessId());
+        assertTrue(proc.getName().length() > 0);
+    }
+
+    @Test
+    public void getProcess_ProcessHasThread() {
+        OSProcess proc = os.getProcess(os.getProcessId());
+        assertTrue(proc.getThreadCount() > 0);
+    }
+
+    @Test
+    public void getProcess_GetKernelTime() {
+        OSProcess proc = os.getProcess(os.getProcessId());
+        assertTrue(proc.getThreadCount() > 0);
+    }
+
+    @Test
+    public void getProcess_GetUserTime() {
+        OSProcess proc = os.getProcess(os.getProcessId());
+        assertTrue(proc.getUserTime() >= 0);
+    }
+
+    @Test
+    public void getProcess_GetUpTime() {
+        OSProcess proc = os.getProcess(os.getProcessId());
+        assertTrue(proc.getUpTime() >= 0);
+    }
+
+    @Test
+    public void getProcess_GetResidentSetSize() {
+        OSProcess proc = os.getProcess(os.getProcessId());
+        assertTrue(proc.getResidentSetSize() >= 0);
+    }
+
+    @Test
+    public void getProcess_OnSuccess() {
+        MetricCollectionStructures.processStructure processS = MetricCollector.getProcess(timestamp, os, hal.getMemory());
+        assertNotNull(processS);
+        assertTrue(processS.getTimestamp() > 0);
+        assertTrue(processS.getNoOfThreads() >= 1);
+        assertTrue(processS.getNoOfProcesses() >= 1);
+        assertNotNull(processS.processesList);
+        assertTrue(processS.processesList.size() > 0);
     }
 }
