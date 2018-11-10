@@ -1,6 +1,7 @@
 import org.junit.BeforeClass;
 import org.junit.Test;
 import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.PowerSource;
 import oshi.software.os.OperatingSystem;
@@ -57,5 +58,43 @@ public class MetricCollectorTest {
         assertTrue(powerS.getPowerStatus() == 0 || powerS.getPowerStatus() == 1);
         assertTrue(powerS.getBatteryPercentage() >= 0d || powerS.getBatteryPercentage() <= 100d);
     }
+
+
+    @Test
+    public void getCPU_SystemCpuLoadTicks() {
+        CentralProcessor p = si.getHardware().getProcessor();
+        assertEquals(p.getSystemCpuLoadTicks().length, CentralProcessor.TickType.values().length);
+
+    }
+
+    @Test
+    public void getCPU_getProcessorCpuLoadBetweenTicks() {
+        CentralProcessor p = si.getHardware().getProcessor();
+        assertEquals(p.getProcessorCpuLoadBetweenTicks().length, p.getLogicalProcessorCount());
+    }
+
+    @Test
+    public void getCPU_AllProcessorDetails() {
+        CentralProcessor p = si.getHardware().getProcessor();
+        assertTrue(p.getSystemUptime() > 0);
+        assertTrue(p.getLogicalProcessorCount() >= p.getPhysicalProcessorCount());
+        assertTrue(p.getPhysicalProcessorCount() > 0);
+        for (int cpu = 0; cpu < p.getLogicalProcessorCount(); cpu++) {
+            assertTrue(p.getProcessorCpuLoadBetweenTicks()[cpu] >= 0 && p.getProcessorCpuLoadBetweenTicks()[cpu] <= 1);
+            assertEquals(p.getProcessorCpuLoadTicks()[cpu].length, CentralProcessor.TickType.values().length);
+        }
+    }
+
+    @Test
+    public void getCPU_OnSuccess() {
+        MetricCollectionStructures.cpuStructure cpuS = MetricCollector.getCPU(timestamp, hal.getProcessor());
+        assertNotNull(cpuS);
+        assertTrue(cpuS.getTimestamp() > 0);
+        assertTrue(cpuS.getUptime() > 0);
+        assertTrue(cpuS.getUserLoad() >= 0d && cpuS.getUserLoad() <= 100d);
+        assertTrue(cpuS.getSystemLoad() >= 0d && cpuS.getSystemLoad() <= 100d);
+        assertTrue(cpuS.getIdelLoad() >= 0d && cpuS.getIdelLoad() <= 100d);
+    }
+
 
 }
