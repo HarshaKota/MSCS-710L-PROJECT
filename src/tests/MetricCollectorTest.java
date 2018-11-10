@@ -1,10 +1,7 @@
 import org.junit.BeforeClass;
 import org.junit.Test;
 import oshi.SystemInfo;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.hardware.PowerSource;
-import oshi.hardware.Sensors;
+import oshi.hardware.*;
 import oshi.software.os.OperatingSystem;
 
 import static org.junit.Assert.*;
@@ -126,5 +123,32 @@ public class MetricCollectorTest {
         assertTrue(sensorS.getCpuTemperature() >= 0d);
         assertTrue(sensorS.getCpuVoltage() >= 0d);
         assertTrue(sensorS.getFans().length > 0 || sensorS.getFans().length == 0);
+    }
+
+    @Test
+    public void getMemory_MemoryNotNull() {
+        GlobalMemory memory = hal.getMemory();
+        assertNotNull(memory);
+    }
+
+    @Test
+    public void getMemory_getTotalMemory() {
+        GlobalMemory memory = hal.getMemory();
+        assertTrue(memory.getTotal() > 0);
+    }
+
+    @Test
+    public void getMemory_getAvaialbleMemory() {
+        GlobalMemory memory = hal.getMemory();
+        assertTrue(memory.getAvailable() >= 0);
+    }
+
+    @Test
+    public void getMemory_OnSuccess() {
+        MetricCollectionStructures.memoryStructure memoryS = MetricCollector.getMemory(timestamp, hal.getMemory());
+        assertNotNull(memoryS);
+        assertTrue(memoryS.getTimestamp() > 0);
+        assertTrue(memoryS.getTotalMemory() >= 0d);
+        assertTrue(memoryS.getUsedMemory() >= 0d);
     }
 }
