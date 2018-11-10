@@ -40,8 +40,8 @@ public class MetricCollector {
             // -1d indicates charging
             if (timeRemaining < -1d) {
                 pS.setPowerStatus(1);
-                // 0d indicates discharging
-            } else if (timeRemaining < 0d) {
+            // 0d indicates discharging
+            } else if (timeRemaining > 0d) {
                 pS.setPowerStatus(0);
             }
 
@@ -54,7 +54,7 @@ public class MetricCollector {
             return pS;
         }
 
-        return new MetricCollectionStructures.powerStructure();
+        return null;
     }
 
     // Collects CPU Info
