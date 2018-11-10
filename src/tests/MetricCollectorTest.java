@@ -243,4 +243,14 @@ public class MetricCollectorTest {
         assertNotNull(processS.processesList);
         assertTrue(processS.processesList.size() > 0);
     }
+
+    @Test
+    public void startSession() {
+        assertTrue(MetricCollector.startSession() > 0);
+    }
+
+    @Test
+    public void endSession() {
+        assertTrue(MetricCollector.endSession() > 0);
+    }
 }
