@@ -151,4 +151,29 @@ public class MetricCollectorTest {
         assertTrue(memoryS.getTotalMemory() >= 0d);
         assertTrue(memoryS.getUsedMemory() >= 0d);
     }
+
+    @Test
+    public void getNetwork_getBytesRecv() {
+        for (NetworkIF net : si.getHardware().getNetworkIFs()) {
+            assertTrue(net.getBytesRecv() >= 0);
+        }
+    }
+
+    @Test
+    public void getNetwork_getBytesSent() {
+        for (NetworkIF net : si.getHardware().getNetworkIFs()) {
+            assertTrue(net.getBytesSent() >= 0);
+        }
+    }
+
+    @Test
+    public void getNetwork_OnSuccess() {
+        MetricCollectionStructures.networkStructure networkS = MetricCollector.getNetwork(timestamp, hal.getNetworkIFs());
+        assertNotNull(networkS);
+        assertTrue(networkS.getTimestamp() > 0);
+        assertTrue(networkS.getPacketsReceived() >= 0);
+        assertTrue(networkS.getPacketsSent() >= 0);
+        assertTrue(!networkS.getSizeReceived().equals(""));
+        assertTrue(!networkS.getSizeSent().equals(""));
+    }
 }
