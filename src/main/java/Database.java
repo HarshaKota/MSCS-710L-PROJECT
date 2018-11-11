@@ -380,6 +380,12 @@ public class Database {
     // Insert values into Sensors Table
     void insertIntoSensorsTable(MetricCollectionStructures.sensorsStructure sS) throws Exception {
 
+        if (sS.getTimestamp() ==  0 || sS.getCpuTemperature() == 0d || sS.getCpuVoltage() == 999d)
+        {
+            log.error("Empty sensorsStructure used to insert into Sensors table ");
+            throw new Exception("Empty sensorsStructure used to insert into Sensors table ");
+        }
+
         StringBuilder fans = new StringBuilder();
         if (sS.getFans().length > 0) {
             for (int i = 0; i < sS.getFans().length - 1; i++) {
