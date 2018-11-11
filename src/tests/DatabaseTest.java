@@ -124,4 +124,22 @@ public class DatabaseTest {
         Database dbObj = new Database(databaseUrl);
         dbObj.insertIntoCpuTable(cpuStructure);
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoCpuTable_EmptyInputs3() throws Exception {
+        MetricCollectionStructures.cpuStructure cpuStructure = new MetricCollectionStructures.cpuStructure();
+        cpuStructure.setTimestamp(System.currentTimeMillis());
+        cpuStructure.setUptime(100L);
+        cpuStructure.setUserLoad(100d);
+        cpuStructure.setSystemLoad(100d);
+        cpuStructure.setIdleLoad(100d);
+        CentralProcessor p = si.getHardware().getProcessor();
+        ArrayList<Double> processorLoad = new ArrayList<>();
+        for (int i=0; i<p.getLogicalProcessorCount(); i++)
+            processorLoad.add(10d);
+        processorLoad.remove(0);
+        cpuStructure.setProcessorLoad(processorLoad);
+        Database dbObj = new Database(databaseUrl);
+        dbObj.insertIntoCpuTable(cpuStructure);
+    }
 }
