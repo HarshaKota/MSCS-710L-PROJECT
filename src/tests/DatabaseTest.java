@@ -59,4 +59,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.createCPUTable();
     }
+
+    @Test(expected = Exception.class)
+    public void createNetworkTable() throws Exception {
+        Database dbObj = new Database();
+        dbObj.createNetworkTable();
+    }
 }
