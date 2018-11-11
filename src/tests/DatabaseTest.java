@@ -153,4 +153,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.insertIntoSensorsTable(sensorsStructure);
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoSensorsTable_EmptyInputs() throws Exception {
+        Database dbObj = new Database(databaseUrl);
+        dbObj.insertIntoSensorsTable(new MetricCollectionStructures.sensorsStructure());
+    }
 }
