@@ -99,6 +99,8 @@ class MetricCollectionStructures {
             this.processorLoad = processorLoad;
         }
 
+        ArrayList<Double> getProcessorLoad() { return processorLoad; }
+
         @Override
         public String toString() {
             return "cpuStructure{" +
