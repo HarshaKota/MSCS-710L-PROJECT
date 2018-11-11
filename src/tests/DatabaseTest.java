@@ -247,4 +247,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.insertStartSessionIntoSessionTable(System.currentTimeMillis());
     }
+
+    @Test(expected = Exception.class)
+    public void insertEndSessionIntoSessionTable_NoConnection() throws Exception {
+        Database dbObj = new Database();
+        dbObj.insertEndSessionIntoSessionTable(System.currentTimeMillis(), System.currentTimeMillis());
+    }
 }
