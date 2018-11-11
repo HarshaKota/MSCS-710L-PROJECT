@@ -358,6 +358,16 @@ public class Database {
                 throw new Exception("Empty cpuStructure used to insert into CPU table ");
         }
 
+        if (cS.getProcessorLoad() == null) {
+            log.error("Empty cpuStructure used to insert into CPU table: Empty getProcessorLoad ");
+            throw new Exception("Empty cpuStructure used to insert into CPU table: Empty getProcessorLoad ");
+        }
+
+        if (cS.getProcessorLoad().size() != hal.getProcessor().getLogicalProcessorCount()) {
+            log.error("No of processor loads are less than logicalProcessorCount ");
+            throw new Exception("No of processor loads are less than logicalProcessorCount ");
+        }
+
         StringBuilder processorData = new StringBuilder();
 
         for (int i = 0; i < cS.processorLoad.size() - 1; i++) {
