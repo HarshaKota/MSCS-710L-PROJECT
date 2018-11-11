@@ -412,6 +412,12 @@ public class Database {
     // Insert values into Memory Table
     void insertIntoMemoryTable(MetricCollectionStructures.memoryStructure mS) throws Exception {
 
+        if (mS.getTimestamp() ==  0 || mS.getUsedMemory() == 0d || mS.getTotalMemory() == 0d)
+        {
+            log.error("Empty memoryStructure used to insert into Memory table ");
+            throw new Exception("Empty memoryStructure used to insert into Memory table ");
+        }
+
         try {
             Statement insertIntoMemoryTableStatement = connection.createStatement();
             String sql =
