@@ -29,4 +29,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.checkSessionTable();
     }
+
+    @Test(expected = Exception.class)
+    public void createPowerTable() throws Exception {
+        Database dbObj = new Database();
+        dbObj.createPowerTable();
+    }
 }
