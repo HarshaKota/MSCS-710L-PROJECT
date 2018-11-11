@@ -11,14 +11,16 @@ public class Database {
 
     private Connection connection = null;
     private final Logger log = LogManager.getLogger(Database.class);
-    private static SystemInfo si;
     private static HardwareAbstractionLayer hal;
 
+    private final String databaseClassName = "org.sqlite.JDBC";
+    private final String databaseUrl = "jdbc:sqlite:MetricCollector.db";
+
     public Database() {
-        si = new SystemInfo();
+        SystemInfo si = new SystemInfo();
         hal = si.getHardware();
 
-        establishDatabaseConnection();
+        establishDatabaseConnection(databaseClassName, databaseUrl);
 
         createSensorsTable();
 
@@ -39,21 +41,24 @@ public class Database {
         checkSessionTable();
     }
 
+    public Database(String s) {
+        // Test
+    }
+
     // Establish connection to the sqlite database/ Create if its doesn't exist
-    private void establishDatabaseConnection(){
+    void establishDatabaseConnection(String databaseClassName, String databaseUrl){
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:MetricCollector.db");
+            Class.forName(databaseClassName);
+            connection = DriverManager.getConnection(databaseUrl);
             connection.setAutoCommit(false);
-        } catch (Exception e) {
+        } catch (NullPointerException | SQLException | ClassNotFoundException e) {
             log.error("Failed to connect to the database " + e.getClass().getName() + ": " + e.getMessage());
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new NullPointerException();
         }
     }
 
     // Check if the session table is intact with both the startSession and endSession times
-    private void checkSessionTable() {
+    void checkSessionTable() {
 
         // Get the start and end times of the last session inserted into the session table
             String selectSql = "SELECT * FROM SESSION ORDER BY STARTSESSION DESC LIMIT 1";
@@ -130,7 +135,7 @@ public class Database {
     }
 
     // Create a Power Sources table
-    private void createPowerTable(){
+    void createPowerTable(){
 
         if(TableCreationChecks.checkPowerSource(hal.getPowerSources())) {
 
@@ -153,7 +158,7 @@ public class Database {
     }
 
     // Create a new Sensors table
-    private void createSensorsTable(){
+    void createSensorsTable(){
 
         // Builds the fan column
         int noOfFans = TableCreationChecks.getFans(hal.getSensors());
@@ -197,7 +202,7 @@ public class Database {
     }
 
     // Create a Memory table
-    private void createMemoryTable(){
+    void createMemoryTable(){
 
         try {
             Statement memoryTableStatement = connection.createStatement();
@@ -235,7 +240,7 @@ public class Database {
     }
 
     // Create a ProcessorInfo table
-    private void createProcessTable(){
+    void createProcessTable(){
 
         try {
             Statement processorInfoTableStatement = connection.createStatement();
@@ -253,7 +258,7 @@ public class Database {
     }
 
     // Create a CPU table
-    private void createCPUTable(){
+    void createCPUTable(){
 
         int noOfLogicalCPUs = TableCreationChecks.getLogicalCPUs(hal.getProcessor());
 
@@ -285,7 +290,7 @@ public class Database {
     }
 
     // Create a Network table
-    private void createNetworkTable(){
+    void createNetworkTable(){
 
         try {
             Statement networkTableStatement = connection.createStatement();
@@ -305,7 +310,7 @@ public class Database {
     }
 
     // Create a Sessions table to hold each user session start and end time
-    private void createSessionTable() {
+    void createSessionTable() {
 
         try {
             Statement sessionTableStatement = connection.createStatement();
