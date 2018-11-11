@@ -209,4 +209,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.insertIntoProcessTable(processStructure);
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoProcessTable_EmptyInputs1() throws Exception {
+        Database dbObj = new Database(databaseUrl);
+        dbObj.insertIntoProcessTable(new MetricCollectionStructures.processStructure());
+    }
 }
