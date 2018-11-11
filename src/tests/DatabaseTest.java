@@ -215,4 +215,14 @@ public class DatabaseTest {
         Database dbObj = new Database(databaseUrl);
         dbObj.insertIntoProcessTable(new MetricCollectionStructures.processStructure());
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoProcessTable_EmptyInputs2() throws Exception {
+        MetricCollectionStructures.processStructure processStructure = new MetricCollectionStructures.processStructure();
+        processStructure.setTimestamp(System.currentTimeMillis());
+        processStructure.setNoOfThreads(10);
+        processStructure.setNoOfProcesses(10);
+        Database dbObj = new Database(databaseUrl);
+        dbObj.insertIntoProcessTable(processStructure);
+    }
 }
