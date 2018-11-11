@@ -92,7 +92,7 @@ public class MetricCollectorTest {
         assertTrue(cpuS.getUptime() > 0);
         assertTrue(cpuS.getUserLoad() >= 0d && cpuS.getUserLoad() <= 100d);
         assertTrue(cpuS.getSystemLoad() >= 0d && cpuS.getSystemLoad() <= 100d);
-        assertTrue(cpuS.getIdelLoad() >= 0d && cpuS.getIdelLoad() <= 100d);
+        assertTrue(cpuS.getIdleLoad() >= 0d && cpuS.getIdleLoad() <= 100d);
     }
 
     @Test

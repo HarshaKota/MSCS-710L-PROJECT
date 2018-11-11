@@ -88,7 +88,7 @@ public class MetricCollector {
         cS.setUptime(processor.getSystemUptime());
         cS.setUserLoad(Math.round((100d * user / totalCpu)*10.0)/10.0);
         cS.setSystemLoad(Math.round((100d * sys / totalCpu)*10.0)/10.0);
-        cS.setIdelLoad(Math.round((100d * idle / totalCpu)*10.0)/10.0);
+        cS.setIdleLoad(Math.round((100d * idle / totalCpu)*10.0)/10.0);
         double[] load = processor.getProcessorCpuLoadBetweenTicks();
         ArrayList<Double> individualProcessorLoad = new ArrayList<>();
         for (double eachLoad : load) {

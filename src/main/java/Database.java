@@ -351,7 +351,7 @@ public class Database {
     void insertIntoCpuTable(MetricCollectionStructures.cpuStructure cS) throws Exception {
 
         if (cS.getTimestamp() == 0 || cS.getUptime() == 0 || cS.getUserLoad() == 0d || cS.getSystemLoad() == 0d ||
-                cS.getIdelLoad() == 0d)
+                cS.getIdleLoad() == 0d)
         {
                 log.error("Empty cpuStructure used to insert into CPU table ");
                 throw new Exception("Empty cpuStructure used to insert into CPU table ");
@@ -368,7 +368,7 @@ public class Database {
             Statement insertIntoCpuTableStatement = connection.createStatement();
             String sql =
                     "INSERT INTO CPU VALUES ("+cS.getTimestamp()+"," +cS.getUptime()+"," +cS.getUserLoad()+","
-                            +cS.getSystemLoad()+"," +cS.getIdelLoad()+"," + processorData + ")";
+                            +cS.getSystemLoad()+"," +cS.getIdleLoad()+"," + processorData + ")";
             insertIntoCpuTableStatement.executeUpdate(sql);
             insertIntoCpuTableStatement.close();
         } catch (Exception e) {

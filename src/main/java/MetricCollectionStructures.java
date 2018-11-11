@@ -52,7 +52,7 @@ class MetricCollectionStructures {
         long uptime;
         double userLoad;
         double systemLoad;
-        double idelLoad;
+        double idleLoad;
         ArrayList<Double> processorLoad = new ArrayList<>();
 
         long getTimestamp() {
@@ -87,12 +87,12 @@ class MetricCollectionStructures {
             this.systemLoad = systemLoad;
         }
 
-        double getIdelLoad() {
-            return idelLoad;
+        double getIdleLoad() {
+            return idleLoad;
         }
 
-        void setIdelLoad(double idelLoad) {
-            this.idelLoad = idelLoad;
+        void setIdleLoad(double idleLoad) {
+            this.idleLoad = idleLoad;
         }
 
         void setProcessorLoad(ArrayList<Double> processorLoad) {
@@ -106,7 +106,7 @@ class MetricCollectionStructures {
                     ", uptime=" + uptime +
                     ", userLoad=" + userLoad +
                     ", systemLoad=" + systemLoad +
-                    ", idelLoad=" + idelLoad +
+                    ", idleLoad=" + idleLoad +
                     ", processorLoad=" + processorLoad +
                     '}';
         }
