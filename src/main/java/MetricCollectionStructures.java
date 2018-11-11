@@ -295,5 +295,15 @@ class MetricCollectionStructures {
         }
 
         HashMap<String, List<Double>> getProcessesList() { return processesList; }
+
+        @Override
+        public String toString() {
+            return "processStructure{" +
+                    "timestamp=" + timestamp +
+                    ", noOfProcesses=" + noOfProcesses +
+                    ", noOfThreads=" + noOfThreads +
+                    ", processesList=" + processesList +
+                    '}';
+        }
     }
 }
