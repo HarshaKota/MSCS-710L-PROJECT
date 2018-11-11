@@ -434,6 +434,13 @@ public class Database {
     // Insert values into Network Table
     void insertIntoNetworkTable(MetricCollectionStructures.networkStructure nS) throws Exception {
 
+        if (nS.getTimestamp() ==  0 || nS.getPacketsReceived() == 0 || nS.getPacketsSent() == 0 ||
+                nS.getSizeReceived().equals("") || nS.getSizeSent().equals(""))
+        {
+            log.error("Empty networkStructure used to insert into Network table ");
+            throw new Exception("Empty networkStructure used to insert into Network table ");
+        }
+
         try {
             Statement insertIntoNetworkTableStatement = connection.createStatement();
             String sql =
