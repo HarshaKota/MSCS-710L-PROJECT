@@ -41,4 +41,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.createSensorsTable();
     }
+
+    @Test(expected = Exception.class)
+    public void createMemoryTable() throws Exception {
+        Database dbObj = new Database();
+        dbObj.createMemoryTable();
+    }
 }
