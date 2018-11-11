@@ -53,7 +53,7 @@ public class Database {
             connection.setAutoCommit(false);
         } catch (NullPointerException | SQLException | ClassNotFoundException e) {
             log.error("Failed to connect to the database " + e.getClass().getName() + ": " + e.getMessage());
-            throw new NullPointerException();
+            System.exit(0);
         }
     }
 
