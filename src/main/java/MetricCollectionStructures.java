@@ -95,8 +95,8 @@ class MetricCollectionStructures {
             this.idelLoad = idelLoad;
         }
 
-        void setProcessorLoad(double processorLoad) {
-            this.processorLoad.add(processorLoad);
+        void setProcessorLoad(ArrayList<Double> processorLoad) {
+            this.processorLoad = processorLoad;
         }
 
         @Override
