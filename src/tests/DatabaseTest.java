@@ -1,29 +1,26 @@
 import org.junit.BeforeClass;
 import org.junit.Test;
 import oshi.SystemInfo;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.software.os.OperatingSystem;
+import oshi.hardware.CentralProcessor;
 
-import static org.junit.Assert.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class DatabaseTest {
 
     private static SystemInfo si;
-    private static HardwareAbstractionLayer hal;
-    private static OperatingSystem os;
+    private static String databaseUrl;
 
     @BeforeClass
     public static void setup() {
         si = new SystemInfo();
-        hal = si.getHardware();
-        os = si.getOperatingSystem();
+        databaseUrl = "jdbc:sqlite:TestMetricCollector.db";
     }
 
-    @Test
-    public void establishDatabaseConnection_Null()  {
-        Database dbObj = new Database("Test");
+    @Test(expected = Exception.class)
+    public void establishDatabaseConnection_Null() throws Exception {
+        Database dbObj = new Database();
         dbObj.establishDatabaseConnection(null, null);
     }
-
-
 }
