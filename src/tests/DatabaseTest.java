@@ -159,4 +159,14 @@ public class DatabaseTest {
         Database dbObj = new Database(databaseUrl);
         dbObj.insertIntoSensorsTable(new MetricCollectionStructures.sensorsStructure());
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoMemoryTable_NoConnection() throws Exception {
+        MetricCollectionStructures.memoryStructure memoryStructure = new MetricCollectionStructures.memoryStructure();
+        memoryStructure.setTimestamp(System.currentTimeMillis());
+        memoryStructure.setUsedMemory(10d);
+        memoryStructure.setTotalMemory(10d);
+        Database dbObj = new Database();
+        dbObj.insertIntoMemoryTable(memoryStructure);
+    }
 }
