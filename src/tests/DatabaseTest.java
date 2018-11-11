@@ -175,4 +175,16 @@ public class DatabaseTest {
         Database dbObj = new Database(databaseUrl);
         dbObj.insertIntoMemoryTable(new MetricCollectionStructures.memoryStructure());
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoNetworkTable_NoConnection() throws Exception {
+        MetricCollectionStructures.networkStructure networkStructure = new MetricCollectionStructures.networkStructure();
+        networkStructure.setTimestamp(System.currentTimeMillis());
+        networkStructure.setPacketsReceived(10);
+        networkStructure.setPacketsSent(10);
+        networkStructure.setSizeReceived("5 Gb");
+        networkStructure.setSizeSent("5 Gb");
+        Database dbObj = new Database();
+        dbObj.insertIntoNetworkTable(networkStructure);
+    }
 }
