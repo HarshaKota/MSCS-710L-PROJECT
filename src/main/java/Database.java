@@ -553,7 +553,7 @@ public class Database {
     void commit() throws Exception {
         try {
             connection.commit();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             log.error("Failed to commit " + e.getClass().getName() + ": " + e.getMessage());
             throw new Exception(e);
         }
@@ -565,7 +565,7 @@ public class Database {
     void closeDatabaseConnection() throws Exception {
         try {
             connection.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             log.error("Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
             throw new Exception(e);
         }
