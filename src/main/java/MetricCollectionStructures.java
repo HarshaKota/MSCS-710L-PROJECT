@@ -293,5 +293,7 @@ class MetricCollectionStructures {
         void setProcessesList(HashMap<String, List<Double>> processesList) {
             this.processesList = processesList;
         }
+
+        HashMap<String, List<Double>> getProcessesList() { return processesList; }
     }
 }
