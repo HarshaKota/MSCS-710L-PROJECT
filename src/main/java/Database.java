@@ -11,14 +11,13 @@ public class Database {
 
     private Connection connection = null;
     private final Logger log = LogManager.getLogger(Database.class);
-    private static HardwareAbstractionLayer hal;
+    private final SystemInfo si = new SystemInfo();
+    private final HardwareAbstractionLayer hal = si.getHardware();
 
-    private final String databaseClassName = "org.sqlite.JDBC";
-    private final String databaseUrl = "jdbc:sqlite:MetricCollector.db";
 
-    public Database() {
-        SystemInfo si = new SystemInfo();
-        hal = si.getHardware();
+    public Database(String databaseUrl) throws Exception {
+
+        String databaseClassName = "org.sqlite.JDBC";
 
         establishDatabaseConnection(databaseClassName, databaseUrl);
 
@@ -41,24 +40,22 @@ public class Database {
         checkSessionTable();
     }
 
-    public Database(String s) {
-        // Test
-    }
+    public Database() { }
 
     // Establish connection to the sqlite database/ Create if its doesn't exist
-    void establishDatabaseConnection(String databaseClassName, String databaseUrl){
+    void establishDatabaseConnection(String databaseClassName, String databaseUrl) throws Exception {
         try {
             Class.forName(databaseClassName);
             connection = DriverManager.getConnection(databaseUrl);
             connection.setAutoCommit(false);
         } catch (NullPointerException | SQLException | ClassNotFoundException e) {
             log.error("Failed to connect to the database " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Check if the session table is intact with both the startSession and endSession times
-    void checkSessionTable() {
+    void checkSessionTable() throws Exception {
 
         // Get the start and end times of the last session inserted into the session table
             String selectSql = "SELECT * FROM SESSION ORDER BY STARTSESSION DESC LIMIT 1";
@@ -75,7 +72,7 @@ public class Database {
             checkSessionTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to fetch the last inserted session time " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new NullPointerException("Failed to fetch the last inserted session time");
         }
 
         // Check and make sure the timestamp values are the same using 2 different table
@@ -96,7 +93,7 @@ public class Database {
                 getEndTimeFromSensorsStatement.close();
             } catch (Exception e) {
                 log.error("Failed to last timestamp from the sensors table " + e.getClass().getName() + ": " + e.getMessage());
-                System.exit(0);
+                throw new Exception(e);
             }
 
             try {
@@ -108,12 +105,12 @@ public class Database {
                 getEndTimeFromMemoryStatement.close();
             } catch (Exception e) {
                 log.error("Failed to last timestamp from the memory table " + e.getClass().getName() + ": " + e.getMessage());
-                System.exit(0);
+                throw new Exception(e);
             }
 
             if (sensorLastTimestamp != memoryLastTimestamp) {
                 log.fatal("The 2 tables - sensors and memory have different number of records in them.");
-                System.exit(0);
+                throw new Exception("The 2 tables - sensors and memory have different number of records in them.");
             } else {
                 String fixEndSessionTimeSql = "UPDATE SESSION SET ENDSESSION = ? WHERE STARTSESSION = ?";
                 try {
@@ -127,7 +124,7 @@ public class Database {
                     connection.commit();
                 } catch (Exception e) {
                     log.error("Failed to fix the endSession time in Session Table " + e.getClass().getName() + ": " + e.getMessage());
-                    System.exit(0);
+                    throw new Exception(e);
                 }
 
             }
@@ -135,7 +132,7 @@ public class Database {
     }
 
     // Create a Power Sources table
-    void createPowerTable(){
+    void createPowerTable() throws Exception {
 
         if(TableCreationChecks.checkPowerSource(hal.getPowerSources())) {
 
@@ -150,7 +147,7 @@ public class Database {
                 powerTableStatement.close();
             } catch (Exception e) {
                 log.error("Failed to create Power Table " + e.getClass().getName() + ": " + e.getMessage());
-                System.exit(0);
+                throw new Exception(e);
             }
         } else {
             log.warn("There is no battery in this system. Power statistics will be unavailable");
@@ -158,7 +155,7 @@ public class Database {
     }
 
     // Create a new Sensors table
-    void createSensorsTable(){
+    void createSensorsTable() throws Exception {
 
         // Builds the fan column
         int noOfFans = TableCreationChecks.getFans(hal.getSensors());
@@ -197,12 +194,12 @@ public class Database {
             sensorsTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create Sensor Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Create a Memory table
-    void createMemoryTable(){
+    void createMemoryTable() throws Exception {
 
         try {
             Statement memoryTableStatement = connection.createStatement();
@@ -215,12 +212,12 @@ public class Database {
             memoryTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create Memory Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Create a Processes table
-    private void createProcessInfoTable(){
+    private void createProcessInfoTable() throws Exception {
 
         try {
             Statement processesTableStatement = connection.createStatement();
@@ -235,12 +232,12 @@ public class Database {
             processesTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create ProcessInfo Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Create a ProcessorInfo table
-    void createProcessTable(){
+    void createProcessTable() throws Exception {
 
         try {
             Statement processorInfoTableStatement = connection.createStatement();
@@ -253,12 +250,12 @@ public class Database {
             processorInfoTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create Process Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Create a CPU table
-    void createCPUTable(){
+    void createCPUTable() throws Exception {
 
         int noOfLogicalCPUs = TableCreationChecks.getLogicalCPUs(hal.getProcessor());
 
@@ -285,12 +282,12 @@ public class Database {
             cpuTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create CPU Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Create a Network table
-    void createNetworkTable(){
+    void createNetworkTable() throws Exception {
 
         try {
             Statement networkTableStatement = connection.createStatement();
@@ -305,12 +302,12 @@ public class Database {
             networkTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create Network Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Create a Sessions table to hold each user session start and end time
-    void createSessionTable() {
+    void createSessionTable() throws Exception {
 
         try {
             Statement sessionTableStatement = connection.createStatement();
@@ -322,13 +319,13 @@ public class Database {
             sessionTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to create Session Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
 
     }
 
     // Insert values into Power Table
-    void insertIntoPowerTable(MetricCollectionStructures.powerStructure pS){
+    void insertIntoPowerTable(MetricCollectionStructures.powerStructure pS) throws Exception {
 
         if (Main.hasPowerSource) {
             try {
@@ -339,13 +336,13 @@ public class Database {
                 insertIntoPowerTableStatement.close();
             } catch (Exception e) {
                 log.error("Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
-                System.exit(0);
+                throw new Exception(e);
             }
         }
     }
 
     // Insert values into CPU Table
-    void insertIntoCpuTable(MetricCollectionStructures.cpuStructure cS) {
+    void insertIntoCpuTable(MetricCollectionStructures.cpuStructure cS) throws Exception {
         StringBuilder processorData = new StringBuilder();
 
         for (int i=0; i<cS.processorLoad.size()-1; i++) {
@@ -362,12 +359,12 @@ public class Database {
             insertIntoCpuTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to insert into CPU Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Insert values into Sensors Table
-    void insertIntoSensorsTable(MetricCollectionStructures.sensorsStructure sS) {
+    void insertIntoSensorsTable(MetricCollectionStructures.sensorsStructure sS) throws Exception {
 
         StringBuilder fans = new StringBuilder();
         if (sS.getFans().length > 0) {
@@ -388,12 +385,12 @@ public class Database {
             insertIntoSensorsTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to insert into Sensors Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Insert values into Memory Table
-    void insertIntoMemoryTable(MetricCollectionStructures.memoryStructure mS) {
+    void insertIntoMemoryTable(MetricCollectionStructures.memoryStructure mS) throws Exception {
 
         try {
             Statement insertIntoMemoryTableStatement = connection.createStatement();
@@ -404,12 +401,12 @@ public class Database {
             insertIntoMemoryTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to insert into Memory Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Insert values into Network Table
-    void insertIntoNetworkTable(MetricCollectionStructures.networkStructure nS) {
+    void insertIntoNetworkTable(MetricCollectionStructures.networkStructure nS) throws Exception {
 
         try {
             Statement insertIntoNetworkTableStatement = connection.createStatement();
@@ -420,12 +417,12 @@ public class Database {
             insertIntoNetworkTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to insert into Network Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Insert values into the Process and Processes tables
-    void insertIntoProcessTable(MetricCollectionStructures.processStructure pS) {
+    void insertIntoProcessTable(MetricCollectionStructures.processStructure pS) throws Exception {
 
         try {
             Statement insertIntoProcessTableStatement = connection.createStatement();
@@ -436,7 +433,7 @@ public class Database {
             insertIntoProcessTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to insert into Process Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
 
         for (Map.Entry<String, List<Double>> processInfo: pS.processesList.entrySet()) {
@@ -450,13 +447,13 @@ public class Database {
                 insertIntoProcessInfoTableStatement.close();
             } catch (Exception e) {
                 log.error("Failed to insert into ProcessInfo Table " + e.getClass().getName() + ": " + e.getMessage());
-                System.exit(0);
+                throw new Exception(e);
             }
         }
     }
 
     // Insert the start session time into the session table
-    void insertStartSessionIntoSessionTable(long startSession) {
+    void insertStartSessionIntoSessionTable(long startSession) throws Exception {
 
         try {
             Statement insertStartSessionIntoSessionTableStatement = connection.createStatement();
@@ -466,12 +463,12 @@ public class Database {
             insertStartSessionIntoSessionTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to insert Start Session Time into Session Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Update the session end time of previously inserted startSession time
-    void insertEndSessionIntoSessionTable(long startSession, long endSession) {
+    void insertEndSessionIntoSessionTable(long startSession, long endSession) throws Exception {
 
         String sql = "UPDATE SESSION SET ENDSESSION = ? WHERE STARTSESSION = ?";
 
@@ -486,28 +483,29 @@ public class Database {
             insertEndSessionIntoSessionTableStatement.close();
         } catch (Exception e) {
             log.error("Failed to update the endSession time in Session Table " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
     // Commit the metrics collected
-    void commit() {
+    void commit() throws Exception {
         try {
             connection.commit();
         } catch (SQLException e) {
             log.error("Failed to commit " + e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            throw new Exception(e);
         }
     }
 
 
 
     // Close the connection to the sqlite database
-    void closeDatabaseConnection() {
+    void closeDatabaseConnection() throws Exception {
         try {
             connection.close();
         } catch (SQLException e) {
             log.error("Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception(e);
         }
     }
 }
