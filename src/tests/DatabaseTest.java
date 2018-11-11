@@ -71,4 +71,15 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.createSessionTable();
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoPowerTable_NoConnection() throws Exception {
+        Main.hasPowerSource = true;
+        MetricCollectionStructures.powerStructure powerStructure = new MetricCollectionStructures.powerStructure();
+        powerStructure.setTimestamp(System.currentTimeMillis());
+        powerStructure.setPowerStatus(0);
+        powerStructure.setBatteryPercentage(100d);
+        Database dbObj = new Database();
+        dbObj.insertIntoPowerTable(powerStructure);
+    }
 }
