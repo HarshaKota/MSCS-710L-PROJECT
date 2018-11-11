@@ -515,7 +515,7 @@ public class Database {
     }
 
     // Insert the start session time into the session table
-    void insertStartSessionIntoSessionTable(long startSession) throws Exception {
+    void insertStartSessionIntoSessionTable(final long startSession) throws Exception {
 
         try {
             Statement insertStartSessionIntoSessionTableStatement = connection.createStatement();
@@ -530,7 +530,7 @@ public class Database {
     }
 
     // Update the session end time of previously inserted startSession time
-    void insertEndSessionIntoSessionTable(long startSession, long endSession) throws Exception {
+    void insertEndSessionIntoSessionTable(final long startSession, final long endSession) throws Exception {
 
         String sql = "UPDATE SESSION SET ENDSESSION = ? WHERE STARTSESSION = ?";
 
