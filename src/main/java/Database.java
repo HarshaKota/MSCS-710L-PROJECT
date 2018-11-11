@@ -327,6 +327,12 @@ public class Database {
     // Insert values into Power Table
     void insertIntoPowerTable(MetricCollectionStructures.powerStructure pS) throws Exception {
 
+        //Check if the received powerStructure is not empty
+        if (pS.getTimestamp() == 0 || pS.getBatteryPercentage() == 0d) {
+            log.error("Empty powerStructure used to insert into power table");
+            throw new Exception("Empty powerStructure used to insert into power table");
+        }
+
         if (Main.hasPowerSource) {
             try {
                 Statement insertIntoPowerTableStatement = connection.createStatement();
