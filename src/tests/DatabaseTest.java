@@ -53,4 +53,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.createProcessTable();
     }
+
+    @Test(expected = Exception.class)
+    public void createCPUTable() throws Exception {
+        Database dbObj = new Database();
+        dbObj.createCPUTable();
+    }
 }
