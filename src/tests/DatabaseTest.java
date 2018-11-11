@@ -23,4 +23,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.establishDatabaseConnection(null, null);
     }
+
+    @Test(expected = Exception.class)
+    public void checkSessionTable_Null() throws Exception {
+        Database dbObj = new Database();
+        dbObj.checkSessionTable();
+    }
 }
