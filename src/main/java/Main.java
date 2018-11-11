@@ -16,13 +16,14 @@ public class Main {
     private final static SystemInfo si = new SystemInfo();
     private final static HardwareAbstractionLayer hal = si.getHardware();
     private final static OperatingSystem os = si.getOperatingSystem();
+    private static final String databaseUrl = "jdbc:sqlite:MetricCollector.db";
 
     static boolean hasPowerSource = false;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         // Create the database
-        final Database dbObject = new Database();
+        final Database dbObject = new Database(databaseUrl);
 
         // Start the UI
         UI ui = new UI();
