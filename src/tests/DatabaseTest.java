@@ -169,4 +169,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.insertIntoMemoryTable(memoryStructure);
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoMemoryTable_EmptyInputs() throws Exception {
+        Database dbObj = new Database(databaseUrl);
+        dbObj.insertIntoMemoryTable(new MetricCollectionStructures.memoryStructure());
+    }
 }
