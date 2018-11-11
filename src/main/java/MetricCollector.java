@@ -90,9 +90,11 @@ public class MetricCollector {
         cS.setSystemLoad(Math.round((100d * sys / totalCpu)*10.0)/10.0);
         cS.setIdelLoad(Math.round((100d * idle / totalCpu)*10.0)/10.0);
         double[] load = processor.getProcessorCpuLoadBetweenTicks();
+        ArrayList<Double> individualProcessorLoad = new ArrayList<>();
         for (double eachLoad : load) {
-            cS.setProcessorLoad(Math.round((eachLoad * 100)*10.0)/10.0);
+            individualProcessorLoad.add(Math.round((eachLoad * 100)*10.0)/10.0);
         }
+        cS.setProcessorLoad(individualProcessorLoad);
 
         System.out.println(String.format("%1$20s  %2$d", "getCPU calls:", noOfCallsTogetCPU)); //Sysout
 
