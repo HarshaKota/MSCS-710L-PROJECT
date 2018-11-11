@@ -4,6 +4,7 @@ import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 
 import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -456,6 +457,24 @@ public class Database {
 
     // Insert values into the Process and Processes tables
     void insertIntoProcessTable(MetricCollectionStructures.processStructure pS) throws Exception {
+
+        if (pS.getTimestamp() ==  0 || pS.getNoOfThreads() == 0 || pS.getNoOfProcesses() == 0)
+        {
+            log.error("Empty processStructure used to insert into Process table ");
+            throw new Exception("Empty processStructure used to insert into Process table ");
+        }
+
+        if (pS.getProcessesList() == null) {
+            log.error("Empty processStructure used to insert into Processes table: processesList Null ");
+            throw new Exception("Empty processStructure used to insert into Processes table: processesList Null ");
+        }
+        HashMap<String, List<Double>> processesList = pS.getProcessesList();
+        for (Map.Entry<String, List<Double>> pair: ((Map<String, List<Double>>) processesList).entrySet()) {
+            if (pair.getKey().equals("") || pair.getValue().get(0) == 0d || pair.getValue().get(1) == 0) {
+                log.error("Empty processStructure used to insert into Processes table: Empty processesList ");
+                throw new Exception("Empty processStructure used to insert into Processes table: Empty processesList ");
+            }
+        }
 
         try {
             Statement insertIntoProcessTableStatement = connection.createStatement();
