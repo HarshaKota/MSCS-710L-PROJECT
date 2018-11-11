@@ -187,4 +187,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.insertIntoNetworkTable(networkStructure);
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoNetworkTable_EmptyInputs() throws Exception {
+        Database dbObj = new Database(databaseUrl);
+        dbObj.insertIntoNetworkTable(new MetricCollectionStructures.networkStructure());
+    }
 }
