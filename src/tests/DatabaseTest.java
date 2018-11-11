@@ -225,4 +225,20 @@ public class DatabaseTest {
         Database dbObj = new Database(databaseUrl);
         dbObj.insertIntoProcessTable(processStructure);
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoProcessTable_EmptyInputs3() throws Exception {
+        MetricCollectionStructures.processStructure processStructure = new MetricCollectionStructures.processStructure();
+        processStructure.setTimestamp(System.currentTimeMillis());
+        processStructure.setNoOfThreads(10);
+        processStructure.setNoOfProcesses(10);
+        HashMap<String, List<Double>> processList = new HashMap<>();
+        List<Double> processesList = new ArrayList<>();
+        processesList.add(10d);
+        processesList.add(10d);
+        processList.put("", processesList);
+        processStructure.setProcessesList(processList);
+        Database dbObj = new Database(databaseUrl);
+        dbObj.insertIntoProcessTable(processStructure);
+    }
 }
