@@ -35,4 +35,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.createPowerTable();
     }
+
+    @Test(expected = Exception.class)
+    public void createSensorsTable() throws Exception {
+        Database dbObj = new Database();
+        dbObj.createSensorsTable();
+    }
 }
