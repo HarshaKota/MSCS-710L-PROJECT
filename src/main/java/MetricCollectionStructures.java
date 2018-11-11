@@ -53,7 +53,7 @@ class MetricCollectionStructures {
         double userLoad;
         double systemLoad;
         double idleLoad;
-        ArrayList<Double> processorLoad = new ArrayList<>();
+        ArrayList<Double> processorLoad;
 
         long getTimestamp() {
             return timestamp;
