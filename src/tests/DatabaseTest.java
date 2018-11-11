@@ -82,4 +82,11 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.insertIntoPowerTable(powerStructure);
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoPowerTable_EmptyInputs() throws Exception {
+        Main.hasPowerSource = true;
+        Database dbObj = new Database(databaseUrl);
+        dbObj.insertIntoPowerTable(new MetricCollectionStructures.powerStructure());
+    }
 }
