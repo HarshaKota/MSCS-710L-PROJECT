@@ -142,4 +142,15 @@ public class DatabaseTest {
         Database dbObj = new Database(databaseUrl);
         dbObj.insertIntoCpuTable(cpuStructure);
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoSensorsTable_NoConnection() throws Exception {
+        MetricCollectionStructures.sensorsStructure sensorsStructure = new MetricCollectionStructures.sensorsStructure();
+        sensorsStructure.setTimestamp(System.currentTimeMillis());
+        sensorsStructure.setCpuTemperature(10d);
+        sensorsStructure.setCpuVoltage(10d);
+        sensorsStructure.setFans(new int[0]);
+        Database dbObj = new Database();
+        dbObj.insertIntoSensorsTable(sensorsStructure);
+    }
 }
