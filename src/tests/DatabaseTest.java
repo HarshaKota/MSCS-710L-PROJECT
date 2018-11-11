@@ -112,4 +112,16 @@ public class DatabaseTest {
         Database dbObj = new Database(databaseUrl);
         dbObj.insertIntoCpuTable(new MetricCollectionStructures.cpuStructure());
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoCpuTable_EmptyInputs2() throws Exception {
+        MetricCollectionStructures.cpuStructure cpuStructure = new MetricCollectionStructures.cpuStructure();
+        cpuStructure.setTimestamp(System.currentTimeMillis());
+        cpuStructure.setUptime(100L);
+        cpuStructure.setUserLoad(100d);
+        cpuStructure.setSystemLoad(100d);
+        cpuStructure.setIdleLoad(100d);
+        Database dbObj = new Database(databaseUrl);
+        dbObj.insertIntoCpuTable(cpuStructure);
+    }
 }
