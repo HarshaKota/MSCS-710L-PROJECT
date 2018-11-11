@@ -106,4 +106,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.insertIntoCpuTable(cpuStructure);
     }
+
+    @Test(expected = Exception.class)
+    public void insertIntoCpuTable_EmptyInputs1() throws Exception {
+        Database dbObj = new Database(databaseUrl);
+        dbObj.insertIntoCpuTable(new MetricCollectionStructures.cpuStructure());
+    }
 }
