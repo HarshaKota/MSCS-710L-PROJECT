@@ -115,7 +115,7 @@ class MetricCollectionStructures {
     public static class sensorsStructure {
         long timestamp;
         double cpuTemperature;
-        double cpuVoltage = 999.0;
+        double cpuVoltage = 999d;
         int[] fans = {};
 
         long getTimestamp() {
