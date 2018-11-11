@@ -259,4 +259,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.commit();
     }
+
+    @Test(expected = Exception.class)
+    public void closeDatabaseConnection_NoConnection() throws Exception {
+        Database dbObj = new Database();
+        dbObj.closeDatabaseConnection();
+    }
 }
