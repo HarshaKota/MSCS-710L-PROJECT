@@ -15,7 +15,7 @@ public class DatabaseTest {
     @BeforeClass
     public static void setup() {
         si = new SystemInfo();
-        databaseUrl = "jdbc:sqlite:TestMetricCollector.db";
+        databaseUrl = "jdbc:sqlite:MetricCollector.db";
     }
 
     @Test(expected = Exception.class)
@@ -27,6 +27,12 @@ public class DatabaseTest {
     @Test(expected = Exception.class)
     public void checkSessionTable_Null() throws Exception {
         Database dbObj = new Database();
+        dbObj.checkSessionTable();
+    }
+
+    @Test
+    public void checkSessionTable_OnSuccess() throws Exception {
+        Database dbObj = new Database(databaseUrl);
         dbObj.checkSessionTable();
     }
 
