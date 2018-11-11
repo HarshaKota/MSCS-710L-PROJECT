@@ -37,8 +37,6 @@ public class Database {
         createNetworkTable();
 
         createSessionTable();
-
-        checkSessionTable();
     }
 
     public Database() { }

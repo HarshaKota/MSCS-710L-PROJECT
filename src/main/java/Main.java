@@ -25,6 +25,9 @@ public class Main {
         // Create the database
         final Database dbObject = new Database(databaseUrl);
 
+        // Check if the session table is intact
+        dbObject.checkSessionTable();
+
         // Start the UI
         UI ui = new UI();
         Thread uiThread = new Thread(ui);
