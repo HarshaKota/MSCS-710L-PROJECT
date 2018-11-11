@@ -65,4 +65,10 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.createNetworkTable();
     }
+
+    @Test(expected = Exception.class)
+    public void createSessionTable() throws Exception {
+        Database dbObj = new Database();
+        dbObj.createSessionTable();
+    }
 }
