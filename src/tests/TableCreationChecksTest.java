@@ -37,7 +37,6 @@ public class TableCreationChecksTest {
         Sensors sensors = hal.getSensors();
         int[] fans = sensors.getFanSpeeds();
         if (sensors.getFanSpeeds().length == 0) {
-            System.out.println(sensors.getFanSpeeds().length);
             assertEquals(0,TableCreationChecks.getFans(hal.getSensors()));
         } else if (sensors.getFanSpeeds().length > 0) {
             for (int fan : fans) {
