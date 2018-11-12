@@ -35,11 +35,14 @@ public class TableCreationChecksTest {
     @Test
     public void getFans() {
         Sensors sensors = hal.getSensors();
-        int[] case1 = {0};
+        int[] fans = sensors.getFanSpeeds();
         if (sensors.getFanSpeeds().length == 0) {
+            System.out.println(sensors.getFanSpeeds().length);
             assertEquals(0,TableCreationChecks.getFans(hal.getSensors()));
-        } else if (sensors.getFanSpeeds().length == case1.length) {
-            assertEquals(0,TableCreationChecks.getFans(hal.getSensors()));
+        } else if (sensors.getFanSpeeds().length > 0) {
+            for (int fan : fans) {
+                assertNotEquals(0, fan);
+            }
         }
     }
 
