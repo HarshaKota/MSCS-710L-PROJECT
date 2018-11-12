@@ -30,12 +30,6 @@ public class DatabaseTest {
         dbObj.checkSessionTable();
     }
 
-    @Test
-    public void checkSessionTable_OnSuccess() throws Exception {
-        Database dbObj = new Database(databaseUrl);
-        dbObj.checkSessionTable();
-    }
-
     @Test(expected = Exception.class)
     public void createPowerTable() throws Exception {
         Database dbObj = new Database();
