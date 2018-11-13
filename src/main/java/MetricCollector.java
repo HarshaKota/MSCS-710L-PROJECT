@@ -35,7 +35,7 @@ public class MetricCollector {
 
             pS.setTimestamp(metricCollectedTime);
 
-            double timeRemaining = powerSources[0].getTimeRemaining();
+            double timeRemaining =  getTimeRemaining(powerSources);
 
             // -1d indicates charging
             if (timeRemaining < -1d) {
@@ -243,8 +243,7 @@ public class MetricCollector {
     //
     // Returns a double representing how much time the battery has until it is drained.
     public double getTimeRemaining(PowerSource[] powerSources) {
-        double timeRemaining = powerSources[0].getTimeRemaining();
-        return timeRemaining;
+        return powerSources[0].getTimeRemaining();
     }
 
     // Return true if the PowerTable has been created

@@ -42,6 +42,16 @@ public class MetricCollectorTest {
     }
 
     @Test
+    public void getPower_CheckCharging() {
+        PowerSource[] powerSources = hal.getPowerSources();
+        final long metricCollectedTime = MetricCollector.startSession();
+        final MetricCollector testCollector = Mockito.spy(new MetricCollector());
+        Mockito.when(testCollector.hasPowerTable()).thenReturn(true);
+        Mockito.when(testCollector.getTimeRemaining(powerSources)).thenReturn(-2d);
+        testCollector.getPower(metricCollectedTime, powerSources);
+    }
+
+    @Test
     public void getPower_CheckGetRemainingCapacity() {
         PowerSource[] psArr = si.getHardware().getPowerSources();
         for(PowerSource ps: psArr) {
