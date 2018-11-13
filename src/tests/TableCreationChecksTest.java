@@ -40,7 +40,7 @@ public class TableCreationChecksTest {
             assertEquals(0,TableCreationChecks.getFans(hal.getSensors()));
         } else if (sensors.getFanSpeeds().length > 0) {
             for (int fan : fans) {
-                assertNotEquals(0, fan);
+                assertTrue(fan >= 0);
             }
         }
     }
