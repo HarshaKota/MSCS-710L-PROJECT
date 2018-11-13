@@ -271,7 +271,7 @@ public class MetricCollector {
     //
     //
     // Returns a Boolean representing if the Power table has been created or not.
-    private double getFans(HardwareAbstractionLayer hal) {
+    double getFans(HardwareAbstractionLayer hal) {
         return TableCreationChecks.getFans(hal.getSensors());
     }
 

@@ -136,7 +136,6 @@ public class MetricCollectorTest {
         Sensors testSensors = hal.getSensors();
         final long metricCollectedTime = MetricCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
-        final TableCreationChecks testChecks = Mockito.spy(new TableCreationChecks());
         Mockito.when(testCollector.getCpuVoltage(hal)).thenReturn(100.0);
         testCollector.getSensors(metricCollectedTime, hal, testSensors);
     }
@@ -146,18 +145,17 @@ public class MetricCollectorTest {
         Sensors testSensors = hal.getSensors();
         final long metricCollectedTime = MetricCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
-        final TableCreationChecks testChecks = Mockito.spy(new TableCreationChecks());
         Mockito.when(testCollector.getCpuVoltage(hal)).thenReturn(999.0);
         testCollector.getSensors(metricCollectedTime, hal, testSensors);
     }
 
     @Test
-    public void getSensors_Fans() {
-        Sensors s = si.getHardware().getSensors();
-        int[] speeds = s.getFanSpeeds();
-        for (int speed : speeds) {
-            assertTrue(speed >= 0);
-        }
+    public void getSensors_ValidFanSpeeds() {
+        Sensors testSensors = hal.getSensors();
+        final long metricCollectedTime = MetricCollector.startSession();
+        final MetricCollector testCollector = Mockito.spy(new MetricCollector());
+        Mockito.when(testCollector.getFans(hal)).thenReturn(100.0);
+        testCollector.getSensors(metricCollectedTime, hal, testSensors);
     }
 
     @Test
