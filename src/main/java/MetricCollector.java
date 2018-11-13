@@ -109,17 +109,17 @@ public class MetricCollector {
     //
     //
     // Returns sensorsStructure
-    static MetricCollectionStructures.sensorsStructure getSensors(final long metricCollectedTime, HardwareAbstractionLayer hal, Sensors sensors) {
+    MetricCollectionStructures.sensorsStructure getSensors(final long metricCollectedTime, HardwareAbstractionLayer hal, Sensors sensors) {
         noOfCallsTogetSensors++;
 
         MetricCollectionStructures.sensorsStructure sS= new MetricCollectionStructures.sensorsStructure();
 
         sS.setTimestamp(metricCollectedTime);
         sS.setCpuTemperature(sensors.getCpuTemperature());
-        if (TableCreationChecks.getCpuVoltage(hal.getSensors()) != 999.0) {
+        if (getCpuVoltage(hal) != 999.0) {
             sS.setCpuVoltage(sensors.getCpuVoltage());
         }
-        if (TableCreationChecks.getFans(hal.getSensors()) > 0) {
+        if (getFans(hal) > 0) {
             sS.setFans(sensors.getFanSpeeds());
         }
 
@@ -246,7 +246,7 @@ public class MetricCollector {
     //
     //
     // Returns a double representing how much time the battery has until it is drained.
-    public double getTimeRemaining(PowerSource[] powerSources) {
+    double getTimeRemaining(PowerSource[] powerSources) {
         return powerSources[0].getTimeRemaining();
     }
 
@@ -254,8 +254,25 @@ public class MetricCollector {
     //
     //
     // Returns a Boolean representing if the Power table has been created or not.
-    public Boolean hasPowerTable() {
+    Boolean hasPowerTable() {
         return Main.hasPowerSource;
+    }
+
+    // Return Cpu voltage
+    //
+    //
+    // Returns a double representing the voltage running through the CPU
+    double getCpuVoltage(HardwareAbstractionLayer hal) {
+
+        return TableCreationChecks.getCpuVoltage(hal.getSensors());
+    }
+
+    // Return true if the PowerTable has been created
+    //
+    //
+    // Returns a Boolean representing if the Power table has been created or not.
+    private double getFans(HardwareAbstractionLayer hal) {
+        return TableCreationChecks.getFans(hal.getSensors());
     }
 
     // Record the start of the session

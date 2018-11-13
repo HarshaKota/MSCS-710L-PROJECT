@@ -7,6 +7,8 @@ import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
 import org.mockito.Mockito;
 import org.mockito.Spy;
+import sun.management.Sensor;
+
 import static org.junit.Assert.*;
 
 public class MetricCollectorTest {
@@ -15,7 +17,7 @@ public class MetricCollectorTest {
     private static HardwareAbstractionLayer hal;
     private static OperatingSystem os;
     private static long timestamp;
-    MetricCollector testCollector = new MetricCollector();
+    private MetricCollector testCollector = new MetricCollector();
 
     @BeforeClass
     public static void setup() {
@@ -130,6 +132,16 @@ public class MetricCollectorTest {
     }
 
     @Test
+    public void getSensors_ValidCpuVoltage() {
+        Sensors testSensors = hal.getSensors();
+        final long metricCollectedTime = MetricCollector.startSession();
+        final MetricCollector testCollector = Mockito.spy(new MetricCollector());
+        final TableCreationChecks testChecks = Mockito.spy(new TableCreationChecks());
+        Mockito.when(testCollector.getCpuVoltage(hal)).thenReturn(100.0);
+        testCollector.getSensors(metricCollectedTime, hal, testSensors);
+    }
+
+    @Test
     public void getSensors_Fans() {
         Sensors s = si.getHardware().getSensors();
         int[] speeds = s.getFanSpeeds();
@@ -140,7 +152,7 @@ public class MetricCollectorTest {
 
     @Test
     public void getSensors_OnSuccess() {
-        MetricCollectionStructures.sensorsStructure sensorS = MetricCollector.getSensors(timestamp, hal, hal.getSensors());
+        MetricCollectionStructures.sensorsStructure sensorS = testCollector.getSensors(timestamp, hal, hal.getSensors());
         assertNotNull(sensorS);
         assertTrue(sensorS.getTimestamp() > 0);
         assertTrue(sensorS.getCpuTemperature() >= 0d);

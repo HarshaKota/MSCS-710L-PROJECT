@@ -59,7 +59,7 @@ public class Main {
             Callable<MetricCollectionStructures.sensorsStructure> sensors = new Callable<MetricCollectionStructures.sensorsStructure>() {
                 @Override
                 public MetricCollectionStructures.sensorsStructure call() {
-                    return MetricCollector.getSensors(metricCollectedTime, hal, hal.getSensors());
+                    return testCollector.getSensors(metricCollectedTime, hal, hal.getSensors());
                 }
             };
 
