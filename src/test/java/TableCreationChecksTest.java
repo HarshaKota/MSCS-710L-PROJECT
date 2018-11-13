@@ -54,13 +54,10 @@ public class TableCreationChecksTest {
     }
 
     @Test
-    public void getCpuVoltage() {
-        double noValue = 999.0;
-        Sensors sensors = hal.getSensors();
-        if (sensors.getCpuVoltage() > 0d) {
-            assertTrue(TableCreationChecks.getCpuVoltage(hal.getSensors()) > 0d);
-        } else if (sensors.getCpuVoltage() < 0d) {
-            assertEquals(TableCreationChecks.getCpuVoltage(hal.getSensors()), noValue, 0.0);
-        }
+    public void getCpuVoltage_InvalidVoltage() {
+        final Sensors testSensors = Mockito.spy(hal.getSensors());
+        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
+        Mockito.when(testSensors.getCpuVoltage()).thenReturn(999.0d);
+        testTableChecks.getCpuVoltage(testSensors);
     }
 }
