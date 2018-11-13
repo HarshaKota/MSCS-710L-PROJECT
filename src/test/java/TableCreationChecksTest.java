@@ -60,4 +60,12 @@ public class TableCreationChecksTest {
         Mockito.when(testSensors.getCpuVoltage()).thenReturn(999.0d);
         testTableChecks.getCpuVoltage(testSensors);
     }
+
+    @Test
+    public void getCpuVoltage_ValidVoltage() {
+        final Sensors testSensors = Mockito.spy(hal.getSensors());
+        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
+        Mockito.when(testSensors.getCpuVoltage()).thenReturn(0.0d);
+        testTableChecks.getCpuVoltage(testSensors);
+    }
 }
