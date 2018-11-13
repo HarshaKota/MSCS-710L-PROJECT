@@ -141,7 +141,7 @@ public class MetricCollectorTest {
     }
 
     @Test
-    public void getSensors_NoCpuVoltage() {
+    public void getSensors_InvalidCpuVoltage() {
         Sensors testSensors = hal.getSensors();
         final long metricCollectedTime = MetricCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
@@ -155,6 +155,15 @@ public class MetricCollectorTest {
         final long metricCollectedTime = MetricCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Mockito.when(testCollector.getFans(hal)).thenReturn(100.0);
+        testCollector.getSensors(metricCollectedTime, hal, testSensors);
+    }
+
+    @Test
+    public void getSensors_InvalidFanSpeeds() {
+        Sensors testSensors = hal.getSensors();
+        final long metricCollectedTime = MetricCollector.startSession();
+        final MetricCollector testCollector = Mockito.spy(new MetricCollector());
+        Mockito.when(testCollector.getFans(hal)).thenReturn(0.0);
         testCollector.getSensors(metricCollectedTime, hal, testSensors);
     }
 
