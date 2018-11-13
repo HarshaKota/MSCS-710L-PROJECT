@@ -4,7 +4,8 @@ import oshi.SystemInfo;
 import oshi.hardware.*;
 import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
-
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import static org.junit.Assert.*;
 
 public class MetricCollectorTest {
@@ -13,6 +14,7 @@ public class MetricCollectorTest {
     private static HardwareAbstractionLayer hal;
     private static OperatingSystem os;
     private static long timestamp;
+    MetricCollector testCollector = new MetricCollector();
 
     @BeforeClass
     public static void setup() {
@@ -25,19 +27,18 @@ public class MetricCollectorTest {
     @Test
     public void getPower_NoPower() {
         Main.hasPowerSource = false;
-        MetricCollectionStructures.powerStructure powerS = MetricCollector.getPower(timestamp, hal.getPowerSources());
+        MetricCollectionStructures.powerStructure powerS = testCollector.getPower(timestamp, hal.getPowerSources());
         assertNull(powerS);
     }
 
     @Test
-    public void getPower_CheckGetTimeRemaining() {
-        PowerSource[] psArr = si.getHardware().getPowerSources();
-        double epsilon = 1E-6;
-        for(PowerSource ps: psArr) {
-            assertTrue(ps.getTimeRemaining() > 0 || Math.abs(ps.getTimeRemaining() - -1) < epsilon
-                    || Math.abs(ps.getTimeRemaining() - -2) < epsilon);
-        }
-
+    public void getPower_CheckNotCharging() {
+        PowerSource[] powerSources = hal.getPowerSources();
+        final long metricCollectedTime = MetricCollector.startSession();
+        final MetricCollector testCollector = Mockito.spy(new MetricCollector());
+        Mockito.when(testCollector.hasPowerTable()).thenReturn(true);
+        Mockito.when(testCollector.getTimeRemaining(powerSources)).thenReturn(2d);
+        testCollector.getPower(metricCollectedTime, powerSources);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class MetricCollectorTest {
     @Test
     public void getPower_OnSuccess() {
         Main.hasPowerSource = true;
-        MetricCollectionStructures.powerStructure powerS = MetricCollector.getPower(timestamp, hal.getPowerSources());
+        MetricCollectionStructures.powerStructure powerS = testCollector.getPower(timestamp, hal.getPowerSources());
         assertNotNull(powerS);
         assertTrue(powerS.getTimestamp() > 0);
         assertTrue(powerS.getPowerStatus() == 0 || powerS.getPowerStatus() == 1);

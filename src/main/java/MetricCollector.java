@@ -26,9 +26,9 @@ public class MetricCollector {
     //      1 - charging
     //      0 - discharging
     // Returns powerStructure
-    static MetricCollectionStructures.powerStructure getPower(final long metricCollectedTime, PowerSource[] powerSources) {
+    MetricCollectionStructures.powerStructure getPower(final long metricCollectedTime, PowerSource[] powerSources) {
 
-        if (Main.hasPowerSource) {
+        if (hasPowerTable()) {
             noOfCallsTogetPower++;
 
             MetricCollectionStructures.powerStructure pS = new MetricCollectionStructures.powerStructure();
@@ -236,6 +236,23 @@ public class MetricCollector {
 
         return pS;
 
+    }
+
+    // Return time remaining. Used by getPower method.
+    //
+    //
+    // Returns a double representing how much time the battery has until it is drained.
+    public double getTimeRemaining(PowerSource[] powerSources) {
+        double timeRemaining = powerSources[0].getTimeRemaining();
+        return timeRemaining;
+    }
+
+    // Return true if the PowerTable has been created
+    //
+    //
+    // Returns a Boolean representing if the Power table has been created or not.
+    public Boolean hasPowerTable() {
+        return Main.hasPowerSource;
     }
 
     // Record the start of the session

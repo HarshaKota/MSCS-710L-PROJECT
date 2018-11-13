@@ -35,6 +35,7 @@ public class Main {
 
         // Record the session start time in the session table
         final long startSessionTime = MetricCollector.startSession();
+        final MetricCollector testCollector = new MetricCollector();
         dbObject.insertStartSessionIntoSessionTable(startSessionTime);
 
         while (Main.applicationOpen.get()) {
@@ -44,7 +45,7 @@ public class Main {
             Callable<MetricCollectionStructures.powerStructure> power = new Callable<MetricCollectionStructures.powerStructure>() {
                 @Override
                 public MetricCollectionStructures.powerStructure call() {
-                    return MetricCollector.getPower(metricCollectedTime, hal.getPowerSources());
+                    return testCollector.getPower(metricCollectedTime, hal.getPowerSources());
                 }
             };
 
