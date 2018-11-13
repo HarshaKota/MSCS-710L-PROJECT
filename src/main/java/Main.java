@@ -52,7 +52,7 @@ public class Main {
             Callable<MetricCollectionStructures.cpuStructure> cpu = new Callable<MetricCollectionStructures.cpuStructure>() {
                 @Override
                 public MetricCollectionStructures.cpuStructure call() {
-                    return MetricCollector.getCPU(metricCollectedTime, hal.getProcessor());
+                    return testCollector.getCPU(metricCollectedTime, hal.getProcessor());
                 }
             };
 

@@ -1,5 +1,6 @@
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import oshi.SystemInfo;
 import oshi.hardware.*;
 import oshi.software.os.OSProcess;
@@ -69,6 +70,16 @@ public class MetricCollectorTest {
         assertTrue(powerS.getBatteryPercentage() >= 0d || powerS.getBatteryPercentage() <= 100d);
     }
 
+    @Test //(expected = InterruptedException.class)
+    public void getCPU_ThrowInterruptException() {
+        ExpectedException thrown = ExpectedException.none();
+        CentralProcessor processor = hal.getProcessor();
+        final long metricCollectedTime = MetricCollector.startSession();
+        final MetricCollector testCollector = Mockito.spy(new MetricCollector());
+        Thread.currentThread().interrupt();
+        thrown.expect(InterruptedException.class);
+        testCollector.getCPU(metricCollectedTime, processor);
+    }
 
     @Test
     public void getCPU_SystemCpuLoadTicks() {
@@ -97,7 +108,7 @@ public class MetricCollectorTest {
 
     @Test
     public void getCPU_OnSuccess() {
-        MetricCollectionStructures.cpuStructure cpuS = MetricCollector.getCPU(timestamp, hal.getProcessor());
+        MetricCollectionStructures.cpuStructure cpuS = testCollector.getCPU(timestamp, hal.getProcessor());
         assertNotNull(cpuS);
         assertTrue(cpuS.getTimestamp() > 0);
         assertTrue(cpuS.getUptime() > 0);

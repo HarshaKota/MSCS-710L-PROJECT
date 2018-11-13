@@ -61,15 +61,19 @@ public class MetricCollector {
     //
     //
     // Returns cpuStructure
-    static MetricCollectionStructures.cpuStructure getCPU(final long metricCollectedTime, CentralProcessor processor) {
+    MetricCollectionStructures.cpuStructure getCPU(final long metricCollectedTime, CentralProcessor processor) {
         noOfCallsTogetCPU++;
 
         long[] prevTicks = processor.getSystemCpuLoadTicks();
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
-            log.error("Failed when calcualting ticks");
+            log.error("Failed when calculating ticks");
+//            try {
+//                throw new InterruptedException();
+//            } catch (InterruptedException e1) {
+//                e1.printStackTrace();
+//            }
         }
         long[] ticks = processor.getSystemCpuLoadTicks();
         long user = ticks[CentralProcessor.TickType.USER.getIndex()] - prevTicks[CentralProcessor.TickType.USER.getIndex()];
