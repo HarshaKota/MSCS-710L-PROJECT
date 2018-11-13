@@ -44,6 +44,16 @@ public class TableCreationChecksTest {
     }
 
     @Test
+    public void getFans_InvalidFanSpeeds() {
+        final Sensors testSensors = Mockito.spy(hal.getSensors());
+        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
+        int[] fanArray =new int[1];
+        fanArray[0] = 1;
+        Mockito.when(testSensors.getFanSpeeds()).thenReturn(fanArray);
+        testTableChecks.getFans(testSensors);
+    }
+
+    @Test
     public void getCpuVoltage() {
         double noValue = 999.0;
         Sensors sensors = hal.getSensors();
