@@ -1,5 +1,6 @@
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.PowerSource;
@@ -33,16 +34,13 @@ public class TableCreationChecksTest {
     }
 
     @Test
-    public void getFans() {
-        Sensors sensors = hal.getSensors();
-        int[] fans = sensors.getFanSpeeds();
-        if (sensors.getFanSpeeds().length == 0) {
-            assertEquals(0,TableCreationChecks.getFans(hal.getSensors()));
-        } else if (sensors.getFanSpeeds().length > 0) {
-            for (int fan : fans) {
-                assertTrue(fan >= 0);
-            }
-        }
+    public void getFans_ValidFanSpeeds() {
+        final Sensors testSensors = Mockito.spy(hal.getSensors());
+        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
+        int[] fanArray =new int[1];
+        fanArray[0] = 0;
+        Mockito.when(testSensors.getFanSpeeds()).thenReturn(fanArray);
+        testTableChecks.getFans(testSensors);
     }
 
     @Test
