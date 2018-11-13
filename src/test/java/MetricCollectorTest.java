@@ -142,6 +142,16 @@ public class MetricCollectorTest {
     }
 
     @Test
+    public void getSensors_NoCpuVoltage() {
+        Sensors testSensors = hal.getSensors();
+        final long metricCollectedTime = MetricCollector.startSession();
+        final MetricCollector testCollector = Mockito.spy(new MetricCollector());
+        final TableCreationChecks testChecks = Mockito.spy(new TableCreationChecks());
+        Mockito.when(testCollector.getCpuVoltage(hal)).thenReturn(999.0);
+        testCollector.getSensors(metricCollectedTime, hal, testSensors);
+    }
+
+    @Test
     public void getSensors_Fans() {
         Sensors s = si.getHardware().getSensors();
         int[] speeds = s.getFanSpeeds();
