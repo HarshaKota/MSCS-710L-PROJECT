@@ -132,7 +132,7 @@ public class MetricCollector {
     //
     //
     // Returns memoryStructure
-    static MetricCollectionStructures.memoryStructure getMemory(final long metricCollectedTime, GlobalMemory memory) {
+    MetricCollectionStructures.memoryStructure getMemory(final long metricCollectedTime, GlobalMemory memory) {
         noOfCallsTogetMemory++;
 
         MetricCollectionStructures.memoryStructure mS = new MetricCollectionStructures.memoryStructure();
@@ -154,7 +154,7 @@ public class MetricCollector {
     //
     //
     // Returns networkStructure
-    static MetricCollectionStructures.networkStructure getNetwork(final long metricCollectedTime, NetworkIF[] networkIFS) {
+    MetricCollectionStructures.networkStructure getNetwork(final long metricCollectedTime, NetworkIF[] networkIFS) {
         noOfCallsTogetNetwork++;
 
         MetricCollectionStructures.networkStructure nS = new MetricCollectionStructures.networkStructure();
@@ -192,7 +192,7 @@ public class MetricCollector {
     //
     //
     // Returns processStructure
-    static MetricCollectionStructures.processStructure getProcess(final long metricCollectedTime, OperatingSystem os, GlobalMemory memory) {
+    MetricCollectionStructures.processStructure getProcess(final long metricCollectedTime, OperatingSystem os, GlobalMemory memory) {
         noOfCallsTogetProcesses++;
 
         MetricCollectionStructures.processStructure pS = new MetricCollectionStructures.processStructure();
@@ -250,6 +250,7 @@ public class MetricCollector {
         return powerSources[0].getTimeRemaining();
     }
 
+
     // Return true if the PowerTable has been created
     //
     //
@@ -258,14 +259,15 @@ public class MetricCollector {
         return Main.hasPowerSource;
     }
 
+
     // Return Cpu voltage
     //
     //
     // Returns a double representing the voltage running through the CPU
     double getCpuVoltage(HardwareAbstractionLayer hal) {
-
         return TableCreationChecks.getCpuVoltage(hal.getSensors());
     }
+
 
     // Return true if the PowerTable has been created
     //
@@ -275,15 +277,21 @@ public class MetricCollector {
         return TableCreationChecks.getFans(hal.getSensors());
     }
 
-    // Record the start of the session
-    static long startSession() {
 
+    // Used to fetch a start session time
+    //
+    //
+    // Returns the current time as a long value
+    long startSession() {
         return System.currentTimeMillis();
     }
 
-    // Record the end of the session
-    static long endSession() {
 
+    // Used to fetch a end session time
+    //
+    //
+    // Returns the current time as a long value
+    long endSession() {
         return System.currentTimeMillis();
     }
 }
