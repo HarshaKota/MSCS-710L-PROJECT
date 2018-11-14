@@ -5,6 +5,7 @@ import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.PowerSource;
 import oshi.hardware.Sensors;
+import oshi.hardware.platform.windows.WindowsPowerSource;
 
 import static org.junit.Assert.*;
 
@@ -28,6 +29,14 @@ public class TableCreationChecksTest {
     public void checkPowerSource_InvalidPowerSource() {
         final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
         PowerSource[] powerSources = new PowerSource[0];
+        testTableChecks.checkPowerSource(powerSources);
+    }
+
+    @Test
+    public void checkPowerSource_ValidPowerSource() {
+        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
+        PowerSource[] powerSources = new PowerSource[1];
+        powerSources[0] = new WindowsPowerSource("TestBatteryName", 0.99d, 52.0d);
         testTableChecks.checkPowerSource(powerSources);
     }
 
