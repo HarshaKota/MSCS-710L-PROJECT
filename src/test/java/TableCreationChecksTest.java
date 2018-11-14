@@ -25,12 +25,10 @@ public class TableCreationChecksTest {
     }
 
     @Test
-    public void checkPowerSource() {
-        PowerSource[] powerSources = hal.getPowerSources();
-        boolean result = powerSources.length != 0
-                && !powerSources[0].getName().equalsIgnoreCase("Unknown")
-                && powerSources[0].getRemainingCapacity() * 100d != 0.0;
-        assertTrue(result || !result);
+    public void checkPowerSource_InvalidPowerSource() {
+        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
+        PowerSource[] powerSources = new PowerSource[0];
+        testTableChecks.checkPowerSource(powerSources);
     }
 
     @Test
