@@ -118,7 +118,7 @@ class MetricCollectionStructures {
         long timestamp;
         double cpuTemperature = 999d;
         double cpuVoltage = 999d;
-        int[] fans;
+        ArrayList<Integer> fans;
 
         long getTimestamp() {
             return timestamp;
@@ -144,13 +144,9 @@ class MetricCollectionStructures {
             this.cpuVoltage = cpuVoltage;
         }
 
-        void setFans(int[] fans) {
-            this.fans = fans;
-        }
+        ArrayList<Integer> getFans() { return fans; }
 
-        int[] getFans() {
-            return fans;
-        }
+        void setFans(ArrayList<Integer> fans) { this.fans = fans; }
 
         @Override
         public String toString() {
@@ -158,7 +154,7 @@ class MetricCollectionStructures {
                     "timestamp=" + timestamp +
                     ", cpuTemperature=" + cpuTemperature +
                     ", cpuVoltage=" + cpuVoltage +
-                    ", fans=" + Arrays.toString(fans) +
+                    ", fans=" + fans +
                     '}';
         }
     }
