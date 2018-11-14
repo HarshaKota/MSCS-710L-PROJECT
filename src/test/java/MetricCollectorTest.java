@@ -6,8 +6,6 @@ import oshi.hardware.*;
 import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
 import org.mockito.Mockito;
-import org.mockito.Spy;
-import sun.management.Sensor;
 
 import static org.junit.Assert.*;
 
