@@ -349,8 +349,8 @@ public class Database {
     // Insert values into CPU Table
     void insertIntoCpuTable(MetricCollectionStructures.cpuStructure cS) throws Exception {
 
-        if (cS.getTimestamp() == 0 || cS.getUptime() == 0 || cS.getUserLoad() == 0d || cS.getSystemLoad() == 0d ||
-                cS.getIdleLoad() == 0d)
+        if (cS.getTimestamp() < 0 || cS.getUptime() < 0 || cS.getUserLoad() < 0d || cS.getSystemLoad() < 0d ||
+                cS.getIdleLoad() < 0d)
         {
                 log.error("insertIntoCpuTable: Empty cpuStructure used to insert into CPU table ");
                 throw new Exception("insertIntoCpuTable: Empty cpuStructure used to insert into CPU table ");
