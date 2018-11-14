@@ -389,7 +389,7 @@ public class Database {
     // Insert values into Sensors Table
     void insertIntoSensorsTable(MetricCollectionStructures.sensorsStructure sS) throws Exception {
 
-        if (sS.getTimestamp() ==  0 || sS.getCpuTemperature() == 0d)
+        if (sS.getTimestamp() ==  0)
         {
             log.error("insertIntoSensorsTable: Empty sensorsStructure used to insert into Sensors table ");
             throw new Exception("insertIntoSensorsTable: Empty sensorsStructure used to insert into Sensors table ");
@@ -406,7 +406,9 @@ public class Database {
         try {
             Statement insertIntoSensorsTableStatement = connection.createStatement();
             String sql =
-                    "INSERT INTO SENSORS VALUES ("+sS.getTimestamp()+"," +sS.getCpuTemperature() +
+                    "INSERT INTO SENSORS VALUES ("+sS.getTimestamp()+"," +
+                            (sS.getCpuTemperature()==999.0 ? "" : ",") +
+                            (sS.getCpuTemperature()==999.0 ? "" : (sS.getCpuTemperature())+",") +
                             (sS.getCpuVoltage()== 999.0 ? "" : ",") +
                             (sS.getCpuVoltage()==999.0 ? "" : (sS.getCpuVoltage())+",") +
                             fans + ")";
