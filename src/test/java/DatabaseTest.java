@@ -1,7 +1,9 @@
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
+import oshi.hardware.Sensors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +30,21 @@ public class DatabaseTest {
     public void checkSessionTable_Null() throws Exception {
         Database dbObj = new Database();
         dbObj.checkSessionTable();
+    }
+
+    @Test
+    public void checkSessionTable_NotNull() {
+        final Database testDatabase = Mockito.spy(new Database());
+        try {
+            testDatabase.establishDatabaseConnection("org.sqlite.JDBC", "jdbc:sqlite:MetricCollector.db");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            testDatabase.checkSessionTable();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test(expected = Exception.class)
