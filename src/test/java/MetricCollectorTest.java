@@ -173,7 +173,7 @@ public class MetricCollectorTest {
         assertTrue(sensorS.getTimestamp() > 0);
         assertTrue(sensorS.getCpuTemperature() >= 0d);
         assertTrue(sensorS.getCpuVoltage() >= 0d);
-        assertTrue(sensorS.getFans().length > 0 || sensorS.getFans().length == 0);
+        assertTrue(sensorS.getFans().size() > 0 || sensorS.getFans().size() == 0);
     }
 
     @Test

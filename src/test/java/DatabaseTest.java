@@ -167,7 +167,7 @@ public class DatabaseTest {
         sensorsStructure.setTimestamp(System.currentTimeMillis());
         sensorsStructure.setCpuTemperature(10d);
         sensorsStructure.setCpuVoltage(10d);
-        sensorsStructure.setFans(new int[0]);
+        sensorsStructure.setFans(new ArrayList<Integer>());
         Database dbObj = new Database();
         dbObj.insertIntoSensorsTable(sensorsStructure);
     }
