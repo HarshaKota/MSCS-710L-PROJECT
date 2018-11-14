@@ -409,6 +409,7 @@ public class Database {
                     "INSERT INTO SENSORS VALUES ("+sS.getTimestamp()+"," +sS.getCpuTemperature() +
                             (sS.getCpuVoltage()== 999.0 ? "" : ",") +
                             (sS.getCpuVoltage()==999.0 ? "" : (sS.getCpuVoltage())+",") +
+                            (fans.length() < 0 ? "" : ",") +
                             fans + ")";
             insertIntoSensorsTableStatement.executeUpdate(sql);
             insertIntoSensorsTableStatement.close();
