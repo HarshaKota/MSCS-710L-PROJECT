@@ -33,54 +33,56 @@ public class Main {
         Thread uiThread = new Thread(ui);
         uiThread.start();
 
+        // Get an instance of the metric collector
+        final MetricCollector metricCollector = new MetricCollector();
+
         // Record the session start time in the session table
-        final long startSessionTime = MetricCollector.startSession();
-        final MetricCollector testCollector = new MetricCollector();
+        final long startSessionTime = metricCollector.startSession();
         dbObject.insertStartSessionIntoSessionTable(startSessionTime);
 
         while (Main.applicationOpen.get()) {
 
-            final long metricCollectedTime = MetricCollector.startSession();
+            final long metricCollectedTime = metricCollector.startSession();
 
             Callable<MetricCollectionStructures.powerStructure> power = new Callable<MetricCollectionStructures.powerStructure>() {
                 @Override
                 public MetricCollectionStructures.powerStructure call() {
-                    return testCollector.getPower(metricCollectedTime, hal.getPowerSources());
+                    return metricCollector.getPower(metricCollectedTime, hal.getPowerSources());
                 }
             };
 
             Callable<MetricCollectionStructures.cpuStructure> cpu = new Callable<MetricCollectionStructures.cpuStructure>() {
                 @Override
                 public MetricCollectionStructures.cpuStructure call() {
-                    return testCollector.getCPU(metricCollectedTime, hal.getProcessor());
+                    return metricCollector.getCPU(metricCollectedTime, hal.getProcessor());
                 }
             };
 
             Callable<MetricCollectionStructures.sensorsStructure> sensors = new Callable<MetricCollectionStructures.sensorsStructure>() {
                 @Override
                 public MetricCollectionStructures.sensorsStructure call() {
-                    return testCollector.getSensors(metricCollectedTime, hal, hal.getSensors());
+                    return metricCollector.getSensors(metricCollectedTime, hal, hal.getSensors());
                 }
             };
 
             Callable<MetricCollectionStructures.memoryStructure> memory = new Callable<MetricCollectionStructures.memoryStructure>() {
                 @Override
                 public MetricCollectionStructures.memoryStructure call() {
-                    return MetricCollector.getMemory(metricCollectedTime, hal.getMemory());
+                    return metricCollector.getMemory(metricCollectedTime, hal.getMemory());
                 }
             };
 
             Callable<MetricCollectionStructures.networkStructure> network = new Callable<MetricCollectionStructures.networkStructure>() {
                 @Override
                 public MetricCollectionStructures.networkStructure call() {
-                    return MetricCollector.getNetwork(metricCollectedTime, hal.getNetworkIFs());
+                    return metricCollector.getNetwork(metricCollectedTime, hal.getNetworkIFs());
                 }
             };
 
             Callable<MetricCollectionStructures.processStructure> processes = new Callable<MetricCollectionStructures.processStructure>() {
                 @Override
                 public MetricCollectionStructures.processStructure call() {
-                    return MetricCollector.getProcess(metricCollectedTime, os, hal.getMemory());
+                    return metricCollector.getProcess(metricCollectedTime, os, hal.getMemory());
                 }
             };
 
@@ -131,7 +133,7 @@ public class Main {
         }
 
         // Record the session end time in the session table
-        final long endSessionTime = MetricCollector.endSession();
+        final long endSessionTime = metricCollector.endSession();
         dbObject.insertEndSessionIntoSessionTable(startSessionTime, endSessionTime);
 
         dbObject.closeDatabaseConnection();
