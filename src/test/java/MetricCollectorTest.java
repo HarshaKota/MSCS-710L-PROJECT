@@ -29,7 +29,7 @@ public class MetricCollectorTest {
     @Test
     public void getPower_NoPower() {
         Main.hasPowerSource = false;
-        MetricCollectionStructures.powerStructure powerS = testCollector.getPower(timestamp, hal.getPowerSources());
+        MetricCollectionStructures.powerStructure powerS = testCollector.getPower(timestamp);
         assertNull(powerS);
     }
 
@@ -40,7 +40,7 @@ public class MetricCollectorTest {
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Mockito.when(testCollector.hasPowerTable()).thenReturn(true);
         Mockito.when(testCollector.getTimeRemaining(powerSources)).thenReturn(2d);
-        testCollector.getPower(metricCollectedTime, powerSources);
+        testCollector.getPower(metricCollectedTime);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class MetricCollectorTest {
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Mockito.when(testCollector.hasPowerTable()).thenReturn(true);
         Mockito.when(testCollector.getTimeRemaining(powerSources)).thenReturn(-2d);
-        testCollector.getPower(metricCollectedTime, powerSources);
+        testCollector.getPower(metricCollectedTime);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class MetricCollectorTest {
     @Test
     public void getPower_OnSuccess() {
         Main.hasPowerSource = true;
-        MetricCollectionStructures.powerStructure powerS = testCollector.getPower(timestamp, hal.getPowerSources());
+        MetricCollectionStructures.powerStructure powerS = testCollector.getPower(timestamp);
         assertNotNull(powerS);
         assertTrue(powerS.getTimestamp() > 0);
         assertTrue(powerS.getPowerStatus() == 0 || powerS.getPowerStatus() == 1);
@@ -79,7 +79,7 @@ public class MetricCollectorTest {
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Thread.currentThread().interrupt();
         thrown.expect(InterruptedException.class);
-        testCollector.getCPU(metricCollectedTime, processor);
+        testCollector.getCPU(metricCollectedTime);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class MetricCollectorTest {
 
     @Test
     public void getCPU_OnSuccess() {
-        MetricCollectionStructures.cpuStructure cpuS = testCollector.getCPU(timestamp, hal.getProcessor());
+        MetricCollectionStructures.cpuStructure cpuS = testCollector.getCPU(timestamp);
         assertNotNull(cpuS);
         assertTrue(cpuS.getTimestamp() > 0);
         assertTrue(cpuS.getUptime() > 0);
@@ -136,7 +136,7 @@ public class MetricCollectorTest {
         final long metricCollectedTime = testCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Mockito.when(testCollector.getCpuVoltage(hal)).thenReturn(100.0);
-        testCollector.getSensors(metricCollectedTime, hal, testSensors);
+        testCollector.getSensors(metricCollectedTime);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class MetricCollectorTest {
         final long metricCollectedTime = testCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Mockito.when(testCollector.getCpuVoltage(hal)).thenReturn(999.0);
-        testCollector.getSensors(metricCollectedTime, hal, testSensors);
+        testCollector.getSensors(metricCollectedTime);
     }
 
     @Test
@@ -154,7 +154,7 @@ public class MetricCollectorTest {
         final long metricCollectedTime = testCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Mockito.when(testCollector.getFans(hal)).thenReturn(100.0);
-        testCollector.getSensors(metricCollectedTime, hal, testSensors);
+        testCollector.getSensors(metricCollectedTime);
     }
 
     @Test
@@ -163,12 +163,12 @@ public class MetricCollectorTest {
         final long metricCollectedTime = testCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Mockito.when(testCollector.getFans(hal)).thenReturn(0.0);
-        testCollector.getSensors(metricCollectedTime, hal, testSensors);
+        testCollector.getSensors(metricCollectedTime);
     }
 
     @Test
     public void getSensors_OnSuccess() {
-        MetricCollectionStructures.sensorsStructure sensorS = testCollector.getSensors(timestamp, hal, hal.getSensors());
+        MetricCollectionStructures.sensorsStructure sensorS = testCollector.getSensors(timestamp);
         assertNotNull(sensorS);
         assertTrue(sensorS.getTimestamp() > 0);
         assertTrue(sensorS.getCpuTemperature() >= 0d);
@@ -196,7 +196,7 @@ public class MetricCollectorTest {
 
     @Test
     public void getMemory_OnSuccess() {
-        MetricCollectionStructures.memoryStructure memoryS = testCollector.getMemory(timestamp, hal.getMemory());
+        MetricCollectionStructures.memoryStructure memoryS = testCollector.getMemory(timestamp);
         assertNotNull(memoryS);
         assertTrue(memoryS.getTimestamp() > 0);
         assertTrue(memoryS.getTotalMemory() >= 0d);
@@ -219,7 +219,7 @@ public class MetricCollectorTest {
 
     @Test
     public void getNetwork_OnSuccess() {
-        MetricCollectionStructures.networkStructure networkS = testCollector.getNetwork(timestamp, hal.getNetworkIFs());
+        MetricCollectionStructures.networkStructure networkS = testCollector.getNetwork(timestamp);
         assertNotNull(networkS);
         assertTrue(networkS.getTimestamp() > 0);
         assertTrue(networkS.getPacketsReceived() >= 0);
@@ -285,7 +285,7 @@ public class MetricCollectorTest {
 
     @Test
     public void getProcess_OnSuccess() {
-        MetricCollectionStructures.processStructure processS = testCollector.getProcess(timestamp, os, hal.getMemory());
+        MetricCollectionStructures.processStructure processS = testCollector.getProcess(timestamp);
         assertNotNull(processS);
         assertTrue(processS.getTimestamp() > 0);
         assertTrue(processS.getNoOfThreads() >= 1);
