@@ -49,7 +49,7 @@ public class Database {
             connection.setAutoCommit(false);
         } catch (NullPointerException | SQLException | ClassNotFoundException e) {
             log.error("establishDatabaseConnection: Failed to connect to the database " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            throw new Exception("establishDatabaseConnection: Failed to connect to the database " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -70,8 +70,8 @@ public class Database {
             }
             checkSessionTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to fetch the last inserted session time " + e.getClass().getName() + ": " + e.getMessage());
-            throw new NullPointerException("Failed to fetch the last inserted session time");
+            log.error("checkSessionTable: Failed to fetch the last inserted session time " + e.getClass().getName() + ": " + e.getMessage());
+            throw new NullPointerException("checkSessionTable: Failed to fetch the last inserted session time");
         }
 
         // Check and make sure the timestamp values are the same using 2 different table
@@ -91,8 +91,8 @@ public class Database {
                 }
                 getEndTimeFromSensorsStatement.close();
             } catch (Exception e) {
-                log.error("Failed to last timestamp from the sensors table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception(e);
+                log.error("checkSessionTable: Failed to last timestamp from the sensors table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("checkSessionTable: Failed to last timestamp from the sensors table " + e.getClass().getName() + ": " + e.getMessage());
             }
 
             try {
@@ -103,13 +103,13 @@ public class Database {
                 }
                 getEndTimeFromMemoryStatement.close();
             } catch (Exception e) {
-                log.error("Failed to last timestamp from the memory table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception(e);
+                log.error("checkSessionTable: Failed to last timestamp from the memory table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("checkSessionTable: Failed to last timestamp from the memory table " + e.getClass().getName() + ": " + e.getMessage());
             }
 
             if (sensorLastTimestamp != memoryLastTimestamp) {
-                log.fatal("The 2 tables - sensors and memory have different number of records in them.");
-                throw new Exception("The 2 tables - sensors and memory have different number of records in them.");
+                log.fatal("checkSessionTable: The 2 tables - sensors and memory have different number of records in them.");
+                throw new Exception("checkSessionTable: The 2 tables - sensors and memory have different number of records in them.");
             } else {
                 String fixEndSessionTimeSql = "UPDATE SESSION SET ENDSESSION = ? WHERE STARTSESSION = ?";
                 try {
@@ -122,8 +122,8 @@ public class Database {
                     fixEndSesionTimeStatement.close();
                     connection.commit();
                 } catch (Exception e) {
-                    log.error("Failed to fix the endSession time in Session Table " + e.getClass().getName() + ": " + e.getMessage());
-                    throw new Exception(e);
+                    log.error("checkSessionTable: Failed to fix the endSession time in Session Table " + e.getClass().getName() + ": " + e.getMessage());
+                    throw new Exception("checkSessionTable: Failed to fix the endSession time in Session Table " + e.getClass().getName() + ": " + e.getMessage());
                 }
 
             }
@@ -149,7 +149,7 @@ public class Database {
                 throw new Exception(e);
             }
         } else {
-            log.warn("There is no battery in this system. Power statistics will be unavailable");
+            log.warn("createPowerTable: There is no battery in this system. Power statistics will be unavailable");
         }
     }
 
@@ -192,8 +192,8 @@ public class Database {
             sensorsTableStatement.executeUpdate(sql);
             sensorsTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to create Sensor Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("createSensorsTable: Failed to create Sensor Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("createSensorsTable: Failed to create Sensor Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -210,8 +210,8 @@ public class Database {
             memoryTableStatement.executeUpdate(sql);
             memoryTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to create Memory Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("createMemoryTable: Failed to create Memory Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("createMemoryTable: Failed to create Memory Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -230,8 +230,8 @@ public class Database {
             processesTableStatement.executeUpdate(sql);
             processesTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to create ProcessInfo Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("createProcessInfoTable: Failed to create ProcessInfo Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("createProcessInfoTable: Failed to create ProcessInfo Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -248,8 +248,8 @@ public class Database {
             processorInfoTableStatement.executeUpdate(sql);
             processorInfoTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to create Process Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("createProcessTable: Failed to create Process Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("createProcessTable: Failed to create Process Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -280,8 +280,8 @@ public class Database {
             cpuTableStatement.executeUpdate(sql);
             cpuTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to create CPU Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("createCPUTable: Failed to create CPU Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("createCPUTable: Failed to create CPU Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -300,8 +300,8 @@ public class Database {
             networkTableStatement.executeUpdate(sql);
             networkTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to create Network Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("createNetworkTable: Failed to create Network Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("createNetworkTable: Failed to create Network Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -317,8 +317,8 @@ public class Database {
             sessionTableStatement.executeUpdate(sql);
             sessionTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to create Session Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("createSessionTable: Failed to create Session Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("createSessionTable: Failed to create Session Table " + e.getClass().getName() + ": " + e.getMessage());
         }
 
     }
@@ -328,8 +328,8 @@ public class Database {
 
         //Check if the received powerStructure is not empty
         if (pS.getTimestamp() == 0 || pS.getBatteryPercentage() == 0d) {
-            log.error("Empty powerStructure used to insert into power table");
-            throw new Exception("Empty powerStructure used to insert into power table");
+            log.error("insertIntoPowerTable: Empty powerStructure used to insert into power table");
+            throw new Exception("insertIntoPowerTable: Empty powerStructure used to insert into power table");
         }
 
         if (Main.hasPowerSource) {
@@ -340,8 +340,8 @@ public class Database {
                 insertIntoPowerTableStatement.executeUpdate(sql);
                 insertIntoPowerTableStatement.close();
             } catch (Exception e) {
-                log.error("Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception(e);
+                log.error("insertIntoPowerTable: Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("insertIntoPowerTable: Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
             }
         }
     }
@@ -352,18 +352,18 @@ public class Database {
         if (cS.getTimestamp() == 0 || cS.getUptime() == 0 || cS.getUserLoad() == 0d || cS.getSystemLoad() == 0d ||
                 cS.getIdleLoad() == 0d)
         {
-                log.error("Empty cpuStructure used to insert into CPU table ");
-                throw new Exception("Empty cpuStructure used to insert into CPU table ");
+                log.error("insertIntoCpuTable: Empty cpuStructure used to insert into CPU table ");
+                throw new Exception("insertIntoCpuTable: Empty cpuStructure used to insert into CPU table ");
         }
 
         if (cS.getProcessorLoad() == null) {
-            log.error("Empty cpuStructure used to insert into CPU table: Empty getProcessorLoad ");
-            throw new Exception("Empty cpuStructure used to insert into CPU table: Empty getProcessorLoad ");
+            log.error("insertIntoCpuTable: Empty cpuStructure used to insert into CPU table: Empty getProcessorLoad ");
+            throw new Exception("insertIntoCpuTable: Empty cpuStructure used to insert into CPU table: Empty getProcessorLoad ");
         }
 
         if (cS.getProcessorLoad().size() != hal.getProcessor().getLogicalProcessorCount()) {
-            log.error("No of processor loads are less than logicalProcessorCount ");
-            throw new Exception("No of processor loads are less than logicalProcessorCount ");
+            log.error("insertIntoCpuTable: No of processor loads are less than logicalProcessorCount ");
+            throw new Exception("insertIntoCpuTable: No of processor loads are less than logicalProcessorCount ");
         }
 
         StringBuilder processorData = new StringBuilder();
@@ -381,8 +381,8 @@ public class Database {
             insertIntoCpuTableStatement.executeUpdate(sql);
             insertIntoCpuTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to insert into CPU Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("insertIntoCpuTable: Failed to insert into CPU Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("insertIntoCpuTable: Failed to insert into CPU Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -391,8 +391,8 @@ public class Database {
 
         if (sS.getTimestamp() ==  0 || sS.getCpuTemperature() == 0d)
         {
-            log.error("Empty sensorsStructure used to insert into Sensors table ");
-            throw new Exception("Empty sensorsStructure used to insert into Sensors table ");
+            log.error("insertIntoSensorsTable: Empty sensorsStructure used to insert into Sensors table ");
+            throw new Exception("insertIntoSensorsTable: Empty sensorsStructure used to insert into Sensors table ");
         }
 
         StringBuilder fans = new StringBuilder();
@@ -413,8 +413,8 @@ public class Database {
             insertIntoSensorsTableStatement.executeUpdate(sql);
             insertIntoSensorsTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to insert into Sensors Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("insertIntoSensorsTable: Failed to insert into Sensors Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("insertIntoSensorsTable: Failed to insert into Sensors Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -423,8 +423,8 @@ public class Database {
 
         if (mS.getTimestamp() ==  0 || mS.getUsedMemory() == 0d || mS.getTotalMemory() == 0d)
         {
-            log.error("Empty memoryStructure used to insert into Memory table ");
-            throw new Exception("Empty memoryStructure used to insert into Memory table ");
+            log.error("insertIntoMemoryTable: Empty memoryStructure used to insert into Memory table ");
+            throw new Exception("insertIntoMemoryTable: Empty memoryStructure used to insert into Memory table ");
         }
 
         try {
@@ -435,8 +435,8 @@ public class Database {
             insertIntoMemoryTableStatement.executeUpdate(sql);
             insertIntoMemoryTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to insert into Memory Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("insertIntoMemoryTable: Failed to insert into Memory Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("insertIntoMemoryTable: Failed to insert into Memory Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -446,8 +446,8 @@ public class Database {
         if (nS.getTimestamp() ==  0 || nS.getPacketsReceived() == 0 || nS.getPacketsSent() == 0 ||
                 nS.getSizeReceived().equals("") || nS.getSizeSent().equals(""))
         {
-            log.error("Empty networkStructure used to insert into Network table ");
-            throw new Exception("Empty networkStructure used to insert into Network table ");
+            log.error("insertIntoNetworkTable: Empty networkStructure used to insert into Network table ");
+            throw new Exception("insertIntoNetworkTable: Empty networkStructure used to insert into Network table ");
         }
 
         try {
@@ -458,8 +458,8 @@ public class Database {
             insertIntoNetworkTableStatement.executeUpdate(sql);
             insertIntoNetworkTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to insert into Network Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("insertIntoNetworkTable: Failed to insert into Network Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("insertIntoNetworkTable: Failed to insert into Network Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -468,19 +468,19 @@ public class Database {
 
         if (pS.getTimestamp() ==  0 || pS.getNoOfThreads() == 0 || pS.getNoOfProcesses() == 0)
         {
-            log.error("Empty processStructure used to insert into Process table ");
-            throw new Exception("Empty processStructure used to insert into Process table ");
+            log.error("insertIntoProcessTable: Empty processStructure used to insert into Process table ");
+            throw new Exception("insertIntoProcessTable: Empty processStructure used to insert into Process table ");
         }
 
         if (pS.getProcessesList() == null) {
-            log.error("Empty processStructure used to insert into Processes table: processesList Null ");
-            throw new Exception("Empty processStructure used to insert into Processes table: processesList Null ");
+            log.error("insertIntoProcessTable: Empty processStructure used to insert into Processes table: processesList Null ");
+            throw new Exception("insertIntoProcessTable: Empty processStructure used to insert into Processes table: processesList Null ");
         }
         HashMap<String, List<Double>> processesList = pS.getProcessesList();
         for (Map.Entry<String, List<Double>> pair: ((Map<String, List<Double>>) processesList).entrySet()) {
             if (pair.getKey().equals("") || pair.getValue().get(0) == 0d || pair.getValue().get(1) == 0) {
-                log.error("Empty processStructure used to insert into Processes table: Empty processesList ");
-                throw new Exception("Empty processStructure used to insert into Processes table: Empty processesList ");
+                log.error("insertIntoProcessTable: Empty processStructure used to insert into Processes table: Empty processesList ");
+                throw new Exception("insertIntoProcessTable: Empty processStructure used to insert into Processes table: Empty processesList ");
             }
         }
 
@@ -492,8 +492,8 @@ public class Database {
             insertIntoProcessTableStatement.executeUpdate(sql);
             insertIntoProcessTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to insert into Process Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("insertIntoProcessTable: Failed to insert into Process Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("insertIntoProcessTable: Failed to insert into Process Table " + e.getClass().getName() + ": " + e.getMessage());
         }
 
         for (Map.Entry<String, List<Double>> processInfo: pS.processesList.entrySet()) {
@@ -506,8 +506,8 @@ public class Database {
                 insertIntoProcessInfoTableStatement.executeUpdate(sql);
                 insertIntoProcessInfoTableStatement.close();
             } catch (Exception e) {
-                log.error("Failed to insert into ProcessInfo Table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception(e);
+                log.error("insertIntoProcessTable: Failed to insert into ProcessInfo Table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("insertIntoProcessTable: Failed to insert into ProcessInfo Table " + e.getClass().getName() + ": " + e.getMessage());
             }
         }
     }
@@ -522,8 +522,8 @@ public class Database {
             insertStartSessionIntoSessionTableStatement.executeUpdate(sql);
             insertStartSessionIntoSessionTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to insert Start Session Time into Session Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("insertStartSessionIntoSessionTable: Failed to insert Start Session Time into Session Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("insertStartSessionIntoSessionTable: Failed to insert Start Session Time into Session Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -542,8 +542,8 @@ public class Database {
             insertEndSessionIntoSessionTableStatement.executeUpdate();
             insertEndSessionIntoSessionTableStatement.close();
         } catch (Exception e) {
-            log.error("Failed to update the endSession time in Session Table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("insertEndSessionIntoSessionTable: Failed to update the endSession time in Session Table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("insertEndSessionIntoSessionTable: Failed to update the endSession time in Session Table " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -552,8 +552,8 @@ public class Database {
         try {
             connection.commit();
         } catch (Exception e) {
-            log.error("Failed to commit " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("commit: Failed to commit " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("commit: Failed to commit " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
@@ -564,8 +564,8 @@ public class Database {
         try {
             connection.close();
         } catch (Exception e) {
-            log.error("Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception(e);
+            log.error("closeDatabaseConnection: Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("closeDatabaseConnection: Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 }
