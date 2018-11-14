@@ -396,11 +396,14 @@ public class Database {
         }
 
         StringBuilder fans = new StringBuilder();
-        if (sS.getFans().length > 0) {
-            for (int i = 0; i < sS.getFans().length - 1; i++) {
-                fans.append(sS.fans[i]).append(",");
+        if(sS.getFans().size() > 0) {
+            int commas = sS.getFans().size() - 1;
+            for (int i = 0; i < sS.getFans().size(); i++) {
+                if (commas > 0) {
+                    fans.append(sS.fans.get(i)).append(",");
+                }
+                fans.append(sS.fans.get(i));
             }
-            fans.append(sS.fans[sS.getFans().length - 1]);
         }
 
         try {
@@ -409,7 +412,7 @@ public class Database {
                     "INSERT INTO SENSORS VALUES ("+sS.getTimestamp()+"," +sS.getCpuTemperature() +
                             (sS.getCpuVoltage()== 999.0 ? "" : ",") +
                             (sS.getCpuVoltage()==999.0 ? "" : (sS.getCpuVoltage())+",") +
-                            (fans.length() < 0 ? "" : ",") +
+                            (fans.length() <= 0 ? "" : ",") +
                             fans + ")";
             insertIntoSensorsTableStatement.executeUpdate(sql);
             insertIntoSensorsTableStatement.close();
