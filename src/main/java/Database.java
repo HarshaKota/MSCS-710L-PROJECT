@@ -145,7 +145,7 @@ public class Database {
                 powerTableStatement.executeUpdate(sql);
                 powerTableStatement.close();
             } catch (Exception e) {
-                log.error("Failed to create Power Table " + e.getClass().getName() + ": " + e.getMessage());
+                log.error("createPowerTable: Failed to create Power Table " + e.getClass().getName() + ": " + e.getMessage());
                 throw new Exception(e);
             }
         } else {
