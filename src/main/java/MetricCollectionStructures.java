@@ -118,7 +118,7 @@ class MetricCollectionStructures {
         long timestamp;
         double cpuTemperature = 999d;
         double cpuVoltage = 999d;
-        int[] fans = {};
+        int[] fans;
 
         long getTimestamp() {
             return timestamp;
