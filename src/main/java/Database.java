@@ -406,9 +406,7 @@ public class Database {
         try {
             Statement insertIntoSensorsTableStatement = connection.createStatement();
             String sql =
-                    "INSERT INTO SENSORS VALUES ("+sS.getTimestamp()+"," +
-                            (sS.getCpuTemperature()==999.0 ? "" : ",") +
-                            (sS.getCpuTemperature()==999.0 ? "" : (sS.getCpuTemperature())+",") +
+                    "INSERT INTO SENSORS VALUES ("+sS.getTimestamp()+"," +sS.getCpuTemperature() +
                             (sS.getCpuVoltage()== 999.0 ? "" : ",") +
                             (sS.getCpuVoltage()==999.0 ? "" : (sS.getCpuVoltage())+",") +
                             fans + ")";
