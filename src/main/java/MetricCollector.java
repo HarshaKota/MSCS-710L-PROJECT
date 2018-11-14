@@ -1,5 +1,6 @@
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import oshi.SystemInfo;
 import oshi.hardware.*;
 import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
@@ -26,16 +27,20 @@ public class MetricCollector {
     //      1 - charging
     //      0 - discharging
     // Returns powerStructure
-    MetricCollectionStructures.powerStructure getPower(final long metricCollectedTime, PowerSource[] powerSources) {
+    MetricCollectionStructures.powerStructure getPower(final long metricCollectedTime) {
 
         if (hasPowerTable()) {
             noOfCallsTogetPower++;
+
+            // OSHI library objects
+            SystemInfo si = new SystemInfo();
+            HardwareAbstractionLayer hal = si.getHardware();
 
             MetricCollectionStructures.powerStructure pS = new MetricCollectionStructures.powerStructure();
 
             pS.setTimestamp(metricCollectedTime);
 
-            double timeRemaining =  getTimeRemaining(powerSources);
+            double timeRemaining =  getTimeRemaining(hal.getPowerSources());
 
             // -1d indicates charging
             if (timeRemaining < -1d) {
@@ -45,7 +50,7 @@ public class MetricCollector {
                 pS.setPowerStatus(0);
             }
 
-            for (PowerSource pSource : powerSources) {
+            for (PowerSource pSource : hal.getPowerSources()) {
                 pS.setBatteryPercentage(Math.round((pSource.getRemainingCapacity() * 100d) * 10.0) / 10.0);
             }
 
@@ -61,10 +66,14 @@ public class MetricCollector {
     //
     //
     // Returns cpuStructure
-    MetricCollectionStructures.cpuStructure getCPU(final long metricCollectedTime, CentralProcessor processor) {
+    MetricCollectionStructures.cpuStructure getCPU(final long metricCollectedTime) {
         noOfCallsTogetCPU++;
 
-        long[] prevTicks = processor.getSystemCpuLoadTicks();
+        // OSHI library objects
+        SystemInfo si = new SystemInfo();
+        HardwareAbstractionLayer hal = si.getHardware();
+
+        long[] prevTicks = hal.getProcessor().getSystemCpuLoadTicks();
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -75,7 +84,7 @@ public class MetricCollector {
 //                e1.printStackTrace();
 //            }
         }
-        long[] ticks = processor.getSystemCpuLoadTicks();
+        long[] ticks = hal.getProcessor().getSystemCpuLoadTicks();
         long user = ticks[CentralProcessor.TickType.USER.getIndex()] - prevTicks[CentralProcessor.TickType.USER.getIndex()];
         long nice = ticks[CentralProcessor.TickType.NICE.getIndex()] - prevTicks[CentralProcessor.TickType.NICE.getIndex()];
         long sys = ticks[CentralProcessor.TickType.SYSTEM.getIndex()] - prevTicks[CentralProcessor.TickType.SYSTEM.getIndex()];
@@ -89,11 +98,11 @@ public class MetricCollector {
         MetricCollectionStructures.cpuStructure cS = new MetricCollectionStructures.cpuStructure();
 
         cS.setTimestamp(metricCollectedTime);
-        cS.setUptime(processor.getSystemUptime());
+        cS.setUptime(hal.getProcessor().getSystemUptime());
         cS.setUserLoad(Math.round((100d * user / totalCpu)*10.0)/10.0);
         cS.setSystemLoad(Math.round((100d * sys / totalCpu)*10.0)/10.0);
         cS.setIdleLoad(Math.round((100d * idle / totalCpu)*10.0)/10.0);
-        double[] load = processor.getProcessorCpuLoadBetweenTicks();
+        double[] load = hal.getProcessor().getProcessorCpuLoadBetweenTicks();
         ArrayList<Double> individualProcessorLoad = new ArrayList<>();
         for (double eachLoad : load) {
             individualProcessorLoad.add(Math.round((eachLoad * 100)*10.0)/10.0);
@@ -109,18 +118,22 @@ public class MetricCollector {
     //
     //
     // Returns sensorsStructure
-    MetricCollectionStructures.sensorsStructure getSensors(final long metricCollectedTime, HardwareAbstractionLayer hal, Sensors sensors) {
+    MetricCollectionStructures.sensorsStructure getSensors(final long metricCollectedTime) {
         noOfCallsTogetSensors++;
+
+        // OSHI library objects
+        SystemInfo si = new SystemInfo();
+        HardwareAbstractionLayer hal = si.getHardware();
 
         MetricCollectionStructures.sensorsStructure sS= new MetricCollectionStructures.sensorsStructure();
 
         sS.setTimestamp(metricCollectedTime);
-        sS.setCpuTemperature(sensors.getCpuTemperature());
+        sS.setCpuTemperature(hal.getSensors().getCpuTemperature());
         if (getCpuVoltage(hal) != 999.0) {
-            sS.setCpuVoltage(sensors.getCpuVoltage());
+            sS.setCpuVoltage(hal.getSensors().getCpuVoltage());
         }
         if (getFans(hal) > 0) {
-            sS.setFans(sensors.getFanSpeeds());
+            sS.setFans(hal.getSensors().getFanSpeeds());
         }
 
         System.out.println(String.format("%1$20s  %2$d", "getSensors calls:", noOfCallsTogetSensors)); //Sysout
@@ -132,15 +145,19 @@ public class MetricCollector {
     //
     //
     // Returns memoryStructure
-    MetricCollectionStructures.memoryStructure getMemory(final long metricCollectedTime, GlobalMemory memory) {
+    MetricCollectionStructures.memoryStructure getMemory(final long metricCollectedTime) {
         noOfCallsTogetMemory++;
+
+        // OSHI library objects
+        SystemInfo si = new SystemInfo();
+        HardwareAbstractionLayer hal = si.getHardware();
 
         MetricCollectionStructures.memoryStructure mS = new MetricCollectionStructures.memoryStructure();
 
         final long GIBI = 1L << 30;
         mS.setTimestamp(metricCollectedTime);
-        double availableMemory = Math.round((((double)memory.getAvailable()/GIBI)*10.0))/10.0;
-        double totalMemory = Math.round((((double)memory.getTotal()/GIBI)*10.0))/10.0;
+        double availableMemory = Math.round((((double)hal.getMemory().getAvailable()/GIBI)*10.0))/10.0;
+        double totalMemory = Math.round((((double)hal.getMemory().getTotal()/GIBI)*10.0))/10.0;
         double usedMemory = totalMemory - availableMemory;
         mS.setUsedMemory(usedMemory);
         mS.setTotalMemory(totalMemory);
@@ -154,8 +171,12 @@ public class MetricCollector {
     //
     //
     // Returns networkStructure
-    MetricCollectionStructures.networkStructure getNetwork(final long metricCollectedTime, NetworkIF[] networkIFS) {
+    MetricCollectionStructures.networkStructure getNetwork(final long metricCollectedTime) {
         noOfCallsTogetNetwork++;
+
+        // OSHI library objects
+        SystemInfo si = new SystemInfo();
+        HardwareAbstractionLayer hal = si.getHardware();
 
         MetricCollectionStructures.networkStructure nS = new MetricCollectionStructures.networkStructure();
 
@@ -163,7 +184,7 @@ public class MetricCollector {
         long packetsSent = 0;
         String sizeReceived = "";
         String sizeSent = "";
-        for (NetworkIF net: networkIFS) {
+        for (NetworkIF net: hal.getNetworkIFs()) {
             boolean hasData = net.getBytesRecv() > 0 || net.getBytesSent() > 0 || net.getPacketsRecv() > 0
                     || net.getPacketsSent() > 0;
             if(hasData) {
@@ -192,8 +213,13 @@ public class MetricCollector {
     //
     //
     // Returns processStructure
-    MetricCollectionStructures.processStructure getProcess(final long metricCollectedTime, OperatingSystem os, GlobalMemory memory) {
+    MetricCollectionStructures.processStructure getProcess(final long metricCollectedTime) {
         noOfCallsTogetProcesses++;
+
+        // OSHI library objects
+        SystemInfo si = new SystemInfo();
+        HardwareAbstractionLayer hal = si.getHardware();
+        OperatingSystem os = si.getOperatingSystem();
 
         MetricCollectionStructures.processStructure pS = new MetricCollectionStructures.processStructure();
 
@@ -213,7 +239,7 @@ public class MetricCollector {
             if (isPresent == null) {
                 List<Double> cpuAndMemValues = new ArrayList<>();
                 cpuAndMemValues.add(Math.round((100d * (p.getKernelTime() + p.getUserTime()) / p.getUpTime())*10.0)/10.0);
-                cpuAndMemValues.add(Math.round((100d * p.getResidentSetSize() / memory.getTotal())*10.0)/10.0);
+                cpuAndMemValues.add(Math.round((100d * p.getResidentSetSize() / hal.getMemory().getTotal())*10.0)/10.0);
                 processesMap.put(p.getName(), cpuAndMemValues);
             } else {
                 // In the list
@@ -222,7 +248,7 @@ public class MetricCollector {
 
                 // Present rounded values
                 double presentVal1 = Math.round((100d * (p.getKernelTime() + p.getUserTime()) / p.getUpTime())*10.0)/10.0;
-                double presentVal2 = Math.round((100d * p.getResidentSetSize() / memory.getTotal())*10.0)/10.0;
+                double presentVal2 = Math.round((100d * p.getResidentSetSize() / hal.getMemory().getTotal())*10.0)/10.0;
 
                 // Getting the computed rounded values
                 double newCpuValue = Math.round(((previousVal1+presentVal1)/2)*10.0)/10.0;

@@ -13,9 +13,6 @@ public class Main {
 
     static AtomicBoolean applicationOpen = new AtomicBoolean(true);
 
-    private final static SystemInfo si = new SystemInfo();
-    private final static HardwareAbstractionLayer hal = si.getHardware();
-    private final static OperatingSystem os = si.getOperatingSystem();
     static  String databaseUrl = "jdbc:sqlite:MetricCollector.db";
 
     static boolean hasPowerSource = false;
@@ -47,42 +44,42 @@ public class Main {
             Callable<MetricCollectionStructures.powerStructure> power = new Callable<MetricCollectionStructures.powerStructure>() {
                 @Override
                 public MetricCollectionStructures.powerStructure call() {
-                    return metricCollector.getPower(metricCollectedTime, hal.getPowerSources());
+                    return metricCollector.getPower(metricCollectedTime);
                 }
             };
 
             Callable<MetricCollectionStructures.cpuStructure> cpu = new Callable<MetricCollectionStructures.cpuStructure>() {
                 @Override
                 public MetricCollectionStructures.cpuStructure call() {
-                    return metricCollector.getCPU(metricCollectedTime, hal.getProcessor());
+                    return metricCollector.getCPU(metricCollectedTime);
                 }
             };
 
             Callable<MetricCollectionStructures.sensorsStructure> sensors = new Callable<MetricCollectionStructures.sensorsStructure>() {
                 @Override
                 public MetricCollectionStructures.sensorsStructure call() {
-                    return metricCollector.getSensors(metricCollectedTime, hal, hal.getSensors());
+                    return metricCollector.getSensors(metricCollectedTime);
                 }
             };
 
             Callable<MetricCollectionStructures.memoryStructure> memory = new Callable<MetricCollectionStructures.memoryStructure>() {
                 @Override
                 public MetricCollectionStructures.memoryStructure call() {
-                    return metricCollector.getMemory(metricCollectedTime, hal.getMemory());
+                    return metricCollector.getMemory(metricCollectedTime);
                 }
             };
 
             Callable<MetricCollectionStructures.networkStructure> network = new Callable<MetricCollectionStructures.networkStructure>() {
                 @Override
                 public MetricCollectionStructures.networkStructure call() {
-                    return metricCollector.getNetwork(metricCollectedTime, hal.getNetworkIFs());
+                    return metricCollector.getNetwork(metricCollectedTime);
                 }
             };
 
             Callable<MetricCollectionStructures.processStructure> processes = new Callable<MetricCollectionStructures.processStructure>() {
                 @Override
                 public MetricCollectionStructures.processStructure call() {
-                    return metricCollector.getProcess(metricCollectedTime, os, hal.getMemory());
+                    return metricCollector.getProcess(metricCollectedTime);
                 }
             };
 
