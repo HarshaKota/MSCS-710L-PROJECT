@@ -132,9 +132,14 @@ public class MetricCollector {
         if (getCpuVoltage(hal) != 999.0) {
             sS.setCpuVoltage(hal.getSensors().getCpuVoltage());
         }
+
+        ArrayList<Integer> fans = new ArrayList<>();
         if (getFans(hal) > 0) {
-            sS.setFans(hal.getSensors().getFanSpeeds());
+            for (int fan: hal.getSensors().getFanSpeeds()) {
+                fans.add(fan);
+            }
         }
+        sS.setFans(fans);
 
         System.out.println(String.format("%1$20s  %2$d", "getSensors calls:", noOfCallsTogetSensors)); //Sysout
 
