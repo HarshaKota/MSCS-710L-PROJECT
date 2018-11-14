@@ -32,16 +32,17 @@ public class DatabaseTest {
         dbObj.checkSessionTable();
     }
 
+    //
     @Test
     public void checkSessionTable_NotNull() {
-        final Database testDatabase = Mockito.spy(new Database());
         try {
-            testDatabase.establishDatabaseConnection("org.sqlite.JDBC", "jdbc:sqlite:MetricCollector.db");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
+            final Database testDatabase = Mockito.spy(new Database("jdbc:sqlite:MetricCollector.db"));
+//            testDatabase.establishDatabaseConnection("org.sqlite.JDBC", "jdbc:sqlite:MetricCollector.db");
+//            testDatabase.createSessionTable();
+            testDatabase.insertStartSessionIntoSessionTable(4);
+            testDatabase.insertEndSessionIntoSessionTable(4,5);
             testDatabase.checkSessionTable();
+            testDatabase.closeDatabaseConnection();
         } catch (Exception e) {
             e.printStackTrace();
         }
