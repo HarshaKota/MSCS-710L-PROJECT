@@ -17,19 +17,22 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.*;
+
 public class UI extends Application implements Runnable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
+    private Connection connection = null;
+
 
     // Setting up the UI Window
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws Exception {
         Main.applicationOpen.set(true);
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
 
-
-
+        // Create the database
         stage.setTitle("MetricsCollector Home");
 
         Label descriptionLabel = new Label("Select one of the following metrics from the drop-down box and click the Submit button:");
@@ -51,7 +54,7 @@ public class UI extends Application implements Runnable {
                     if (dropdown.getValue().equals("Power")) {
                         createPowerWindow(powerStage);
                     }
-                } catch (NullPointerException e){
+                } catch (Exception e){
                     log.warn("No Metric selected");
                 }
             }
@@ -102,11 +105,25 @@ public class UI extends Application implements Runnable {
         super.stop();
     }
 
-    public void createPowerWindow(Stage stage){
+    public void createPowerWindow(Stage stage) throws Exception {
+        String databaseUrl = "jdbc:sqlite:MetricCollector.db";
+        String databaseClassName = "org.sqlite.JDBC";
+        Database database = new Database();
+        database.establishDatabaseConnection(databaseClassName, databaseUrl);
+        long currentTimeStamp = System.currentTimeMillis();
+        String powerQuery = "SELECT * FROM POWER WHERE (TIMESTAMP <= " + currentTimeStamp + ") AND (TIMESTAMP >= " + (currentTimeStamp - 6000) + ")";
+        System.out.println(powerQuery);
+        Statement powerTableStatement = connection.createStatement();
+        ResultSet powerValues = powerTableStatement.executeQuery(powerQuery);
+        while(powerValues.next()){
+            System.out.println(powerValues.getLong("TIMESTAMP"));
+        }
+        powerTableStatement.close();
+
+
         Label javaFXInfo = new Label("Hello, JavaFX " + ", running on Java " + ".\n" +
                 "This is the value of the Application Status " + Main.applicationOpen);
         Pane javaFXInfoPane = new Pane(javaFXInfo);
-//        rootPane.getChildren().addAll(javaFXInfoPane);
         Scene homeMenuScene = new Scene(javaFXInfoPane, 800, 600);
 
         stage.setScene(homeMenuScene);
