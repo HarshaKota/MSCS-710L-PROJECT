@@ -27,14 +27,10 @@ public class MetricCollector {
     //      1 - charging
     //      0 - discharging
     // Returns powerStructure
-    MetricCollectionStructures.powerStructure getPower(final long metricCollectedTime) {
+    MetricCollectionStructures.powerStructure getPower(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
 
         if (hasPowerTable()) {
             noOfCallsTogetPower++;
-
-            // OSHI library objects
-            SystemInfo si = new SystemInfo();
-            HardwareAbstractionLayer hal = si.getHardware();
 
             MetricCollectionStructures.powerStructure pS = new MetricCollectionStructures.powerStructure();
 
@@ -66,12 +62,8 @@ public class MetricCollector {
     //
     //
     // Returns cpuStructure
-    MetricCollectionStructures.cpuStructure getCPU(final long metricCollectedTime) {
+    MetricCollectionStructures.cpuStructure getCPU(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsTogetCPU++;
-
-        // OSHI library objects
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
 
         long[] prevTicks = hal.getProcessor().getSystemCpuLoadTicks();
         try {
@@ -118,14 +110,10 @@ public class MetricCollector {
     //
     //
     // Returns sensorsStructure
-    MetricCollectionStructures.sensorsStructure getSensors(final long metricCollectedTime) {
+    MetricCollectionStructures.sensorsStructure getSensors(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsTogetSensors++;
 
-        // OSHI library objects
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
-
-        MetricCollectionStructures.sensorsStructure sS= new MetricCollectionStructures.sensorsStructure();
+        MetricCollectionStructures.sensorsStructure sS = new MetricCollectionStructures.sensorsStructure();
 
         sS.setTimestamp(metricCollectedTime);
         sS.setCpuTemperature(hal.getSensors().getCpuTemperature());
@@ -134,12 +122,15 @@ public class MetricCollector {
         }
 
         ArrayList<Integer> fans = new ArrayList<>();
-        if (getFans(hal) > 0) {
+        int fansLength = getFans(hal);
+        if (fansLength > 0) {
             for (int fan: hal.getSensors().getFanSpeeds()) {
                 fans.add(fan);
             }
         }
         sS.setFans(fans);
+
+        System.out.println(fansLength);
 
         System.out.println(String.format("%1$20s  %2$d", "getSensors calls:", noOfCallsTogetSensors)); //Sysout
 
@@ -150,12 +141,8 @@ public class MetricCollector {
     //
     //
     // Returns memoryStructure
-    MetricCollectionStructures.memoryStructure getMemory(final long metricCollectedTime) {
+    MetricCollectionStructures.memoryStructure getMemory(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsTogetMemory++;
-
-        // OSHI library objects
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
 
         MetricCollectionStructures.memoryStructure mS = new MetricCollectionStructures.memoryStructure();
 
@@ -176,12 +163,8 @@ public class MetricCollector {
     //
     //
     // Returns networkStructure
-    MetricCollectionStructures.networkStructure getNetwork(final long metricCollectedTime) {
+    MetricCollectionStructures.networkStructure getNetwork(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsTogetNetwork++;
-
-        // OSHI library objects
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
 
         MetricCollectionStructures.networkStructure nS = new MetricCollectionStructures.networkStructure();
 
@@ -218,13 +201,8 @@ public class MetricCollector {
     //
     //
     // Returns processStructure
-    MetricCollectionStructures.processStructure getProcess(final long metricCollectedTime) {
+    MetricCollectionStructures.processStructure getProcess(final long metricCollectedTime, final HardwareAbstractionLayer hal, final OperatingSystem os) {
         noOfCallsTogetProcesses++;
-
-        // OSHI library objects
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
-        OperatingSystem os = si.getOperatingSystem();
 
         MetricCollectionStructures.processStructure pS = new MetricCollectionStructures.processStructure();
 
@@ -267,6 +245,8 @@ public class MetricCollector {
 
         pS.setProcessesList(processesMap);
 
+        System.out.println(pS.processesList.size());
+
         System.out.println(String.format("%1$20s  %2$d", "getProcess calls:", noOfCallsTogetProcesses)); //Sysout
 
         return pS;
@@ -304,7 +284,7 @@ public class MetricCollector {
     //
     //
     // Returns a Boolean representing if the Power table has been created or not.
-    double getFans(HardwareAbstractionLayer hal) {
+    int getFans(HardwareAbstractionLayer hal) {
         return TableCreationChecks.getFans(hal.getSensors());
     }
 
