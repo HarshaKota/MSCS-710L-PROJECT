@@ -25,11 +25,18 @@ public class UI extends Application implements Runnable {
         Label descriptionLabel = new Label("Select one of the following metrics and click the Submit button");
         String availableMetrics[] = {"Power"};
         ComboBox dropdown = new ComboBox(FXCollections.observableArrayList(availableMetrics));
+        dropdown.resize(600, 25);
         StackPane rootPane = new StackPane();
+        dropdown.setTranslateX(0);
+
         Pane dropDownPane = new Pane(dropdown);
         Pane labelPane = new Pane(descriptionLabel);
-        rootPane.getChildren().addAll(dropDownPane);
-//        TilePane pane = new TilePane(dropdown);
+        labelPane.setTranslateX(50);
+        labelPane.setTranslateY(250);
+        dropDownPane.setTranslateY(300);
+        dropDownPane.setTranslateX(50);
+
+        rootPane.getChildren().addAll(labelPane, dropDownPane);
         Scene homeMenuScene = new Scene(rootPane, 800, 600);
 
         String javaVersion = System.getProperty("java.version");
