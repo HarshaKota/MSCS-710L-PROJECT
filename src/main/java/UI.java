@@ -1,10 +1,13 @@
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -25,6 +28,14 @@ public class UI extends Application implements Runnable {
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
 
+        EventHandler<MouseEvent> clickSubmitEvent = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Stage stage = new Stage();
+                createPowerWindow(stage);
+            }
+        };
+
         stage.setTitle("MetricsCollector Home");
 
         Label descriptionLabel = new Label("Select one of the following metrics from the drop-down box and click the Submit button:");
@@ -37,6 +48,7 @@ public class UI extends Application implements Runnable {
 
         Button button = new Button("Submit");
         button.resize(500, 50);
+        button.setOnMouseClicked(clickSubmitEvent);
 
         dropdown.resize(600, 25);
 
@@ -52,6 +64,7 @@ public class UI extends Application implements Runnable {
         dropDownPane.setTranslateY(300);
         dropDownPane.setTranslateX(50);
         dropDownPane.setClip(outputClip);
+
         Pane labelPane = new Pane(descriptionLabel);
         labelPane.setTranslateX(50);
         labelPane.setTranslateY(250);
@@ -79,5 +92,16 @@ public class UI extends Application implements Runnable {
         Main.applicationOpen.set(false);
         System.out.println("UI Closing. Open?:  " + Main.applicationOpen); //Sysout
         super.stop();
+    }
+
+    public void createPowerWindow(Stage stage){
+        Label javaFXInfo = new Label("Hello, JavaFX " + ", running on Java " + ".\n" +
+                "This is the value of the Application Status " + Main.applicationOpen);
+        Pane javaFXInfoPane = new Pane(javaFXInfo);
+//        rootPane.getChildren().addAll(javaFXInfoPane);
+        Scene homeMenuScene = new Scene(javaFXInfoPane, 800, 600);
+
+        stage.setScene(homeMenuScene);
+        stage.show();
     }
 }
