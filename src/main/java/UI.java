@@ -28,13 +28,7 @@ public class UI extends Application implements Runnable {
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
 
-        EventHandler<MouseEvent> clickSubmitEvent = new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                Stage stage = new Stage();
-                createPowerWindow(stage);
-            }
-        };
+
 
         stage.setTitle("MetricsCollector Home");
 
@@ -44,10 +38,24 @@ public class UI extends Application implements Runnable {
 
         String availableMetrics[] = {"Power"};
 
-        ComboBox dropdown = new ComboBox(FXCollections.observableArrayList(availableMetrics));
+        final ComboBox dropdown = new ComboBox(FXCollections.observableArrayList(availableMetrics));
 
         Button button = new Button("Submit");
         button.resize(500, 50);
+
+        EventHandler<MouseEvent> clickSubmitEvent = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                try {
+                    Stage powerStage = new Stage();
+                    if (dropdown.getValue().equals("Power")) {
+                        createPowerWindow(powerStage);
+                    }
+                } catch (NullPointerException e){
+                    log.warn("No Metric selected");
+                }
+            }
+        };
         button.setOnMouseClicked(clickSubmitEvent);
 
         dropdown.resize(600, 25);
