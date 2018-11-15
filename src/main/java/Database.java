@@ -482,7 +482,7 @@ public class Database {
         }
         HashMap<String, List<Double>> processesList = pS.getProcessesList();
         for (Map.Entry<String, List<Double>> pair: ((Map<String, List<Double>>) processesList).entrySet()) {
-            if (pair.getKey().equals("") || pair.getValue().get(0) == 0d || pair.getValue().get(1) == 0) {
+            if (pair.getKey().equals("") || pair.getValue().get(0) == null || pair.getValue().get(1) == null) {
                 log.error("insertIntoProcessTable: Empty processStructure used to insert into Processes table: Empty processesList ");
                 throw new Exception("insertIntoProcessTable: Empty processStructure used to insert into Processes table: Empty processesList ");
             }
