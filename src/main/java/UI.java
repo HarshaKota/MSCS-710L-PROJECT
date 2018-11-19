@@ -4,14 +4,14 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -22,12 +22,12 @@ import java.sql.*;
 public class UI extends Application implements Runnable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
-    private Connection connection = null;
-
+    private Connection mainConnection = null;
 
     // Setting up the UI Window
     @Override
     public void start(Stage stage) throws Exception {
+        setConnection();
         Main.applicationOpen.set(true);
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
@@ -50,15 +50,16 @@ public class UI extends Application implements Runnable {
             @Override
             public void handle(MouseEvent event) {
                 try {
-                    Stage powerStage = new Stage();
                     if (dropdown.getValue().equals("Power")) {
-                        createPowerWindow(powerStage);
+                        Stage powerStage = new Stage();
+                        updatePowerTableWindow(mainConnection, powerStage);
                     }
                 } catch (Exception e){
                     log.warn("No Metric selected");
                 }
             }
         };
+
         button.setOnMouseClicked(clickSubmitEvent);
 
         dropdown.resize(600, 25);
@@ -89,12 +90,17 @@ public class UI extends Application implements Runnable {
 
         stage.setScene(homeMenuScene);
         stage.show();
+        System.out.println();
+        System.out.println("start");
+
     }
 
     // Launching the UI Window
     @Override
     public void run() {
         launch();
+        System.out.println("Run");
+//        updatePowerTableWindow(mainConnection, );
     }
 
     // Gracefully closing the application
@@ -103,30 +109,61 @@ public class UI extends Application implements Runnable {
         Main.applicationOpen.set(false);
         System.out.println("UI Closing. Open?:  " + Main.applicationOpen); //Sysout
         super.stop();
+        System.out.println("stop");
+
     }
 
-    public void createPowerWindow(Stage stage) throws Exception {
-        String databaseUrl = "jdbc:sqlite:MetricCollector.db";
-        String databaseClassName = "org.sqlite.JDBC";
-        Database database = new Database();
-        database.establishDatabaseConnection(databaseClassName, databaseUrl);
+    void updatePowerTableWindow(Connection connection, Stage powerStage) throws SQLException {
         long currentTimeStamp = System.currentTimeMillis();
         String powerQuery = "SELECT * FROM POWER WHERE (TIMESTAMP <= " + currentTimeStamp + ") AND (TIMESTAMP >= " + (currentTimeStamp - 6000) + ")";
         System.out.println(powerQuery);
         Statement powerTableStatement = connection.createStatement();
         ResultSet powerValues = powerTableStatement.executeQuery(powerQuery);
+
+        NumberAxis xAxis = new NumberAxis("X-Axis", 0d, 60d, 5);
+        xAxis.setLabel("Time in Seconds");
+
+        NumberAxis yAxis = new NumberAxis("Y-Axis", 0d, 100d, 5);
+
+        yAxis.setLabel("Battery Percentage");
+
+        LineChart lineChart = new LineChart(xAxis, yAxis);
+
+        XYChart.Series dataSeries1 = new XYChart.Series();
+        dataSeries1.setName("Recent datapoints");
+
         while(powerValues.next()){
-            System.out.println(powerValues.getLong("TIMESTAMP"));
+            long timeStamp = powerValues.getLong("TIMESTAMP");
+            timeStamp = (System.currentTimeMillis() - timeStamp)/100;
+            System.out.println(timeStamp);
+            double batteryPercentage = powerValues.getDouble("BATTERYPERCENTAGE");
+            System.out.println(batteryPercentage);
+            dataSeries1.getData().add(new XYChart.Data( timeStamp, batteryPercentage));
         }
-        powerTableStatement.close();
 
+        lineChart.getData().add(dataSeries1);
+        lineChart.setPrefSize(800, 600);
+        VBox vbox = new VBox(lineChart);
 
-        Label javaFXInfo = new Label("Hello, JavaFX " + ", running on Java " + ".\n" +
-                "This is the value of the Application Status " + Main.applicationOpen);
-        Pane javaFXInfoPane = new Pane(javaFXInfo);
+        Pane javaFXInfoPane = new Pane(vbox);
         Scene homeMenuScene = new Scene(javaFXInfoPane, 800, 600);
 
-        stage.setScene(homeMenuScene);
-        stage.show();
+        powerStage.setScene(homeMenuScene);
+        powerStage.show();
+        powerTableStatement.close();
+
+    }
+
+    void setConnection() throws Exception {
+        try {
+            String databaseClassName = "org.sqlite.JDBC";
+            Class.forName(databaseClassName);
+            mainConnection = DriverManager.getConnection(Main.databaseUrl);
+            mainConnection.setAutoCommit(true);
+        } catch (NullPointerException | SQLException | ClassNotFoundException e) {
+            log.error("establishDatabaseConnection: Failed to connect to the database " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("establishDatabaseConnection: Failed to connect to the database " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
     }
 }
