@@ -1,5 +1,7 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -23,6 +25,8 @@ public class UI extends Application implements Runnable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
     private Connection mainConnection = null;
+    private Stage powerStage = null;
+    private XYChart.Series powerSeries = new XYChart.Series();
 
     // Setting up the UI Window
     @Override
@@ -31,6 +35,38 @@ public class UI extends Application implements Runnable {
         Main.applicationOpen.set(true);
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
+        final Scene powerScene = createPowerTableWindow();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Runnable updater = new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            updatePowerTableWindow(mainConnection, powerScene);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+
+                while (true) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                    }
+
+                    // UI update is run on the Application thread
+                    Platform.runLater(updater);
+                }
+            }
+
+
+        });
+
+        thread.setDaemon(true);
+        thread.start();
 
         // Create the database
         stage.setTitle("MetricsCollector Home");
@@ -51,8 +87,7 @@ public class UI extends Application implements Runnable {
             public void handle(MouseEvent event) {
                 try {
                     if (dropdown.getValue().equals("Power")) {
-                        Stage powerStage = new Stage();
-                        updatePowerTableWindow(mainConnection, powerStage);
+                        updatePowerTableWindow(mainConnection, powerScene);
                     }
                 } catch (Exception e){
                     log.warn("No Metric selected");
@@ -100,55 +135,59 @@ public class UI extends Application implements Runnable {
     public void run() {
         launch();
         System.out.println("Run");
-//        updatePowerTableWindow(mainConnection, );
+
     }
 
     // Gracefully closing the application
     @Override
     public void stop() throws Exception {
         Main.applicationOpen.set(false);
+
         System.out.println("UI Closing. Open?:  " + Main.applicationOpen); //Sysout
         super.stop();
         System.out.println("stop");
 
     }
 
-    void updatePowerTableWindow(Connection connection, Stage powerStage) throws SQLException {
-        long currentTimeStamp = System.currentTimeMillis();
-        String powerQuery = "SELECT * FROM POWER WHERE (TIMESTAMP <= " + currentTimeStamp + ") AND (TIMESTAMP >= " + (currentTimeStamp - 6000) + ")";
-        System.out.println(powerQuery);
-        Statement powerTableStatement = connection.createStatement();
-        ResultSet powerValues = powerTableStatement.executeQuery(powerQuery);
-
-        NumberAxis xAxis = new NumberAxis("X-Axis", 0d, 60d, 5);
+    Scene createPowerTableWindow(){
+        NumberAxis xAxis = new NumberAxis("X-Axis", 0d, 120d, 5);
         xAxis.setLabel("Time in Seconds");
 
         NumberAxis yAxis = new NumberAxis("Y-Axis", 0d, 100d, 5);
-
         yAxis.setLabel("Battery Percentage");
 
         LineChart lineChart = new LineChart(xAxis, yAxis);
+        powerSeries.setName("Recent datapoints");
 
-        XYChart.Series dataSeries1 = new XYChart.Series();
-        dataSeries1.setName("Recent datapoints");
+        lineChart.getData().add(powerSeries);
+        lineChart.setPrefSize(800, 600);
+        VBox vbox = new VBox(lineChart);
 
+        Pane lineChartPane = new Pane(vbox);
+        Scene powerScene = new Scene(lineChartPane, 800, 600);
+        powerStage = new Stage();
+
+
+        return powerScene;
+    }
+
+    void updatePowerTableWindow(Connection connection, Scene powerScene) throws SQLException {
+        long currentTimeStamp = System.currentTimeMillis();
+        String powerQuery = "SELECT * FROM POWER WHERE (TIMESTAMP <= " + currentTimeStamp + ") AND (TIMESTAMP >= " + (currentTimeStamp - 12000) + ")";
+        System.out.println(powerQuery);
+        Statement powerTableStatement = connection.createStatement();
+        ResultSet powerValues = powerTableStatement.executeQuery(powerQuery);
+        powerSeries.getData().clear();
         while(powerValues.next()){
             long timeStamp = powerValues.getLong("TIMESTAMP");
             timeStamp = (System.currentTimeMillis() - timeStamp)/100;
             System.out.println(timeStamp);
             double batteryPercentage = powerValues.getDouble("BATTERYPERCENTAGE");
             System.out.println(batteryPercentage);
-            dataSeries1.getData().add(new XYChart.Data( timeStamp, batteryPercentage));
+            powerSeries.getData().add(new XYChart.Data( timeStamp, batteryPercentage));
         }
 
-        lineChart.getData().add(dataSeries1);
-        lineChart.setPrefSize(800, 600);
-        VBox vbox = new VBox(lineChart);
-
-        Pane javaFXInfoPane = new Pane(vbox);
-        Scene homeMenuScene = new Scene(javaFXInfoPane, 800, 600);
-
-        powerStage.setScene(homeMenuScene);
+        powerStage.setScene(powerScene);
         powerStage.show();
         powerTableStatement.close();
 
