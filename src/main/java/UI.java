@@ -1,10 +1,8 @@
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -188,6 +186,11 @@ public class UI extends Application implements Runnable {
             double batteryPercentage = powerValues.getDouble("BATTERYPERCENTAGE");
             System.out.println(batteryPercentage);
             powerSeries.getData().add(new XYChart.Data( timeStamp, batteryPercentage));
+            final XYChart.Data<Long, Double> data = new XYChart.Data<>(timeStamp, batteryPercentage);
+            data.setNode(
+                    new HoveredThresholdNode((long)batteryPercentage)
+            );
+            powerSeries.getData().add(data);
         }
 
         powerStage.setScene(powerScene);
@@ -196,7 +199,7 @@ public class UI extends Application implements Runnable {
 
     }
 
-    void setConnection() throws Exception {
+    private void setConnection() throws Exception {
         try {
             String databaseClassName = "org.sqlite.JDBC";
             Class.forName(databaseClassName);
@@ -208,4 +211,36 @@ public class UI extends Application implements Runnable {
         }
 
     }
+    /** a node which displays a value on hover, but is otherwise empty */
+    class HoveredThresholdNode extends StackPane {
+        HoveredThresholdNode(long value) {
+            setPrefSize(15, 15);
+
+            final Label label = createDataThresholdLabel(value);
+
+            setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    getChildren().setAll(label);
+                    setCursor(Cursor.NONE);
+                    toFront();
+                }
+            });
+            setOnMouseExited(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    getChildren().clear();
+                    setCursor(Cursor.CROSSHAIR);
+                }
+            });
+        }
+
+        private Label createDataThresholdLabel(long value) {
+            final Label label = new Label(value + "");
+            label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
+            label.setStyle("-fx-font-size: 20; -fx-font-weight: bold;");
+
+            label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
+            return label;
+        }
+    }
+
 }
