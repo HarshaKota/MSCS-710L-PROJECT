@@ -21,6 +21,7 @@ import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.PowerSource;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class UI extends Application implements Runnable {
     SystemInfo si = new SystemInfo();
@@ -47,8 +48,10 @@ public class UI extends Application implements Runnable {
         Label descriptionLabel = new Label("Select one of the following metrics from the drop-down box and click the Submit button:");
         Label javaFXInfo = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".\n" +
                 "This is the value of the Application Status " + Main.applicationOpen);
-
-        String availableMetrics[] = {"Power"};
+        ArrayList<String> availableMetrics = new ArrayList<>();
+        if(TableCreationChecks.checkPowerSource(hal.getPowerSources())){
+            availableMetrics.add("Power");
+        }
 
         final ComboBox dropdown = new ComboBox(FXCollections.observableArrayList(availableMetrics));
 
@@ -205,6 +208,7 @@ public class UI extends Application implements Runnable {
         data.setNode(
                 new HoveredThresholdNode(currentBatteryPercentage)
         );
+
         powerStage.setScene(powerScene);
         powerStage.show();
         powerTableStatement.close();
