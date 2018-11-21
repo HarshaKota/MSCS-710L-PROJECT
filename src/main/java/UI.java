@@ -36,37 +36,7 @@ public class UI extends Application implements Runnable {
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
         final Scene powerScene = createPowerTableWindow();
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Runnable updater = new Runnable() {
 
-                    @Override
-                    public void run() {
-                        try {
-                            updatePowerTableWindow(mainConnection, powerScene);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-
-                while (true) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
-                    }
-
-                    // UI update is run on the Application thread
-                    Platform.runLater(updater);
-                }
-            }
-
-
-        });
-
-        thread.setDaemon(true);
-        thread.start();
 
         // Create the database
         stage.setTitle("MetricsCollector Home");
@@ -95,6 +65,39 @@ public class UI extends Application implements Runnable {
             }
         };
 
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Runnable updater = new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            if (powerStage.isShowing()) {
+                                updatePowerTableWindow(mainConnection, powerScene);
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+
+                while (true) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                    }
+
+                    // UI update is run on the Application thread
+                    Platform.runLater(updater);
+                }
+            }
+
+
+        });
+
+        thread.setDaemon(true);
+        thread.start();
         button.setOnMouseClicked(clickSubmitEvent);
 
         dropdown.resize(600, 25);
