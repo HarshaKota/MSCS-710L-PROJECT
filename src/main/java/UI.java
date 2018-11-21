@@ -16,10 +16,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import oshi.SystemInfo;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.PowerSource;
 
 import java.sql.*;
 
 public class UI extends Application implements Runnable {
+    SystemInfo si = new SystemInfo();
+    HardwareAbstractionLayer hal = si.getHardware();
 
     private static final Logger log = LogManager.getLogger(UI.class);
     private Connection mainConnection = null;
@@ -158,10 +163,11 @@ public class UI extends Application implements Runnable {
         yAxis.setLabel("Battery Percentage");
 
         LineChart lineChart = new LineChart(xAxis, yAxis);
-        powerSeries.setName("Recent datapoints");
-
+        powerSeries.setName("Recent Data points");
         lineChart.getData().add(powerSeries);
-        lineChart.setPrefSize(800, 600);
+        lineChart.setPrefSize(800, 400);
+        lineChart.setCursor(Cursor.CROSSHAIR);
+
         VBox vbox = new VBox(lineChart);
 
         Pane lineChartPane = new Pane(vbox);
@@ -174,7 +180,7 @@ public class UI extends Application implements Runnable {
 
     void updatePowerTableWindow(Connection connection, Scene powerScene) throws SQLException {
         long currentTimeStamp = System.currentTimeMillis();
-        String powerQuery = "SELECT * FROM POWER WHERE (TIMESTAMP <= " + currentTimeStamp + ") AND (TIMESTAMP >= " + (currentTimeStamp - 12000) + ")";
+        String powerQuery = "SELECT * FROM POWER WHERE (TIMESTAMP <= " + currentTimeStamp + ") AND (TIMESTAMP >= " + (currentTimeStamp - 13000) + ")";
         System.out.println(powerQuery);
         Statement powerTableStatement = connection.createStatement();
         ResultSet powerValues = powerTableStatement.executeQuery(powerQuery);
@@ -188,11 +194,17 @@ public class UI extends Application implements Runnable {
             powerSeries.getData().add(new XYChart.Data( timeStamp, batteryPercentage));
             final XYChart.Data<Long, Double> data = new XYChart.Data<>(timeStamp, batteryPercentage);
             data.setNode(
-                    new HoveredThresholdNode((long)batteryPercentage)
+                    new HoveredThresholdNode(batteryPercentage)
             );
             powerSeries.getData().add(data);
         }
-
+        PowerSource[] ps= hal.getPowerSources();
+        double currentBatteryPercentage = ps[0].getRemainingCapacity() * 100d;
+        powerSeries.getData().add(new XYChart.Data(0,currentBatteryPercentage));
+        final XYChart.Data<Long, Double> data = new XYChart.Data<>((long)0.0, currentBatteryPercentage);
+        data.setNode(
+                new HoveredThresholdNode(currentBatteryPercentage)
+        );
         powerStage.setScene(powerScene);
         powerStage.show();
         powerTableStatement.close();
@@ -213,7 +225,7 @@ public class UI extends Application implements Runnable {
     }
     /** a node which displays a value on hover, but is otherwise empty */
     class HoveredThresholdNode extends StackPane {
-        HoveredThresholdNode(long value) {
+        HoveredThresholdNode(double value) {
             setPrefSize(15, 15);
 
             final Label label = createDataThresholdLabel(value);
@@ -233,7 +245,7 @@ public class UI extends Application implements Runnable {
             });
         }
 
-        private Label createDataThresholdLabel(long value) {
+        private Label createDataThresholdLabel(double value) {
             final Label label = new Label(value + "");
             label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
             label.setStyle("-fx-font-size: 20; -fx-font-weight: bold;");
