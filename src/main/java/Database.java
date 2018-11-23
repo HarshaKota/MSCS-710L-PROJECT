@@ -4,6 +4,7 @@ import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -571,5 +572,26 @@ public class Database {
             log.error("closeDatabaseConnection: Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
             throw new Exception("closeDatabaseConnection: Failed to close database connection " + e.getClass().getName() + ": " + e.getMessage());
         }
+    }
+
+    // Get available Tables
+    ArrayList<String> getTables() {
+        ArrayList<String> tableNames = new ArrayList<>();
+
+        try {
+            ResultSet rs = connection.getMetaData().getTables(null,null,null,null);
+            while (rs.next()) {
+                tableNames.add(rs.getString("TABLE_NAME"));
+            }
+        } catch (SQLException e) {
+            log.error("getTables: Failed to get table names " + e.getClass().getName() + ": " + e.getMessage());
+            try {
+                throw new Exception("getTables: Failed to get table names " + e.getClass().getName() + ": " + e.getMessage());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
+
+        return tableNames;
     }
 }
