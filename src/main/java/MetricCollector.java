@@ -130,8 +130,6 @@ public class MetricCollector {
         }
         sS.setFans(fans);
 
-        System.out.println(fansLength);
-
         System.out.println(String.format("%1$20s  %2$d", "getSensors calls:", noOfCallsTogetSensors)); //Sysout
 
         return sS;
@@ -244,8 +242,6 @@ public class MetricCollector {
         }
 
         pS.setProcessesList(processesMap);
-
-        System.out.println(pS.processesList.size());
 
         System.out.println(String.format("%1$20s  %2$d", "getProcess calls:", noOfCallsTogetProcesses)); //Sysout
 
