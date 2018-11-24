@@ -24,22 +24,24 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class UI extends Application implements Runnable {
-    SystemInfo si = new SystemInfo();
-    HardwareAbstractionLayer hal = si.getHardware();
+    private SystemInfo si = new SystemInfo();
+    private HardwareAbstractionLayer hal = si.getHardware();
 
     private static final Logger log = LogManager.getLogger(UI.class);
     private Connection mainConnection = null;
-    private Stage powerStage = null;
     private XYChart.Series powerSeries = new XYChart.Series();
+    Stage powerStage = null;
 
     // Setting up the UI Window
     @Override
     public void start(Stage stage) throws Exception {
         setConnection();
+        powerStage = new Stage();
+
         Main.applicationOpen.set(true);
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
-        final Scene powerScene = createPowerTableWindow();
+        final LineChart lineChart = createPowerTableWindow();
 
 
         // Create the database
@@ -53,7 +55,7 @@ public class UI extends Application implements Runnable {
             availableMetrics.add("Power");
         }
 
-        final ComboBox dropdown = new ComboBox(FXCollections.observableArrayList(availableMetrics));
+        final ComboBox<String> dropdown = new ComboBox<>(FXCollections.observableArrayList(availableMetrics));
 
         Button button = new Button("Submit");
         button.resize(500, 50);
@@ -63,7 +65,7 @@ public class UI extends Application implements Runnable {
             public void handle(MouseEvent event) {
                 try {
                     if (dropdown.getValue().equals("Power")) {
-                        updatePowerTableWindow(mainConnection, powerScene);
+                        updatePowerTableWindow(mainConnection, lineChart);
                     }
                 } catch (Exception e){
                     log.warn("No Metric selected");
@@ -79,8 +81,10 @@ public class UI extends Application implements Runnable {
                     @Override
                     public void run() {
                         try {
-                            if (powerStage.isShowing()) {
-                                updatePowerTableWindow(mainConnection, powerScene);
+                            if(powerStage != null) {
+                                if (powerStage.isShowing()) {
+                                    updatePowerTableWindow(mainConnection, lineChart);
+                                }
                             }
                         } catch (SQLException e) {
                             e.printStackTrace();
@@ -88,10 +92,10 @@ public class UI extends Application implements Runnable {
                     }
                 };
 
-                while (true) {
+                while (Main.applicationOpen.get()) {
                     try {
                         Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
+                    } catch (InterruptedException ignored) {
                     }
 
                     // UI update is run on the Application thread
@@ -134,8 +138,6 @@ public class UI extends Application implements Runnable {
 
         stage.setScene(homeMenuScene);
         stage.show();
-        System.out.println();
-        System.out.println("start");
 
     }
 
@@ -143,7 +145,6 @@ public class UI extends Application implements Runnable {
     @Override
     public void run() {
         launch();
-        System.out.println("Run");
 
     }
 
@@ -154,11 +155,10 @@ public class UI extends Application implements Runnable {
 
         System.out.println("UI Closing. Open?:  " + Main.applicationOpen); //Sysout
         super.stop();
-        System.out.println("stop");
 
     }
 
-    Scene createPowerTableWindow(){
+    private LineChart createPowerTableWindow(){
         NumberAxis xAxis = new NumberAxis("X-Axis", 0d, 120d, 5);
         xAxis.setLabel("Time in Seconds");
 
@@ -171,48 +171,60 @@ public class UI extends Application implements Runnable {
         lineChart.setPrefSize(800, 400);
         lineChart.setCursor(Cursor.CROSSHAIR);
 
-        VBox vbox = new VBox(lineChart);
-
-        Pane lineChartPane = new Pane(vbox);
-        Scene powerScene = new Scene(lineChartPane, 800, 600);
-        powerStage = new Stage();
-
-
-        return powerScene;
+        return lineChart;
     }
 
-    void updatePowerTableWindow(Connection connection, Scene powerScene) throws SQLException {
+    void updatePowerTableWindow(Connection connection, LineChart lineChart) throws SQLException {
         long currentTimeStamp = System.currentTimeMillis();
         String powerQuery = "SELECT * FROM POWER WHERE (TIMESTAMP <= " + currentTimeStamp + ") AND (TIMESTAMP >= " + (currentTimeStamp - 13000) + ")";
-        System.out.println(powerQuery);
         Statement powerTableStatement = connection.createStatement();
         ResultSet powerValues = powerTableStatement.executeQuery(powerQuery);
+
         powerSeries.getData().clear();
         while(powerValues.next()){
             long timeStamp = powerValues.getLong("TIMESTAMP");
             timeStamp = (System.currentTimeMillis() - timeStamp)/100;
-            System.out.println(timeStamp);
             double batteryPercentage = powerValues.getDouble("BATTERYPERCENTAGE");
-            System.out.println(batteryPercentage);
-            powerSeries.getData().add(new XYChart.Data( timeStamp, batteryPercentage));
-            final XYChart.Data<Long, Double> data = new XYChart.Data<>(timeStamp, batteryPercentage);
+            powerSeries.getData().add(new XYChart.Data( timeStamp, batteryPercentage/2));
+            String powerStatus;
+            int powerStatusIndicator = powerValues.getInt("POWERSTATUS");
+            if(powerStatusIndicator == 0){
+                powerStatus = "Not Charging";
+            }else{
+                powerStatus = "Charging";
+            }
+            final XYChart.Data<Long, Double> data = new XYChart.Data<>(timeStamp, batteryPercentage/2);
             data.setNode(
-                    new HoveredThresholdNode(batteryPercentage)
+                    new HoveredThresholdNode("Battery Percentage: " + batteryPercentage/2 + "\n Power Status: " + powerStatus)
             );
             powerSeries.getData().add(data);
         }
         PowerSource[] ps= hal.getPowerSources();
         double currentBatteryPercentage = ps[0].getRemainingCapacity() * 100d;
-        powerSeries.getData().add(new XYChart.Data(0,currentBatteryPercentage));
-        final XYChart.Data<Long, Double> data = new XYChart.Data<>((long)0.0, currentBatteryPercentage);
-        data.setNode(
-                new HoveredThresholdNode(currentBatteryPercentage)
-        );
+        powerSeries.getData().add(new XYChart.Data(0,currentBatteryPercentage/2));
+        String currentPowerStatus;
+        double powerIndicator = ps[0].getTimeRemaining();
+        if(powerIndicator < -1d){
+            currentPowerStatus = "Charging";
+        }else{
+            currentPowerStatus = "Not Charging";
+        }
 
+        Label powerStatusLabel = new Label("Power Status: " + currentPowerStatus);
+        VBox vbox = new VBox(lineChart);
+        Pane lineChartPane = new Pane(vbox);
+        lineChartPane.setTranslateZ(5);
+        Pane powerStatusPane = new Pane(powerStatusLabel);
+        powerStatusPane.setTranslateY(400);
+        powerStatusPane.setTranslateX(25);
+
+        StackPane rootPane = new StackPane();
+        rootPane.getChildren().addAll(lineChartPane, powerStatusPane);
+
+        Scene powerScene = new Scene(rootPane, 800, 600);
         powerStage.setScene(powerScene);
         powerStage.show();
         powerTableStatement.close();
-
     }
 
     private void setConnection() throws Exception {
@@ -229,10 +241,10 @@ public class UI extends Application implements Runnable {
     }
     /** a node which displays a value on hover, but is otherwise empty */
     class HoveredThresholdNode extends StackPane {
-        HoveredThresholdNode(double value) {
+        HoveredThresholdNode(String labelName) {
             setPrefSize(15, 15);
 
-            final Label label = createDataThresholdLabel(value);
+            final Label label = createDataThresholdLabel(labelName);
 
             setOnMouseEntered(new EventHandler<MouseEvent>() {
                 @Override public void handle(MouseEvent mouseEvent) {
@@ -247,10 +259,11 @@ public class UI extends Application implements Runnable {
                     setCursor(Cursor.CROSSHAIR);
                 }
             });
+            translateZProperty().setValue(10);
         }
 
-        private Label createDataThresholdLabel(double value) {
-            final Label label = new Label(value + "");
+        private Label createDataThresholdLabel(String labelName) {
+            final Label label = new Label(labelName + "");
             label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
             label.setStyle("-fx-font-size: 20; -fx-font-weight: bold;");
 
