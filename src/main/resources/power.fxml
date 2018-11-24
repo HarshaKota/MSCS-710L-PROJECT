@@ -23,7 +23,7 @@
             </AreaChart>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
                <children>
-                  <ChoiceBox fx:id="power_selector" prefWidth="150.0" />
+                  <ChoiceBox fx:id="power_selector" prefHeight="25.0" prefWidth="300.0" />
                   <Button mnemonicParsing="false" onAction="#getPowerMetrics" text="SUBMIT" />
                </children>
             </HBox>
