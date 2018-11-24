@@ -43,7 +43,7 @@ public class powerController implements Initializable {
     // set selectable session options
     private void setSelector(LinkedHashMap<Long, Long> session) {
         for (Map.Entry<Long, Long> map: session.entrySet()) {
-            power_selector.getItems().add(Util.convertLongToDate(map.getKey()) + " # " +Util.convertLongToDate(map.getValue()));
+            power_selector.getItems().add(Util.convertLongToDate(map.getKey()) + " to " +Util.convertLongToDate(map.getValue()));
         }
         power_selector.setValue(power_selector.getItems().get(0));
     }
@@ -54,8 +54,8 @@ public class powerController implements Initializable {
         Long startSession;
         Long endSession;
 
-        startSession = Util.convertDateToLong(power_selector.getValue().trim().split("#")[0]);
-        endSession = Util.convertDateToLong(power_selector.getValue().trim().split("#")[1]);
+        startSession = Util.convertDateToLong(power_selector.getValue().trim().split("to")[0]);
+        endSession = Util.convertDateToLong(power_selector.getValue().trim().split("to")[1]);
 
         try {
             Database dbObject = new Database(databaseUrl);
@@ -74,6 +74,7 @@ public class powerController implements Initializable {
                 d.getNode().setOnMouseExited(event -> d.getNode().getStyleClass().remove("onHover"));
             }
             powerChart.getXAxis().setTickLabelsVisible(false);
+            powerChart.getXAxis().setTickMarkVisible(false);
         } catch (Exception e) {
             log.error("getSessions: Failed to get sessions ");
         }
