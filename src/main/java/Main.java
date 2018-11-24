@@ -30,6 +30,7 @@ public class Main {
 
         // Create the database
         final Database dbObject = new Database(databaseUrl);
+        dbObject.createTables();
 
         // Check if the session table is intact
         dbObject.checkSessionTable();
@@ -50,47 +51,17 @@ public class Main {
 
             final long metricCollectedTime = metricCollector.startSession();
 
-            Callable<MetricCollectionStructures.powerStructure> power = new Callable<MetricCollectionStructures.powerStructure>() {
-                @Override
-                public MetricCollectionStructures.powerStructure call() {
-                    return metricCollector.getPower(metricCollectedTime, hal);
-                }
-            };
+            Callable<MetricCollectionStructures.powerStructure> power = () -> metricCollector.getPower(metricCollectedTime, hal);
 
-            Callable<MetricCollectionStructures.cpuStructure> cpu = new Callable<MetricCollectionStructures.cpuStructure>() {
-                @Override
-                public MetricCollectionStructures.cpuStructure call() {
-                    return metricCollector.getCPU(metricCollectedTime, hal);
-                }
-            };
+            Callable<MetricCollectionStructures.cpuStructure> cpu = () -> metricCollector.getCPU(metricCollectedTime, hal);
 
-            Callable<MetricCollectionStructures.sensorsStructure> sensors = new Callable<MetricCollectionStructures.sensorsStructure>() {
-                @Override
-                public MetricCollectionStructures.sensorsStructure call() {
-                    return metricCollector.getSensors(metricCollectedTime, hal);
-                }
-            };
+            Callable<MetricCollectionStructures.sensorsStructure> sensors = () -> metricCollector.getSensors(metricCollectedTime, hal);
 
-            Callable<MetricCollectionStructures.memoryStructure> memory = new Callable<MetricCollectionStructures.memoryStructure>() {
-                @Override
-                public MetricCollectionStructures.memoryStructure call() {
-                    return metricCollector.getMemory(metricCollectedTime, hal);
-                }
-            };
+            Callable<MetricCollectionStructures.memoryStructure> memory = () -> metricCollector.getMemory(metricCollectedTime, hal);
 
-            Callable<MetricCollectionStructures.networkStructure> network = new Callable<MetricCollectionStructures.networkStructure>() {
-                @Override
-                public MetricCollectionStructures.networkStructure call() {
-                    return metricCollector.getNetwork(metricCollectedTime, hal);
-                }
-            };
+            Callable<MetricCollectionStructures.networkStructure> network = () -> metricCollector.getNetwork(metricCollectedTime, hal);
 
-            Callable<MetricCollectionStructures.processStructure> processes = new Callable<MetricCollectionStructures.processStructure>() {
-                @Override
-                public MetricCollectionStructures.processStructure call() {
-                    return metricCollector.getProcess(metricCollectedTime, hal, os);
-                }
-            };
+            Callable<MetricCollectionStructures.processStructure> processes = () -> metricCollector.getProcess(metricCollectedTime, hal, os);
 
             ExecutorService service = Executors.newFixedThreadPool(6);
 
@@ -134,7 +105,7 @@ public class Main {
             }
 
             System.out.println("----->Started to count down 5 seconds"); //Sysout
-            //Thread.sleep(5000);
+            Thread.sleep(5000);
             System.out.println("<-----Finished countdown of 5 seconds"); //Sysout
         }
 
