@@ -4,10 +4,7 @@ import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Database {
 
@@ -15,6 +12,7 @@ public class Database {
     private final Logger log = LogManager.getLogger(Database.class);
     private final SystemInfo si = new SystemInfo();
     private final HardwareAbstractionLayer hal = si.getHardware();
+    public static ArrayList<String> tablesAvailable;
 
 
     public Database(String databaseUrl) throws Exception {
@@ -22,7 +20,11 @@ public class Database {
         String databaseClassName = "org.sqlite.JDBC";
 
         establishDatabaseConnection(databaseClassName, databaseUrl);
+    }
 
+    public Database() { }
+
+    void createTables() throws Exception {
         createSensorsTable();
 
         createPowerTable();
@@ -38,9 +40,9 @@ public class Database {
         createNetworkTable();
 
         createSessionTable();
-    }
 
-    public Database() { }
+        getTablesAvailable();
+    }
 
     // Establish connection to the sqlite database/ Create if its doesn't exist
     void establishDatabaseConnection(String databaseClassName, String databaseUrl) throws Exception {
@@ -575,13 +577,13 @@ public class Database {
     }
 
     // Get available Tables
-    ArrayList<String> getTables() {
-        ArrayList<String> tableNames = new ArrayList<>();
+    void getTablesAvailable() {
+        tablesAvailable = new ArrayList<>();
 
         try {
             ResultSet rs = connection.getMetaData().getTables(null,null,null,null);
             while (rs.next()) {
-                tableNames.add(rs.getString("TABLE_NAME"));
+                tablesAvailable.add(rs.getString("TABLE_NAME"));
             }
         } catch (SQLException e) {
             log.error("getTables: Failed to get table names " + e.getClass().getName() + ": " + e.getMessage());
@@ -591,7 +593,54 @@ public class Database {
                 e1.printStackTrace();
             }
         }
+    }
 
-        return tableNames;
+    // Get Sessions
+    LinkedHashMap<Long, Long> getSessions() throws Exception {
+        LinkedHashMap<Long,Long> sessions = new LinkedHashMap<>();
+        try {
+            Statement getSessionsStatement = connection.createStatement();
+            String sql =
+                    "SELECT * FROM SESSION ORDER BY STARTSESSION ASC";
+            ResultSet rs = getSessionsStatement.executeQuery(sql);
+            while (rs.next()) {
+                Long startSession = rs.getLong("STARTSESSION");
+                Long endSession = rs.getLong("ENDSESSION");
+                if (endSession == 0 || endSession == null) continue;
+                sessions.put(startSession, endSession);
+            }
+            getSessionsStatement.close();
+        } catch (Exception e) {
+            log.error("getSessions: Failed to sessions from session table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getSessions: Failed to sessions from session table " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return sessions;
+    }
+
+    // Get power metrics
+    LinkedHashMap<Long, Double> getPowerMetrics(Long startTime, Long endTime) throws Exception {
+        LinkedHashMap<Long, Double> powerMetrics = new LinkedHashMap<>();
+
+        String sql =
+                "SELECT * FROM POWER WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP ASC";
+
+        try {
+            PreparedStatement getPowerMetricsStatement = connection.prepareStatement(sql);
+            getPowerMetricsStatement.setLong(1, startTime);
+            getPowerMetricsStatement.setLong(2, endTime);
+            ResultSet rs = getPowerMetricsStatement.executeQuery();
+            while (rs.next()) {
+                Long timestamp = rs.getLong("TIMESTAMP");
+                Double batteryPercentage = rs.getDouble("BATTERYPERCENTAGE");
+                powerMetrics.put(timestamp, batteryPercentage);
+            }
+            getPowerMetricsStatement.close();
+        } catch (Exception e) {
+            log.error("getPowerMetrics: Failed to get power metrics from power table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getPowerMetrics: Failed to get power metrics from power table " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return powerMetrics;
     }
 }
