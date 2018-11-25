@@ -653,4 +653,69 @@ public class Database {
         return powerMetrics;
     }
 
+    // Get cpu table columns
+    ArrayList<String> getCpuColumns() throws Exception {
+        ArrayList<String> cpuColumns = new ArrayList<>();
+
+        String sql = "SELECT * FROM CPU";
+        try {
+            PreparedStatement getCpuTableColumnsStatement = connection.prepareStatement(sql);
+            ResultSet rs = getCpuTableColumnsStatement.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            for (int i=1; i<=columnCount; i++) {
+                cpuColumns.add(rsmd.getColumnName(i));
+            }
+            cpuColumns.remove(0);
+            getCpuTableColumnsStatement.close();
+        } catch (SQLException e) {
+            log.error("getCpuColumns: Failed to get cpu columns " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getCpuColumns: Failed to get cpu columns " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return cpuColumns;
+    }
+
+    // Get cpuMetrics
+    LinkedHashMap<Long, Double> getCpuMetrics(Long startTime, Long endTime, String columnName) throws Exception {
+        LinkedHashMap<Long, Double> cpuMetrics = new LinkedHashMap<>();
+
+        if (startTime != null && endTime != null) {
+            String sql = "SELECT * FROM CPU WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP ASC";
+            try {
+                PreparedStatement getCpuMetricsStatement = connection.prepareStatement(sql);
+                getCpuMetricsStatement.setLong(1, startTime);
+                getCpuMetricsStatement.setLong(2, endTime);
+                ResultSet rs = getCpuMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("TIMESTAMP");
+                    Double columnValue = rs.getDouble(columnName);
+                    cpuMetrics.put(timestamp, columnValue);
+                }
+                getCpuMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getCpuMetrics: Failed to get cpu metrics from cpu table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getCpuMetrics: Failed to get cpu metrics from cpu table " + e.getClass().getName() + ": " + e.getMessage());
+            }
+        } else {
+            String sql = "SELECT MAX(TIMESTAMP), ? FROM CPU";
+            try {
+                PreparedStatement getCpuMetricsStatement = connection.prepareStatement(sql);
+                getCpuMetricsStatement.setString(1, columnName);
+                ResultSet rs = getCpuMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
+                    Double columnValue = rs.getDouble(columnName);
+                    cpuMetrics.put(timestamp, columnValue);
+                }
+                getCpuMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getCpuMetrics: Failed to get cpu metrics from cpu table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getCpuMetrics: Failed to get cpu metrics from cpu table " + e.getClass().getName() + ": " + e.getMessage());
+            }
+        }
+
+        return cpuMetrics;
+    }
+
 }
