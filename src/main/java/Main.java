@@ -16,6 +16,7 @@ public class Main {
     static  String databaseUrl = "jdbc:sqlite:MetricCollector.db";
 
     static boolean hasPowerSource = false;
+    static int collectionInterval = 5000;
 
     private static SystemInfo si;
     private static HardwareAbstractionLayer hal;
@@ -29,7 +30,8 @@ public class Main {
         os = si.getOperatingSystem();
 
         // Create the database
-        final Database dbObject = new Database(databaseUrl);
+        final Database dbObject = new Database();
+        dbObject.establishDatabaseConnection(databaseUrl);
         dbObject.createTables();
 
         // Check if the session table is intact
@@ -105,7 +107,7 @@ public class Main {
             }
 
             System.out.println("----->Started to count down 5 seconds"); //Sysout
-            Thread.sleep(5000);
+            Thread.sleep(collectionInterval);
             System.out.println("<-----Finished countdown of 5 seconds"); //Sysout
         }
 
