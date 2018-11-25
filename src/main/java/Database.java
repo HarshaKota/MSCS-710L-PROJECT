@@ -8,19 +8,11 @@ import java.util.*;
 
 public class Database {
 
-    private Connection connection = null;
+    private static Connection connection = null;
     private final Logger log = LogManager.getLogger(Database.class);
     private final SystemInfo si = new SystemInfo();
     private final HardwareAbstractionLayer hal = si.getHardware();
     public static ArrayList<String> tablesAvailable;
-
-
-    public Database(String databaseUrl) throws Exception {
-
-        String databaseClassName = "org.sqlite.JDBC";
-
-        establishDatabaseConnection(databaseClassName, databaseUrl);
-    }
 
     public Database() { }
 
@@ -45,8 +37,9 @@ public class Database {
     }
 
     // Establish connection to the sqlite database/ Create if its doesn't exist
-    void establishDatabaseConnection(String databaseClassName, String databaseUrl) throws Exception {
+    void establishDatabaseConnection(String databaseUrl) throws Exception {
         try {
+            String databaseClassName = "org.sqlite.JDBC";
             Class.forName(databaseClassName);
             connection = DriverManager.getConnection(databaseUrl);
             connection.setAutoCommit(false);
@@ -620,27 +613,44 @@ public class Database {
 
     // Get power metrics
     LinkedHashMap<Long, Double> getPowerMetrics(Long startTime, Long endTime) throws Exception {
+
         LinkedHashMap<Long, Double> powerMetrics = new LinkedHashMap<>();
 
-        String sql =
-                "SELECT * FROM POWER WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP ASC";
-
-        try {
-            PreparedStatement getPowerMetricsStatement = connection.prepareStatement(sql);
-            getPowerMetricsStatement.setLong(1, startTime);
-            getPowerMetricsStatement.setLong(2, endTime);
-            ResultSet rs = getPowerMetricsStatement.executeQuery();
-            while (rs.next()) {
-                Long timestamp = rs.getLong("TIMESTAMP");
-                Double batteryPercentage = rs.getDouble("BATTERYPERCENTAGE");
-                powerMetrics.put(timestamp, batteryPercentage);
+        if (startTime != null && endTime != null) {
+            String sql = "SELECT * FROM POWER WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP ASC";
+            try {
+                PreparedStatement getPowerMetricsStatement = connection.prepareStatement(sql);
+                getPowerMetricsStatement.setLong(1, startTime);
+                getPowerMetricsStatement.setLong(2, endTime);
+                ResultSet rs = getPowerMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("TIMESTAMP");
+                    Double batteryPercentage = rs.getDouble("BATTERYPERCENTAGE");
+                    powerMetrics.put(timestamp, batteryPercentage);
+                }
+                getPowerMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getPowerMetrics: Failed to get power metrics from power table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getPowerMetrics: Failed to get power metrics from power table " + e.getClass().getName() + ": " + e.getMessage());
             }
-            getPowerMetricsStatement.close();
-        } catch (Exception e) {
-            log.error("getPowerMetrics: Failed to get power metrics from power table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception("getPowerMetrics: Failed to get power metrics from power table " + e.getClass().getName() + ": " + e.getMessage());
+        } else {
+            String sql = "SELECT MAX(TIMESTAMP), BATTERYPERCENTAGE FROM POWER";
+            try {
+                PreparedStatement getPowerMetricsStatement = connection.prepareStatement(sql);
+                ResultSet rs = getPowerMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
+                    Double batteryPercentage = rs.getDouble("BATTERYPERCENTAGE");
+                    powerMetrics.put(timestamp, batteryPercentage);
+                }
+                getPowerMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getPowerMetrics: Failed to get power metrics from power table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getPowerMetrics: Failed to get power metrics from power table " + e.getClass().getName() + ": " + e.getMessage());
+            }
         }
 
         return powerMetrics;
     }
+
 }
