@@ -19,7 +19,6 @@ import java.util.concurrent.*;
 public class powerController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
-    private static String databaseUrl = "jdbc:sqlite:MetricCollector.db";
     private static boolean isLive = false;
 
     @FXML AreaChart<String, Number> powerChart;
@@ -132,7 +131,7 @@ public class powerController implements Initializable {
             powerChart.getXAxis().setTickLabelsVisible(false);
             powerChart.getXAxis().setTickMarkVisible(false);
         } catch (Exception e) {
-            log.error("getSessions: Failed to database connection ");
+            log.error("getSessionMetrics: Failed ");
         }
     }
 
