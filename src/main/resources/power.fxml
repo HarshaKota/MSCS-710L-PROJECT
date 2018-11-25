@@ -9,11 +9,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="powerController">
+<AnchorPane prefHeight="1000.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="powerController">
    <children>
-      <VBox prefHeight="800.0" prefWidth="1200.0">
+      <VBox prefHeight="1000.0" prefWidth="1600.0">
          <children>
-            <AreaChart fx:id="powerChart" legendSide="RIGHT" prefHeight="750.0" prefWidth="1200.0" title="POWER METRICS">
+            <AreaChart fx:id="powerChart" legendSide="RIGHT" title="POWER METRICS" VBox.vgrow="ALWAYS">
               <xAxis>
                 <CategoryAxis label="TIME" side="BOTTOM" />
               </xAxis>
