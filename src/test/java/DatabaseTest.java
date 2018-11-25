@@ -8,6 +8,7 @@ import oshi.hardware.Sensors;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class DatabaseTest {
 
@@ -23,7 +24,7 @@ public class DatabaseTest {
     @Test(expected = Exception.class)
     public void establishDatabaseConnection_Null() throws Exception {
         Database dbObj = new Database();
-        dbObj.establishDatabaseConnection(null, null);
+        dbObj.establishDatabaseConnection(null);
     }
 
     @Test(expected = Exception.class)
@@ -36,11 +37,12 @@ public class DatabaseTest {
     @Test
     public void checkSessionTable_NotNull() {
         try {
-            final Database testDatabase = Mockito.spy(new Database("jdbc:sqlite:MetricCollector.db"));
-//            testDatabase.establishDatabaseConnection("org.sqlite.JDBC", "jdbc:sqlite:MetricCollector.db");
+            final Database testDatabase = Mockito.spy(new Database());
+            testDatabase.establishDatabaseConnection( "jdbc:sqlite:MetricCollector.db");
 //            testDatabase.createSessionTable();
-            testDatabase.insertStartSessionIntoSessionTable(4);
-            testDatabase.insertEndSessionIntoSessionTable(4,5);
+            Long val = new Random().nextLong();
+            testDatabase.insertStartSessionIntoSessionTable(val);
+            testDatabase.insertEndSessionIntoSessionTable(val,5);
             testDatabase.checkSessionTable();
             testDatabase.closeDatabaseConnection();
         } catch (Exception e) {
@@ -104,7 +106,7 @@ public class DatabaseTest {
     @Test(expected = Exception.class)
     public void insertIntoPowerTable_EmptyInputs() throws Exception {
         Main.hasPowerSource = true;
-        Database dbObj = new Database(databaseUrl);
+        Database dbObj = new Database();
         dbObj.insertIntoPowerTable(new MetricCollectionStructures.powerStructure());
     }
 
@@ -127,7 +129,7 @@ public class DatabaseTest {
 
     @Test(expected = Exception.class)
     public void insertIntoCpuTable_EmptyInputs1() throws Exception {
-        Database dbObj = new Database(databaseUrl);
+        Database dbObj = new Database();
         dbObj.insertIntoCpuTable(new MetricCollectionStructures.cpuStructure());
     }
 
@@ -139,7 +141,7 @@ public class DatabaseTest {
         cpuStructure.setUserLoad(100d);
         cpuStructure.setSystemLoad(100d);
         cpuStructure.setIdleLoad(100d);
-        Database dbObj = new Database(databaseUrl);
+        Database dbObj = new Database();
         dbObj.insertIntoCpuTable(cpuStructure);
     }
 
@@ -157,7 +159,7 @@ public class DatabaseTest {
             processorLoad.add(10d);
         processorLoad.remove(0);
         cpuStructure.setProcessorLoad(processorLoad);
-        Database dbObj = new Database(databaseUrl);
+        Database dbObj = new Database();
         dbObj.insertIntoCpuTable(cpuStructure);
     }
 
@@ -174,7 +176,7 @@ public class DatabaseTest {
 
     @Test(expected = Exception.class)
     public void insertIntoSensorsTable_EmptyInputs() throws Exception {
-        Database dbObj = new Database(databaseUrl);
+        Database dbObj = new Database();
         dbObj.insertIntoSensorsTable(new MetricCollectionStructures.sensorsStructure());
     }
 
@@ -190,7 +192,7 @@ public class DatabaseTest {
 
     @Test(expected = Exception.class)
     public void insertIntoMemoryTable_EmptyInputs() throws Exception {
-        Database dbObj = new Database(databaseUrl);
+        Database dbObj = new Database();
         dbObj.insertIntoMemoryTable(new MetricCollectionStructures.memoryStructure());
     }
 
@@ -208,7 +210,7 @@ public class DatabaseTest {
 
     @Test(expected = Exception.class)
     public void insertIntoNetworkTable_EmptyInputs() throws Exception {
-        Database dbObj = new Database(databaseUrl);
+        Database dbObj = new Database();
         dbObj.insertIntoNetworkTable(new MetricCollectionStructures.networkStructure());
     }
 
@@ -230,7 +232,7 @@ public class DatabaseTest {
 
     @Test(expected = Exception.class)
     public void insertIntoProcessTable_EmptyInputs1() throws Exception {
-        Database dbObj = new Database(databaseUrl);
+        Database dbObj = new Database();
         dbObj.insertIntoProcessTable(new MetricCollectionStructures.processStructure());
     }
 
@@ -240,7 +242,7 @@ public class DatabaseTest {
         processStructure.setTimestamp(System.currentTimeMillis());
         processStructure.setNoOfThreads(10);
         processStructure.setNoOfProcesses(10);
-        Database dbObj = new Database(databaseUrl);
+        Database dbObj = new Database();
         dbObj.insertIntoProcessTable(processStructure);
     }
 
@@ -256,7 +258,7 @@ public class DatabaseTest {
         processesList.add(10d);
         processList.put("", processesList);
         processStructure.setProcessesList(processList);
-        Database dbObj = new Database(databaseUrl);
+        Database dbObj = new Database();
         dbObj.insertIntoProcessTable(processStructure);
     }
 
