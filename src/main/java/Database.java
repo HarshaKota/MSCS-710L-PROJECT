@@ -936,4 +936,69 @@ public class Database {
         return processMetrics;
     }
 
+    // Get sensors table columns
+    ArrayList<String> getSensorsColumns() throws Exception {
+        ArrayList<String> sensorsColumns = new ArrayList<>();
+
+        String sql = "SELECT * FROM SENSORS";
+        try {
+            PreparedStatement getSensorsTableColumnsStatement = connection.prepareStatement(sql);
+            ResultSet rs = getSensorsTableColumnsStatement.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            for (int i=1; i<=columnCount; i++) {
+                sensorsColumns.add(rsmd.getColumnName(i));
+            }
+            sensorsColumns.remove(0);
+            getSensorsTableColumnsStatement.close();
+        } catch (SQLException e) {
+            log.error("getSensorsColumns: Failed to get sensors columns " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getSensorsColumns: Failed to get sensors columns " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return sensorsColumns;
+    }
+
+    // Get sensorsMetrics
+    LinkedHashMap<Long, Double> getSensorsMetrics(Long startTime, Long endTime, String columnName) throws Exception {
+        LinkedHashMap<Long, Double> sensorsMetrics = new LinkedHashMap<>();
+
+        if (startTime != null && endTime != null) {
+            String sql = "SELECT * FROM SENSORS WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP ASC";
+            try {
+                PreparedStatement getSensorsMetricsStatement = connection.prepareStatement(sql);
+                getSensorsMetricsStatement.setLong(1, startTime);
+                getSensorsMetricsStatement.setLong(2, endTime);
+                ResultSet rs = getSensorsMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("TIMESTAMP");
+                    Double columnValue = rs.getDouble(columnName);
+                    sensorsMetrics.put(timestamp, columnValue);
+                }
+                getSensorsMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getSensorsMetrics: Failed to get sensors metrics from sensors table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getSensorsMetrics: Failed to get sensors metrics from sensors table " + e.getClass().getName() + ": " + e.getMessage());
+            }
+        } else {
+            String sql = "SELECT MAX(TIMESTAMP), ? FROM SENSORS";
+            try {
+                PreparedStatement getSensorsMetricsStatement = connection.prepareStatement(sql);
+                getSensorsMetricsStatement.setString(1, columnName);
+                ResultSet rs = getSensorsMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
+                    Double columnValue = rs.getDouble(columnName);
+                    sensorsMetrics.put(timestamp, columnValue);
+                }
+                getSensorsMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getSensorsMetrics: Failed to get sensors network from sensors table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getSensorsMetrics: Failed to get sensors metrics from sensors table " + e.getClass().getName() + ": " + e.getMessage());
+            }
+        }
+
+        return sensorsMetrics;
+    }
+
 }
