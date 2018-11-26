@@ -718,4 +718,92 @@ public class Database {
         return cpuMetrics;
     }
 
+    // Get memory table columns
+    ArrayList<String> getMemoryColumns() throws Exception {
+        ArrayList<String> memoryColumns = new ArrayList<>();
+
+        String sql = "SELECT * FROM MEMORY";
+        try {
+            PreparedStatement getMemoryTableColumnsStatement = connection.prepareStatement(sql);
+            ResultSet rs = getMemoryTableColumnsStatement.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            for (int i=1; i<=columnCount; i++) {
+                memoryColumns.add(rsmd.getColumnName(i));
+            }
+            memoryColumns.remove(0);
+            getMemoryTableColumnsStatement.close();
+        } catch (SQLException e) {
+            log.error("getMemoryColumns: Failed to get memory columns " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getMemoryColumns: Failed to get memory columns " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return memoryColumns;
+    }
+
+    // Get Total Memory
+    Double getTotalMemory() throws Exception {
+        Double totalMemory = null;
+
+        String sql = "SELECT MAX(TIMESTAMP), TOTALMEMORY FROM MEMORY";
+
+        try {
+            PreparedStatement getTotalMemoryStatement = connection.prepareStatement(sql);
+            ResultSet rs = getTotalMemoryStatement.executeQuery();
+            while (rs.next()) {
+                Long timestamp = rs.getLong("MAX(TIMESTAMP)");
+                Double totMemory = rs.getDouble("TOTALMEMORY");
+                totalMemory = totMemory;
+            }
+            getTotalMemoryStatement.close();
+        } catch (SQLException e) {
+            log.error("getTotalMemory: Failed to get total memory " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getTotalMemory: Failed to get total memory " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return totalMemory;
+    }
+
+    // Get memoryMetrics
+    LinkedHashMap<Long, Double> getMemoryMetrics(Long startTime, Long endTime, String columnName) throws Exception {
+        LinkedHashMap<Long, Double> memoryMetrics = new LinkedHashMap<>();
+
+        if (startTime != null && endTime != null) {
+            String sql = "SELECT * FROM MEMORY WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP ASC";
+            try {
+                PreparedStatement getMemoryMetricsStatement = connection.prepareStatement(sql);
+                getMemoryMetricsStatement.setLong(1, startTime);
+                getMemoryMetricsStatement.setLong(2, endTime);
+                ResultSet rs = getMemoryMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("TIMESTAMP");
+                    Double columnValue = rs.getDouble(columnName);
+                    memoryMetrics.put(timestamp, columnValue);
+                }
+                getMemoryMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getMemoryMetrics: Failed to get memory metrics from memory table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getMemoryMetrics: Failed to get memory metrics from memory table " + e.getClass().getName() + ": " + e.getMessage());
+            }
+        } else {
+            String sql = "SELECT MAX(TIMESTAMP), ? FROM MEMORY";
+            try {
+                PreparedStatement getMemoryMetricsStatement = connection.prepareStatement(sql);
+                getMemoryMetricsStatement.setString(1, columnName);
+                ResultSet rs = getMemoryMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
+                    Double columnValue = rs.getDouble(columnName);
+                    memoryMetrics.put(timestamp, columnValue);
+                }
+                getMemoryMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getMemoryMetrics: Failed to get memory metrics from memory table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getMemoryMetrics: Failed to get memory metrics from memory table " + e.getClass().getName() + ": " + e.getMessage());
+            }
+        }
+
+        return memoryMetrics;
+    }
+
 }
