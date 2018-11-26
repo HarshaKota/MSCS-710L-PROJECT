@@ -5,30 +5,36 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="1000.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="powerController">
-   <children>
-      <VBox prefHeight="1000.0" prefWidth="1600.0">
+
+<ScrollPane xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="powerController">
+   <content>
+      <AnchorPane prefHeight="1000.0" prefWidth="1600.0">
          <children>
-            <AreaChart fx:id="powerChart" title="POWER METRICS" VBox.vgrow="ALWAYS">
-              <xAxis>
-                <CategoryAxis label="TIME" side="BOTTOM" />
-              </xAxis>
-              <yAxis>
-                <NumberAxis label="BATTERY PERCENTAGE" side="LEFT" />
-              </yAxis>
-            </AreaChart>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
+            <VBox prefHeight="1000.0" prefWidth="1600.0">
                <children>
-                  <ChoiceBox fx:id="power_selector" prefHeight="25.0" prefWidth="300.0" />
-                  <Button mnemonicParsing="false" onAction="#getPowerMetrics" text="SUBMIT" />
-                   <Button layoutX="981.0" layoutY="35.0" mnemonicParsing="false" onAction="#clearChart" text="CLEAR" />
+                  <AreaChart fx:id="powerChart" title="POWER METRICS" VBox.vgrow="ALWAYS">
+                    <xAxis>
+                      <CategoryAxis label="TIME" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis label="BATTERY PERCENTAGE" side="LEFT" />
+                    </yAxis>
+                  </AreaChart>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
+                     <children>
+                        <ChoiceBox fx:id="power_selector" prefHeight="25.0" prefWidth="300.0" />
+                        <Button mnemonicParsing="false" onAction="#getPowerMetrics" text="SUBMIT" />
+                         <Button layoutX="981.0" layoutY="35.0" mnemonicParsing="false" onAction="#clearChart" text="CLEAR" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
          </children>
-      </VBox>
-   </children>
-</AnchorPane>
+      </AnchorPane>
+   </content>
+</ScrollPane>
