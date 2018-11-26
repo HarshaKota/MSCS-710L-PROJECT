@@ -45,7 +45,7 @@ public class mainController implements Initializable {
         String selectedMetric = metricSelectionBox.getValue();
         Parent root1 = null;
         try {
-            root1 = FXMLLoader.load(getClass().getResource(selectedMetric+".fxml"));
+            root1 = FXMLLoader.load(getClass().getResource(selectedMetric.toLowerCase()+".fxml"));
             Stage stage = new Stage();
             stage.setTitle(selectedMetric + " Metrics");
             stage.setScene(new Scene(root1));
