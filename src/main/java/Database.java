@@ -806,4 +806,69 @@ public class Database {
         return memoryMetrics;
     }
 
+    // Get network table columns
+    ArrayList<String> getNetworkColumns() throws Exception {
+        ArrayList<String> networkColumns = new ArrayList<>();
+
+        String sql = "SELECT * FROM NETWORK";
+        try {
+            PreparedStatement getNetworkTableColumnsStatement = connection.prepareStatement(sql);
+            ResultSet rs = getNetworkTableColumnsStatement.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            for (int i=1; i<=columnCount; i++) {
+                networkColumns.add(rsmd.getColumnName(i));
+            }
+            networkColumns.remove(0);
+            getNetworkTableColumnsStatement.close();
+        } catch (SQLException e) {
+            log.error("getNetworkColumns: Failed to get network columns " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getNetworkColumns: Failed to get network columns " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return networkColumns;
+    }
+
+    // Get networkMetrics
+    LinkedHashMap<Long, Double> getNetworkMetrics(Long startTime, Long endTime, String columnName) throws Exception {
+        LinkedHashMap<Long, Double> networkMetrics = new LinkedHashMap<>();
+
+        if (startTime != null && endTime != null) {
+            String sql = "SELECT * FROM NETWORK WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP ASC";
+            try {
+                PreparedStatement getNetworkMetricsStatement = connection.prepareStatement(sql);
+                getNetworkMetricsStatement.setLong(1, startTime);
+                getNetworkMetricsStatement.setLong(2, endTime);
+                ResultSet rs = getNetworkMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("TIMESTAMP");
+                    Double columnValue = rs.getDouble(columnName);
+                    networkMetrics.put(timestamp, columnValue);
+                }
+                getNetworkMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getNetworkMetrics: Failed to get network metrics from network table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getMemoryMetrics: Failed to get network metrics from network table " + e.getClass().getName() + ": " + e.getMessage());
+            }
+        } else {
+            String sql = "SELECT MAX(TIMESTAMP), ? FROM NETWORK";
+            try {
+                PreparedStatement getMemoryMetricsStatement = connection.prepareStatement(sql);
+                getMemoryMetricsStatement.setString(1, columnName);
+                ResultSet rs = getMemoryMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
+                    Double columnValue = rs.getDouble(columnName);
+                    networkMetrics.put(timestamp, columnValue);
+                }
+                getMemoryMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getNetworkMetrics: Failed to get memory network from network table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getNetworkMetrics: Failed to get network metrics from network table " + e.getClass().getName() + ": " + e.getMessage());
+            }
+        }
+
+        return networkMetrics;
+    }
+
 }
