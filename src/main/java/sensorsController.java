@@ -19,7 +19,6 @@ import java.util.concurrent.*;
 public class sensorsController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
-    private static boolean isLive = false;
 
     @FXML AreaChart<String, Number> sensorsChart;
     @FXML ChoiceBox<String> sensors_selector_1;
@@ -44,7 +43,6 @@ public class sensorsController implements Initializable {
     }
     // set selectable session options
     private void setSelector_1(LinkedHashMap<Long, Long> session) {
-        sensors_selector_1.getItems().add("Live");
         for (Map.Entry<Long, Long> map: session.entrySet()) {
             sensors_selector_1.getItems().add(Util.convertLongToDate(map.getKey()) + " to " +Util.convertLongToDate(map.getValue()));
         }
@@ -80,57 +78,7 @@ public class sensorsController implements Initializable {
     // get table data
     @FXML
     public void getSensorsMetrics(ActionEvent actionEvent) {
-        if (sensors_selector_1.getValue().equals("Live")) {
-            isLive = true;
-            getLiveSessionMetrics();
-        } else {
-            isLive = false;
-            getSessionMetrics();
-        }
-    }
-
-    // If selected was live, get Live Metrics
-    private static LinkedHashMap<Long, Double> getLiveMetrics(Database dbObject) {
-        LinkedHashMap<Long, Double> liveMetrics = new LinkedHashMap<>();
-        try {
-            liveMetrics = dbObject.getPowerMetrics(null, null);
-            Thread.sleep(Main.collectionInterval);
-        } catch (Exception e) {
-            log.error("getLiveMetrics: Failed to database connection ");
-        }
-
-        return liveMetrics;
-    }
-
-    // If selected was live
-    private void getLiveSessionMetrics() {
-        sensorsChart.getData().clear();
-        final Database dbObject = new Database();
-        LinkedHashMap<Long, Double> metricList = new LinkedHashMap<>();
-        LinkedHashMap<Long, Double> metricsFromCallable = new LinkedHashMap<>();
-        XYChart.Series<String, Number> liveSeries = new XYChart.Series<>();
-        while (isLive) {
-            Callable<LinkedHashMap<Long, Double>> metrics = () -> getLiveMetrics(dbObject);
-            ExecutorService service = Executors.newFixedThreadPool(1);
-            Future<LinkedHashMap<Long, Double>> metricsFuture = service.submit(metrics);
-            try {
-                metricsFromCallable = metricsFuture.get();
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("Failed while getting live metrics" + e.getClass().getName() + ": " + e.getMessage());
-            }
-            for (Map.Entry<Long, Double> map : metricsFromCallable.entrySet()) {
-                metricList.put(map.getKey(), map.getValue());
-            }
-            for (Map.Entry<Long, Double> map : metricList.entrySet()) {
-                liveSeries.getData().add(new XYChart.Data<>(map.getKey().toString(), map.getValue()));
-            }
-            if (liveSeries.getData().size() == 50) {
-                metricList.remove(Long.valueOf(liveSeries.getData().get(0).getXValue()));
-                liveSeries.getData().remove(0);
-            }
-            sensorsChart.getData().add(liveSeries);
-            System.out.println("Chart size = " + liveSeries.getData().size());
-        }
+        getSessionMetrics();
     }
 
     // If selected was a session, get data from that session
