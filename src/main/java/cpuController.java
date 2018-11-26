@@ -7,6 +7,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tooltip;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import oshi.util.FormatUtil;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -148,11 +149,19 @@ public class cpuController implements Initializable {
             for (Map.Entry<Long, Double> map: cpuMetrics.entrySet()) {
                 series.getData().add(new XYChart.Data<>(map.getKey().toString(), map.getValue()));
             }
+            series.setName(columnName);
             cpuChart.getData().add(series);
             cpuChart.getYAxis().setLabel(columnName);
             for (XYChart.Data<String, Number> d: series.getData()) {
-                Tooltip.install(d.getNode(), new Tooltip(
-                        d.getYValue().toString() + "\n" + Util.convertLongToDate(Long.valueOf(d.getXValue()))));
+                if (columnName.equalsIgnoreCase("uptime")) {
+                    Tooltip.install(d.getNode(), new Tooltip(
+                            FormatUtil.formatElapsedSecs(d.getYValue().longValue()) + "\n" +
+                                    Util.convertLongToDate(Long.valueOf(d.getXValue()))));
+                } else {
+                    Tooltip.install(d.getNode(), new Tooltip(
+                            d.getYValue().toString()+"%" + "\n" + Util.convertLongToDate(Long.valueOf(d.getXValue()))));
+                }
+
                 d.getNode().setOnMouseEntered(event -> d.getNode().getStyleClass().add("onHover"));
                 d.getNode().setOnMouseExited(event -> d.getNode().getStyleClass().remove("onHover"));
             }
