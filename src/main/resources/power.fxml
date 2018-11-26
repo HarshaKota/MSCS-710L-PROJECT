@@ -13,7 +13,7 @@
    <children>
       <VBox prefHeight="1000.0" prefWidth="1600.0">
          <children>
-            <AreaChart fx:id="powerChart" legendSide="RIGHT" title="POWER METRICS" VBox.vgrow="ALWAYS">
+            <AreaChart fx:id="powerChart" title="POWER METRICS" VBox.vgrow="ALWAYS">
               <xAxis>
                 <CategoryAxis label="TIME" side="BOTTOM" />
               </xAxis>
@@ -25,6 +25,7 @@
                <children>
                   <ChoiceBox fx:id="power_selector" prefHeight="25.0" prefWidth="300.0" />
                   <Button mnemonicParsing="false" onAction="#getPowerMetrics" text="SUBMIT" />
+                   <Button layoutX="981.0" layoutY="35.0" mnemonicParsing="false" onAction="#clearChart" text="CLEAR" />
                </children>
             </HBox>
          </children>
