@@ -1003,4 +1003,76 @@ public class Database {
         return sensorsMetrics;
     }
 
+    // Get processinfo table columns
+    ArrayList<String> getProcessinfoColumns() throws Exception {
+        ArrayList<String> processinfoColumns = new ArrayList<>();
+
+        String sql = "SELECT * FROM PROCESSINFO";
+        try {
+            PreparedStatement getProcessinfoTableColumnsStatement = connection.prepareStatement(sql);
+            ResultSet rs = getProcessinfoTableColumnsStatement.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            for (int i=1; i<=columnCount; i++) {
+                processinfoColumns.add(rsmd.getColumnName(i));
+            }
+            processinfoColumns.remove(0);
+            processinfoColumns.remove(0);
+            getProcessinfoTableColumnsStatement.close();
+        } catch (SQLException e) {
+            log.error("getProcessinfoColumns: Failed to get processinfo columns " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getProcessinfoColumns: Failed to get processinfo columns " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return processinfoColumns;
+    }
+
+    // Get processes names from processinfo table
+    ArrayList<String> getProcessesNames(Long startTime, Long endTime) throws Exception {
+        ArrayList<String> processesNames = new ArrayList<>();
+
+        String sql = "SELECT DISTINCT PROCESSNAME FROM PROCESSINFO WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP ASC";
+        try {
+            PreparedStatement getProcessesNamesStatement = connection.prepareStatement(sql);
+            getProcessesNamesStatement.setLong(1, startTime);
+            getProcessesNamesStatement.setLong(2, endTime);
+            ResultSet rs = getProcessesNamesStatement.executeQuery();
+            while (rs.next()) {
+                String processName = rs.getString("PROCESSNAME");
+                processesNames.add(processName);
+            }
+            getProcessesNamesStatement.close();
+        } catch (SQLException e) {
+            log.error("getProcessesNames: Failed to get processes names " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getProcessesNames: Failed to get processes names " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return processesNames;
+    }
+
+    // Get sensorsMetrics
+    LinkedHashMap<Long, Double> getProcessinfoMetrics(Long startTime, Long endTime, String columnName, String processName) throws Exception {
+        LinkedHashMap<Long, Double> processinfoMetrics = new LinkedHashMap<>();
+
+        String sql = "SELECT * FROM PROCESSINFO WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? AND PROCESSNAME = ? ORDER BY TIMESTAMP ASC";
+        try {
+            PreparedStatement getProcessinfoMetricsStatement = connection.prepareStatement(sql);
+            getProcessinfoMetricsStatement.setLong(1, startTime);
+            getProcessinfoMetricsStatement.setLong(2, endTime);
+            getProcessinfoMetricsStatement.setString(3, processName);
+            ResultSet rs = getProcessinfoMetricsStatement.executeQuery();
+            while (rs.next()) {
+                Long timestamp = rs.getLong("TIMESTAMP");
+                Double columnValue = rs.getDouble(columnName);
+                processinfoMetrics.put(timestamp, columnValue);
+            }
+            getProcessinfoMetricsStatement.close();
+        } catch (Exception e) {
+            log.error("getProcessinfoMetrics: Failed to get processinfo metrics from processinfo table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getProcessinfoMetrics: Failed to get processinfo metrics from processinfo table " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return processinfoMetrics;
+    }
+
 }
