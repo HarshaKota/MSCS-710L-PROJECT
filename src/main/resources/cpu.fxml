@@ -13,7 +13,7 @@
     <children>
         <VBox prefHeight="1000.0" prefWidth="1600.0">
             <children>
-                <AreaChart fx:id="cpuChart" legendSide="RIGHT" title="CPU METRICS" VBox.vgrow="ALWAYS">
+                <AreaChart fx:id="cpuChart" title="CPU METRICS" VBox.vgrow="ALWAYS">
                     <xAxis>
                         <CategoryAxis side="BOTTOM" />
                     </xAxis>
