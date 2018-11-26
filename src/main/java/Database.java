@@ -322,22 +322,24 @@ public class Database {
     // Insert values into Power Table
     void insertIntoPowerTable(MetricCollectionStructures.powerStructure pS) throws Exception {
 
-        //Check if the received powerStructure is not empty
-        if (pS.getTimestamp() == 0 || pS.getBatteryPercentage() == 0d) {
-            log.error("insertIntoPowerTable: Empty powerStructure used to insert into power table");
-            throw new Exception("insertIntoPowerTable: Empty powerStructure used to insert into power table");
-        }
+        if (pS != null) {
+            //Check if the received powerStructure is not empty
+            if (pS.getTimestamp() == 0 || pS.getBatteryPercentage() == 0d) {
+                log.error("insertIntoPowerTable: Empty powerStructure used to insert into power table");
+                throw new Exception("insertIntoPowerTable: Empty powerStructure used to insert into power table");
+            }
 
-        if (Main.hasPowerSource) {
-            try {
-                Statement insertIntoPowerTableStatement = connection.createStatement();
-                String sql =
-                        "INSERT INTO POWER VALUES (" + pS.getTimestamp() + "," + pS.getPowerStatus() + "," + pS.getBatteryPercentage() + ")";
-                insertIntoPowerTableStatement.executeUpdate(sql);
-                insertIntoPowerTableStatement.close();
-            } catch (Exception e) {
-                log.error("insertIntoPowerTable: Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception("insertIntoPowerTable: Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
+            if (Main.hasPowerSource) {
+                try {
+                    Statement insertIntoPowerTableStatement = connection.createStatement();
+                    String sql =
+                            "INSERT INTO POWER VALUES (" + pS.getTimestamp() + "," + pS.getPowerStatus() + "," + pS.getBatteryPercentage() + ")";
+                    insertIntoPowerTableStatement.executeUpdate(sql);
+                    insertIntoPowerTableStatement.close();
+                } catch (Exception e) {
+                    log.error("insertIntoPowerTable: Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
+                    throw new Exception("insertIntoPowerTable: Failed to insert into Power Table " + e.getClass().getName() + ": " + e.getMessage());
+                }
             }
         }
     }
