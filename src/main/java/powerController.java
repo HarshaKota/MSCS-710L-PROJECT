@@ -54,7 +54,7 @@ public class powerController implements Initializable {
         powerChart.getData().clear();
     }
 
-    // get power table data
+    // get table data
     @FXML
     public void getPowerMetrics(ActionEvent actionEvent) {
         if (power_selector.getValue().equals("Live")) {

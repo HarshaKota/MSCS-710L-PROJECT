@@ -76,7 +76,7 @@ public class networkController implements Initializable {
         networkChart.getData().clear();
     }
 
-    // get power table data
+    // get table data
     @FXML
     public void getNetworkMetrics(ActionEvent actionEvent) {
         if (network_selector_1.getValue().equals("Live")) {

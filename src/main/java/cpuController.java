@@ -77,7 +77,7 @@ public class cpuController implements Initializable {
         cpuChart.getData().clear();
     }
 
-    // get power table data
+    // get table data
     @FXML
     public void getCpuMetrics(ActionEvent actionEvent) {
         if (cpu_selector_1.getValue().equals("Live")) {

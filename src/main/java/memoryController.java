@@ -74,7 +74,7 @@ public class memoryController implements Initializable {
         memoryChart.getData().clear();
     }
 
-    // get power table data
+    // get table data
     @FXML
     public void getMemoryMetrics(ActionEvent actionEvent) {
         if (memory_selector_1.getValue().equals("Live")) {
