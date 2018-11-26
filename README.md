@@ -1,5 +1,4 @@
-## Welcome to MetricsCollector2018!
-# Project Title
+# Welcome to MetricsCollector2018!
 
 One Paragraph of project description goes here
 
