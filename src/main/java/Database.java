@@ -871,4 +871,69 @@ public class Database {
         return networkMetrics;
     }
 
+    // Get process table columns
+    ArrayList<String> getProcessColumns() throws Exception {
+        ArrayList<String> networkColumns = new ArrayList<>();
+
+        String sql = "SELECT * FROM PROCESS";
+        try {
+            PreparedStatement getProcessTableColumnsStatement = connection.prepareStatement(sql);
+            ResultSet rs = getProcessTableColumnsStatement.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            for (int i=1; i<=columnCount; i++) {
+                networkColumns.add(rsmd.getColumnName(i));
+            }
+            networkColumns.remove(0);
+            getProcessTableColumnsStatement.close();
+        } catch (SQLException e) {
+            log.error("getProcessColumns: Failed to get process columns " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getProcessColumns: Failed to get process columns " + e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return networkColumns;
+    }
+
+    // Get processMetrics
+    LinkedHashMap<Long, Long> getProcessMetrics(Long startTime, Long endTime, String columnName) throws Exception {
+        LinkedHashMap<Long, Long> processMetrics = new LinkedHashMap<>();
+
+        if (startTime != null && endTime != null) {
+            String sql = "SELECT * FROM PROCESS WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP ASC";
+            try {
+                PreparedStatement getProcessMetricsStatement = connection.prepareStatement(sql);
+                getProcessMetricsStatement.setLong(1, startTime);
+                getProcessMetricsStatement.setLong(2, endTime);
+                ResultSet rs = getProcessMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("TIMESTAMP");
+                    Long columnValue = rs.getLong(columnName);
+                    processMetrics.put(timestamp, columnValue);
+                }
+                getProcessMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getProcessMetrics: Failed to get process metrics from process table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getProcessMetrics: Failed to get process metrics from process table " + e.getClass().getName() + ": " + e.getMessage());
+            }
+        } else {
+            String sql = "SELECT MAX(TIMESTAMP), ? FROM NETWORK";
+            try {
+                PreparedStatement getProcessMetricsStatement = connection.prepareStatement(sql);
+                getProcessMetricsStatement.setString(1, columnName);
+                ResultSet rs = getProcessMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
+                    Long columnValue = rs.getLong(columnName);
+                    processMetrics.put(timestamp, columnValue);
+                }
+                getProcessMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getProcessMetrics: Failed to get process network from process table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getProcessMetrics: Failed to get process metrics from process table " + e.getClass().getName() + ": " + e.getMessage());
+            }
+        }
+
+        return processMetrics;
+    }
+
 }
