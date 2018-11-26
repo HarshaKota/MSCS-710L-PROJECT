@@ -49,6 +49,11 @@ public class powerController implements Initializable {
         power_selector.setValue(power_selector.getItems().get(0));
     }
 
+    @FXML
+    private void clearChart() {
+        powerChart.getData().clear();
+    }
+
     // get power table data
     @FXML
     public void getPowerMetrics(ActionEvent actionEvent) {
@@ -116,11 +121,11 @@ public class powerController implements Initializable {
         try {
             Database dbObject = new Database();
             LinkedHashMap<Long, Double> powerMetrics = dbObject.getPowerMetrics(startSession, endSession);
-            powerChart.getData().clear();
             XYChart.Series<String, Number> series = new XYChart.Series<>();
             for (Map.Entry<Long, Double> map: powerMetrics.entrySet()) {
                 series.getData().add(new XYChart.Data<>(map.getKey().toString(), map.getValue()));
             }
+            series.setName("Battery Percentage %");
             powerChart.getData().add(series);
             for (XYChart.Data<String, Number> d: series.getData()) {
                 Tooltip.install(d.getNode(), new Tooltip(
