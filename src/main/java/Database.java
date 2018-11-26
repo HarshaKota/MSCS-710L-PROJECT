@@ -576,7 +576,9 @@ public class Database {
         try {
             ResultSet rs = connection.getMetaData().getTables(null,null,null,null);
             while (rs.next()) {
-                tablesAvailable.add(rs.getString("TABLE_NAME"));
+                String tableName = rs.getString("TABLE_NAME");
+                if (tableName.equalsIgnoreCase("session")) continue;
+                tablesAvailable.add(tableName);
             }
         } catch (SQLException e) {
             log.error("getTables: Failed to get table names " + e.getClass().getName() + ": " + e.getMessage());
