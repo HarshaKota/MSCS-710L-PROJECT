@@ -59,4 +59,13 @@ public class ControllerTest {
         given(controller.getSessions()).willThrow(new Exception());
         controller.getSessions();
     }
+
+    @Test (expected = Exception.class)
+    public void processControllerFailedToGetSessions() {
+        final processController controller = Mockito.spy(new processController());
+        given(controller.getSessions()).willThrow(new Exception());
+        controller.getSessions();
+    }
+
+    
 }
