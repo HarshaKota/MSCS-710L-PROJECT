@@ -95,4 +95,10 @@ public class ControllerTest {
         controller.getSessions();
     }
 
+    @Test (expected = Exception.class)
+    public void sensorsControllerFailedToGetColumns() {
+        final sensorsController controller = Mockito.spy(new sensorsController());
+        given(controller.getColumns()).willThrow(new Exception());
+        controller.getColumns();
+    }
 }
