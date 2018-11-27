@@ -19,7 +19,7 @@
                   <children>
                       <AreaChart fx:id="memoryChart" title="MEMORY METRICS" VBox.vgrow="ALWAYS">
                           <xAxis>
-                              <NumberAxis side="BOTTOM" />
+                              <NumberAxis label="TIME" side="BOTTOM" />
                           </xAxis>
                           <yAxis>
                               <NumberAxis side="LEFT" />
