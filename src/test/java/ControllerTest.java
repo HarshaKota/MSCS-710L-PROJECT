@@ -52,4 +52,11 @@ public class ControllerTest {
         given(controller.getColumns()).willThrow(new Exception());
         controller.getColumns();
     }
+
+    @Test (expected = Exception.class)
+    public void powerControllerFailedToGetSessions() {
+        final powerController controller = Mockito.spy(new powerController());
+        given(controller.getSessions()).willThrow(new Exception());
+        controller.getSessions();
+    }
 }
