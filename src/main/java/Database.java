@@ -638,20 +638,8 @@ public class Database {
                 throw new Exception("getPowerMetrics: Failed to get power metrics from power table " + e.getClass().getName() + ": " + e.getMessage());
             }
         } else {
-            String sql = "SELECT MAX(TIMESTAMP), BATTERYPERCENTAGE FROM POWER";
-            try {
-                PreparedStatement getPowerMetricsStatement = connection.prepareStatement(sql);
-                ResultSet rs = getPowerMetricsStatement.executeQuery();
-                while (rs.next()) {
-                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
-                    Double batteryPercentage = rs.getDouble("BATTERYPERCENTAGE");
-                    powerMetrics.put(timestamp, batteryPercentage);
-                }
-                getPowerMetricsStatement.close();
-            } catch (Exception e) {
-                log.error("getPowerMetrics: Failed to get power metrics from power table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception("getPowerMetrics: Failed to get power metrics from power table " + e.getClass().getName() + ": " + e.getMessage());
-            }
+            log.error("getPowerMetrics: startTime and endTime are null ");
+            throw new Exception("getPowerMetrics: startTime and endTime are null ");
         }
 
         return powerMetrics;
@@ -702,21 +690,8 @@ public class Database {
                 throw new Exception("getCpuMetrics: Failed to get cpu metrics from cpu table " + e.getClass().getName() + ": " + e.getMessage());
             }
         } else {
-            String sql = "SELECT MAX(TIMESTAMP), ? FROM CPU";
-            try {
-                PreparedStatement getCpuMetricsStatement = connection.prepareStatement(sql);
-                getCpuMetricsStatement.setString(1, columnName);
-                ResultSet rs = getCpuMetricsStatement.executeQuery();
-                while (rs.next()) {
-                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
-                    Double columnValue = rs.getDouble(columnName);
-                    cpuMetrics.put(timestamp, columnValue);
-                }
-                getCpuMetricsStatement.close();
-            } catch (Exception e) {
-                log.error("getCpuMetrics: Failed to get cpu metrics from cpu table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception("getCpuMetrics: Failed to get cpu metrics from cpu table " + e.getClass().getName() + ": " + e.getMessage());
-            }
+            log.error("getCpuMetrics: startTime and endTime are null ");
+            throw new Exception("getCpuMetrics: startTime and endTime are null ");
         }
 
         return cpuMetrics;
@@ -790,21 +765,8 @@ public class Database {
                 throw new Exception("getMemoryMetrics: Failed to get memory metrics from memory table " + e.getClass().getName() + ": " + e.getMessage());
             }
         } else {
-            String sql = "SELECT MAX(TIMESTAMP), ? FROM MEMORY";
-            try {
-                PreparedStatement getMemoryMetricsStatement = connection.prepareStatement(sql);
-                getMemoryMetricsStatement.setString(1, columnName);
-                ResultSet rs = getMemoryMetricsStatement.executeQuery();
-                while (rs.next()) {
-                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
-                    Double columnValue = rs.getDouble(columnName);
-                    memoryMetrics.put(timestamp, columnValue);
-                }
-                getMemoryMetricsStatement.close();
-            } catch (Exception e) {
-                log.error("getMemoryMetrics: Failed to get memory metrics from memory table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception("getMemoryMetrics: Failed to get memory metrics from memory table " + e.getClass().getName() + ": " + e.getMessage());
-            }
+            log.error("getMemoryMetrics: startTime and endTime are null ");
+            throw new Exception("getMemoryMetrics: startTime and endTime are null ");
         }
 
         return memoryMetrics;
@@ -855,21 +817,8 @@ public class Database {
                 throw new Exception("getMemoryMetrics: Failed to get network metrics from network table " + e.getClass().getName() + ": " + e.getMessage());
             }
         } else {
-            String sql = "SELECT MAX(TIMESTAMP), ? FROM NETWORK";
-            try {
-                PreparedStatement getMemoryMetricsStatement = connection.prepareStatement(sql);
-                getMemoryMetricsStatement.setString(1, columnName);
-                ResultSet rs = getMemoryMetricsStatement.executeQuery();
-                while (rs.next()) {
-                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
-                    Double columnValue = rs.getDouble(columnName);
-                    networkMetrics.put(timestamp, columnValue);
-                }
-                getMemoryMetricsStatement.close();
-            } catch (Exception e) {
-                log.error("getNetworkMetrics: Failed to get memory network from network table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception("getNetworkMetrics: Failed to get network metrics from network table " + e.getClass().getName() + ": " + e.getMessage());
-            }
+            log.error("getNetworkMetrics: startTime and endTime are null ");
+            throw new Exception("getNetworkMetrics: startTime and endTime are null ");
         }
 
         return networkMetrics;
@@ -920,21 +869,8 @@ public class Database {
                 throw new Exception("getProcessMetrics: Failed to get process metrics from process table " + e.getClass().getName() + ": " + e.getMessage());
             }
         } else {
-            String sql = "SELECT MAX(TIMESTAMP), ? FROM NETWORK";
-            try {
-                PreparedStatement getProcessMetricsStatement = connection.prepareStatement(sql);
-                getProcessMetricsStatement.setString(1, columnName);
-                ResultSet rs = getProcessMetricsStatement.executeQuery();
-                while (rs.next()) {
-                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
-                    Long columnValue = rs.getLong(columnName);
-                    processMetrics.put(timestamp, columnValue);
-                }
-                getProcessMetricsStatement.close();
-            } catch (Exception e) {
-                log.error("getProcessMetrics: Failed to get process network from process table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception("getProcessMetrics: Failed to get process metrics from process table " + e.getClass().getName() + ": " + e.getMessage());
-            }
+            log.error("getProcessMetrics: startTime and endTime are null ");
+            throw new Exception("getProcessMetrics: startTime and endTime are null ");
         }
 
         return processMetrics;
@@ -985,21 +921,8 @@ public class Database {
                 throw new Exception("getSensorsMetrics: Failed to get sensors metrics from sensors table " + e.getClass().getName() + ": " + e.getMessage());
             }
         } else {
-            String sql = "SELECT MAX(TIMESTAMP), ? FROM SENSORS";
-            try {
-                PreparedStatement getSensorsMetricsStatement = connection.prepareStatement(sql);
-                getSensorsMetricsStatement.setString(1, columnName);
-                ResultSet rs = getSensorsMetricsStatement.executeQuery();
-                while (rs.next()) {
-                    Long timestamp = rs.getLong("MAX(TIMESTAMP)");
-                    Double columnValue = rs.getDouble(columnName);
-                    sensorsMetrics.put(timestamp, columnValue);
-                }
-                getSensorsMetricsStatement.close();
-            } catch (Exception e) {
-                log.error("getSensorsMetrics: Failed to get sensors network from sensors table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception("getSensorsMetrics: Failed to get sensors metrics from sensors table " + e.getClass().getName() + ": " + e.getMessage());
-            }
+            log.error("getSensorsMetrics: startTime and endTime are null ");
+            throw new Exception("getSensorsMetrics: startTime and endTime are null ");
         }
 
         return sensorsMetrics;
