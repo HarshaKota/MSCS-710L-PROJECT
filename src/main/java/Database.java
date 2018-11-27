@@ -608,8 +608,8 @@ public class Database {
             }
             getSessionsStatement.close();
         } catch (Exception e) {
-            log.error("getSessions: Failed to sessions from session table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception("getSessions: Failed to sessions from session table " + e.getClass().getName() + ": " + e.getMessage());
+            log.error("getSessions: Failed to get sessions from session table " + e.getClass().getName() + ": " + e.getMessage());
+            throw new Exception("getSessions: Failed to get sessions from session table " + e.getClass().getName() + ": " + e.getMessage());
         }
 
         return sessions;
