@@ -67,5 +67,10 @@ public class ControllerTest {
         controller.getSessions();
     }
 
-    
+    @Test (expected = Exception.class)
+    public void processControllerFailedToGetColumns() {
+        final processController controller = Mockito.spy(new processController());
+        given(controller.getColumns()).willThrow(new Exception());
+        controller.getColumns();
+    }
 }
