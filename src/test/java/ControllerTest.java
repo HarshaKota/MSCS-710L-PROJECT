@@ -73,4 +73,11 @@ public class ControllerTest {
         given(controller.getColumns()).willThrow(new Exception());
         controller.getColumns();
     }
+
+    @Test (expected = Exception.class)
+    public void processInfoControllerFailedToGetColumns() {
+        final processinfoController controller = Mockito.spy(new processinfoController());
+        given(controller.getColumns()).willThrow(new Exception());
+        controller.getColumns();
+    }
 }
