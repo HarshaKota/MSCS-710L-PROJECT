@@ -29,7 +29,7 @@ public class powerController implements Initializable {
     }
 
     // get sessions from session table
-    private LinkedHashMap<Long,Long> getSessions() {
+    LinkedHashMap<Long,Long> getSessions() {
         LinkedHashMap<Long, Long> sessions = new LinkedHashMap<>();
         try {
             Database dbObject = new Database();

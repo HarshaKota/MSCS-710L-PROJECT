@@ -31,7 +31,7 @@ public class sensorsController implements Initializable {
     }
 
     // get sessions from session table
-    private LinkedHashMap<Long,Long> getSessions() {
+    LinkedHashMap<Long,Long> getSessions() {
         LinkedHashMap<Long, Long> sessions = new LinkedHashMap<>();
         try {
             Database dbObject = new Database();
@@ -50,7 +50,7 @@ public class sensorsController implements Initializable {
     }
 
     // get columns available from the sensors table
-    private ArrayList<String> getColumns() {
+    ArrayList<String> getColumns() {
         ArrayList<String> columns = new ArrayList<>();
         Database dbObject = new Database();
         try {
