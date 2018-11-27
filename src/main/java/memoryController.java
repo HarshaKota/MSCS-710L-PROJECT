@@ -49,7 +49,7 @@ public class memoryController implements Initializable {
     }
 
     // get columns available from the memory table
-    private ArrayList<String> getColumns() {
+    ArrayList<String> getColumns() {
         ArrayList<String> columns = new ArrayList<>();
         Database dbObject = new Database();
         try {

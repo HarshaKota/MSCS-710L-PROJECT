@@ -3,6 +3,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 public class ControllerTest {
 
@@ -29,6 +30,13 @@ public class ControllerTest {
         final memoryController controller = Mockito.spy(new memoryController());
         given(controller.getSessions()).willThrow(new Exception());
         controller.getSessions();
+    }
+
+    @Test (expected = Exception.class)
+    public void memoryControllerFailedToGetColumns() {
+        final memoryController controller = Mockito.spy(new memoryController());
+        given(controller.getColumns()).willThrow(new Exception());
+        controller.getColumns();
     }
 
 }
