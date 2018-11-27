@@ -46,5 +46,10 @@ public class ControllerTest {
         controller.getSessions();
     }
 
-    
+    @Test (expected = Exception.class)
+    public void networkmemoryControllerFailedToGetColumns() {
+        final networkController controller = Mockito.spy(new networkController());
+        given(controller.getColumns()).willThrow(new Exception());
+        controller.getColumns();
+    }
 }
