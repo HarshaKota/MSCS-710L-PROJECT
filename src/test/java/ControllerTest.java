@@ -17,4 +17,11 @@ public class ControllerTest {
         controller.getSessions();
     }
 
+    @Test (expected = Exception.class)
+    public void memoryControllerFailedToGetSessions() {
+        final memoryController controller = Mockito.spy(new memoryController());
+        given(controller.getSessions()).willThrow(new Exception());
+        controller.getSessions();
+    }
+
 }
