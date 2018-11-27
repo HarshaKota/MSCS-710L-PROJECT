@@ -28,10 +28,11 @@ public class mainController implements Initializable {
 
     // update choice box with values
     private void setMetricNamesToChoiceBox(ArrayList<String> metricNames) {
+        metricSelectionBox.getItems().add("Static");
         for (String s: metricNames) {
             metricSelectionBox.getItems().add(s);
         }
-        metricSelectionBox.setValue(metricNames.get(0));
+        metricSelectionBox.setValue(metricSelectionBox.getItems().get(0));
     }
 
     // get values for the choice box
