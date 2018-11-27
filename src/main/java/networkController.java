@@ -84,6 +84,7 @@ public class networkController implements Initializable {
     private void getSessionMetrics() {
         Long startSession;
         Long endSession;
+        Long initialPacketCount;
 
         startSession = Util.convertDateToLong(network_selector_1.getValue().trim().split("to")[0]);
         endSession = Util.convertDateToLong(network_selector_1.getValue().trim().split("to")[1]);
@@ -92,9 +93,10 @@ public class networkController implements Initializable {
         try {
             Database dbObject = new Database();
             LinkedHashMap<Long, Double> networkMetrics = dbObject.getNetworkMetrics(startSession, endSession, columnName);
+            initialPacketCount = networkMetrics.entrySet().iterator().next().getValue().longValue();
             XYChart.Series<String, Number> series = new XYChart.Series<>();
             for (Map.Entry<Long, Double> map: networkMetrics.entrySet()) {
-                series.getData().add(new XYChart.Data<>(map.getKey().toString(), map.getValue()));
+                series.getData().add(new XYChart.Data<>(map.getKey().toString(), map.getValue()-initialPacketCount));
             }
             series.setName(columnName);
             networkChart.getData().add(series);
@@ -102,7 +104,8 @@ public class networkController implements Initializable {
             for (XYChart.Data<String, Number> d: series.getData()) {
                 if (columnName.equalsIgnoreCase("noofpacketsreceived") || columnName.equalsIgnoreCase("noofpacketssent")) {
                     Tooltip.install(d.getNode(), new Tooltip(
-                            d.getYValue().toString() +
+                            "Packets: " + d.getYValue().toString() +
+                            "\n" + "Total packets: " + (d.getYValue().longValue() + initialPacketCount) +
                                     "\n" + Util.convertLongToDate(Long.valueOf(d.getXValue()))));
                 } else {
                     Tooltip.install(d.getNode(), new Tooltip(
