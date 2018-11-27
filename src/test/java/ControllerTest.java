@@ -39,4 +39,12 @@ public class ControllerTest {
         controller.getColumns();
     }
 
+    @Test (expected = Exception.class)
+    public void networkControllerFailedToGetSessions() {
+        final networkController controller = Mockito.spy(new networkController());
+        given(controller.getSessions()).willThrow(new Exception());
+        controller.getSessions();
+    }
+
+    
 }
