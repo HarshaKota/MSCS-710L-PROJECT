@@ -19,7 +19,7 @@ public class memoryController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    @FXML AreaChart<String, Number> memoryChart;
+    @FXML AreaChart<Long, Double> memoryChart;
     @FXML ChoiceBox<String> memory_selector_1;
     @FXML ChoiceBox<String> memory_selector_2;
 
@@ -82,6 +82,7 @@ public class memoryController implements Initializable {
     private void getSessionMetrics() {
         Long startSession;
         Long endSession;
+        Long initialTimestamp;
 
         startSession = Util.convertDateToLong(memory_selector_1.getValue().trim().split("to")[0]);
         endSession = Util.convertDateToLong(memory_selector_1.getValue().trim().split("to")[1]);
@@ -90,18 +91,19 @@ public class memoryController implements Initializable {
         try {
             Database dbObject = new Database();
             LinkedHashMap<Long, Double> memoryMetrics = dbObject.getMemoryMetrics(startSession, endSession, columnName);
-            double totalMemory = (dbObject.getTotalMemory()*10.0)/10.0;
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            initialTimestamp = memoryMetrics.entrySet().iterator().next().getKey();
+            double totalMemory = dbObject.getTotalMemory();
+            XYChart.Series<Long, Double> series = new XYChart.Series<>();
             for (Map.Entry<Long, Double> map: memoryMetrics.entrySet()) {
-                series.getData().add(new XYChart.Data<>(map.getKey().toString(), map.getValue()));
+                series.getData().add(new XYChart.Data<>((map.getKey() - initialTimestamp), map.getValue()));
             }
             series.setName("Ram Used / " + totalMemory+"GB");
             memoryChart.getData().add(series);
-            memoryChart.getYAxis().setLabel(columnName);
-            for (XYChart.Data<String, Number> d: series.getData()) {
+            memoryChart.getYAxis().setLabel(columnName + " (.GB)");
+            for (XYChart.Data<Long, Double> d: series.getData()) {
                 Tooltip.install(d.getNode(), new Tooltip(
                         d.getYValue().toString()+"GB"+"/"+totalMemory+"GB" +
-                                "\n" + Util.convertLongToDate(Long.valueOf(d.getXValue()))));
+                                "\n" + Util.convertLongToDate(d.getXValue()+ initialTimestamp)));
                 d.getNode().setOnMouseEntered(event -> d.getNode().getStyleClass().add("onHover"));
                 d.getNode().setOnMouseExited(event -> d.getNode().getStyleClass().remove("onHover"));
             }

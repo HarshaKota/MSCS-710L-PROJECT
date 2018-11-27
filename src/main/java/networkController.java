@@ -19,7 +19,7 @@ public class networkController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    @FXML AreaChart<String, Number> networkChart;
+    @FXML AreaChart<Long, Double> networkChart;
     @FXML ChoiceBox<String> network_selector_1;
     @FXML ChoiceBox<String> network_selector_2;
 
@@ -84,7 +84,8 @@ public class networkController implements Initializable {
     private void getSessionMetrics() {
         Long startSession;
         Long endSession;
-        Long initialPacketCount;
+        Double initialPacketCount;
+        Long initialTimestamp;
 
         startSession = Util.convertDateToLong(network_selector_1.getValue().trim().split("to")[0]);
         endSession = Util.convertDateToLong(network_selector_1.getValue().trim().split("to")[1]);
@@ -93,24 +94,31 @@ public class networkController implements Initializable {
         try {
             Database dbObject = new Database();
             LinkedHashMap<Long, Double> networkMetrics = dbObject.getNetworkMetrics(startSession, endSession, columnName);
-            initialPacketCount = networkMetrics.entrySet().iterator().next().getValue().longValue();
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
-            for (Map.Entry<Long, Double> map: networkMetrics.entrySet()) {
-                series.getData().add(new XYChart.Data<>(map.getKey().toString(), map.getValue()-initialPacketCount));
+            initialPacketCount = networkMetrics.entrySet().iterator().next().getValue();
+            initialTimestamp = networkMetrics.entrySet().iterator().next().getKey();
+            XYChart.Series<Long, Double> series = new XYChart.Series<>();
+            if (columnName.equalsIgnoreCase("sizereceived") || columnName.equalsIgnoreCase("sizesent")) {
+                for (Map.Entry<Long, Double> map : networkMetrics.entrySet()) {
+                    series.getData().add(new XYChart.Data<>((map.getKey() - initialTimestamp), (map.getValue())));
+                }
+            } else {
+                for (Map.Entry<Long, Double> map : networkMetrics.entrySet()) {
+                    series.getData().add(new XYChart.Data<>((map.getKey() - initialTimestamp), (map.getValue() - initialPacketCount)));
+                }
             }
             series.setName(columnName);
             networkChart.getData().add(series);
             networkChart.getYAxis().setLabel(columnName);
-            for (XYChart.Data<String, Number> d: series.getData()) {
+            for (XYChart.Data<Long, Double> d: series.getData()) {
                 if (columnName.equalsIgnoreCase("noofpacketsreceived") || columnName.equalsIgnoreCase("noofpacketssent")) {
                     Tooltip.install(d.getNode(), new Tooltip(
                             "Packets: " + d.getYValue().toString() +
                             "\n" + "Total packets: " + (d.getYValue().longValue() + initialPacketCount) +
-                                    "\n" + Util.convertLongToDate(Long.valueOf(d.getXValue()))));
+                                    "\n" + Util.convertLongToDate(d.getXValue()+ initialTimestamp)));
                 } else {
                     Tooltip.install(d.getNode(), new Tooltip(
                             d.getYValue().toString()+"GB" +
-                                    "\n" + Util.convertLongToDate(Long.valueOf(d.getXValue()))));
+                                    "\n" + Util.convertLongToDate(d.getXValue()+ initialTimestamp)));
                 }
 
                 d.getNode().setOnMouseEntered(event -> d.getNode().getStyleClass().add("onHover"));

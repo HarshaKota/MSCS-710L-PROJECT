@@ -19,7 +19,7 @@
                   <children>
                       <AreaChart fx:id="cpuChart" title="CPU METRICS" VBox.vgrow="ALWAYS">
                           <xAxis>
-                              <CategoryAxis side="BOTTOM" />
+                              <NumberAxis side="BOTTOM" />
                           </xAxis>
                           <yAxis>
                               <NumberAxis side="LEFT" />

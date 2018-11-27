@@ -20,7 +20,7 @@ public class cpuController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    @FXML AreaChart<String, Number> cpuChart;
+    @FXML AreaChart<Long, Double> cpuChart;
     @FXML ChoiceBox<String> cpu_selector_1;
     @FXML ChoiceBox<String> cpu_selector_2;
 
@@ -85,6 +85,7 @@ public class cpuController implements Initializable {
     private void getSessionMetrics() {
         Long startSession;
         Long endSession;
+        Long initialTimestamp;
 
         startSession = Util.convertDateToLong(cpu_selector_1.getValue().trim().split("to")[0]);
         endSession = Util.convertDateToLong(cpu_selector_1.getValue().trim().split("to")[1]);
@@ -93,21 +94,26 @@ public class cpuController implements Initializable {
         try {
             Database dbObject = new Database();
             LinkedHashMap<Long, Double> cpuMetrics = dbObject.getCpuMetrics(startSession, endSession, columnName);
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            initialTimestamp = cpuMetrics.entrySet().iterator().next().getKey();
+            XYChart.Series<Long, Double> series = new XYChart.Series<>();
             for (Map.Entry<Long, Double> map: cpuMetrics.entrySet()) {
-                series.getData().add(new XYChart.Data<>(map.getKey().toString(), map.getValue()));
+                series.getData().add(new XYChart.Data<>((map.getKey() - initialTimestamp), map.getValue()));
             }
             series.setName(columnName);
             cpuChart.getData().add(series);
-            cpuChart.getYAxis().setLabel(columnName);
-            for (XYChart.Data<String, Number> d: series.getData()) {
+            if (columnName.equalsIgnoreCase("uptime")) {
+                cpuChart.getYAxis().setLabel(columnName + " Seconds");
+            } else {
+                cpuChart.getYAxis().setLabel(columnName + "%");
+            }
+            for (XYChart.Data<Long, Double> d: series.getData()) {
                 if (columnName.equalsIgnoreCase("uptime")) {
                     Tooltip.install(d.getNode(), new Tooltip(
                             FormatUtil.formatElapsedSecs(d.getYValue().longValue()) + "\n" +
-                                    Util.convertLongToDate(Long.valueOf(d.getXValue()))));
+                                    Util.convertLongToDate(d.getXValue() + initialTimestamp)));
                 } else {
                     Tooltip.install(d.getNode(), new Tooltip(
-                            d.getYValue().toString()+"%" + "\n" + Util.convertLongToDate(Long.valueOf(d.getXValue()))));
+                            d.getYValue().toString()+"%" + "\n" + Util.convertLongToDate(d.getXValue()+ initialTimestamp)));
                 }
 
                 d.getNode().setOnMouseEntered(event -> d.getNode().getStyleClass().add("onHover"));

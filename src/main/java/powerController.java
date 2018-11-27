@@ -20,7 +20,7 @@ public class powerController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    @FXML AreaChart<String, Number> powerChart;
+    @FXML AreaChart<Long, Double> powerChart;
     @FXML ChoiceBox<String> power_selector;
 
     @Override
@@ -62,6 +62,7 @@ public class powerController implements Initializable {
     private void getSessionMetrics() {
         Long startSession;
         Long endSession;
+        Long initialTimestamp;
 
         startSession = Util.convertDateToLong(power_selector.getValue().trim().split("to")[0]);
         endSession = Util.convertDateToLong(power_selector.getValue().trim().split("to")[1]);
@@ -69,15 +70,16 @@ public class powerController implements Initializable {
         try {
             Database dbObject = new Database();
             LinkedHashMap<Long, Double> powerMetrics = dbObject.getPowerMetrics(startSession, endSession);
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            initialTimestamp = powerMetrics.entrySet().iterator().next().getKey();
+            XYChart.Series<Long, Double> series = new XYChart.Series<>();
             for (Map.Entry<Long, Double> map: powerMetrics.entrySet()) {
-                series.getData().add(new XYChart.Data<>(map.getKey().toString(), map.getValue()));
+                series.getData().add(new XYChart.Data<>((map.getKey() - initialTimestamp), map.getValue()));
             }
             series.setName("Battery Percentage %");
             powerChart.getData().add(series);
-            for (XYChart.Data<String, Number> d: series.getData()) {
+            for (XYChart.Data<Long, Double> d: series.getData()) {
                 Tooltip.install(d.getNode(), new Tooltip(
-                        d.getYValue().toString() + "\n" + Util.convertLongToDate(Long.valueOf(d.getXValue()))));
+                        d.getYValue().toString() + "\n" + Util.convertLongToDate(d.getXValue()+ initialTimestamp)));
                 d.getNode().setOnMouseEntered(event -> d.getNode().getStyleClass().add("onHover"));
                 d.getNode().setOnMouseExited(event -> d.getNode().getStyleClass().remove("onHover"));
             }

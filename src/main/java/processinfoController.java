@@ -22,7 +22,7 @@ public class processinfoController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    @FXML AreaChart<String, Number> processinfoChart;
+    @FXML AreaChart<Long, Double> processinfoChart;
     @FXML ChoiceBox<String> processinfo_selector_1;
     @FXML ChoiceBox<String> processinfo_selector_2;
     @FXML ChoiceBox<String> processinfo_selector_3;
@@ -130,6 +130,7 @@ public class processinfoController implements Initializable {
     private void getSessionMetrics() {
         Long startSession;
         Long endSession;
+        Long initialTimestamp;
         String processesName;
         String columnName;
 
@@ -141,17 +142,18 @@ public class processinfoController implements Initializable {
         try {
             Database dbObject = new Database();
             LinkedHashMap<Long, Double> processinfoMetrics = dbObject.getProcessinfoMetrics(startSession, endSession, columnName, processesName);
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            initialTimestamp = processinfoMetrics.entrySet().iterator().next().getKey();
+            XYChart.Series<Long, Double> series = new XYChart.Series<>();
             for (Map.Entry<Long, Double> map: processinfoMetrics.entrySet()) {
-                series.getData().add(new XYChart.Data<>(map.getKey().toString(), map.getValue()));
+                series.getData().add(new XYChart.Data<>((map.getKey() - initialTimestamp), map.getValue()));
             }
             series.setName(columnName);
             processinfoChart.getData().add(series);
             processinfoChart.getYAxis().setLabel(columnName);
-            for (XYChart.Data<String, Number> d: series.getData()) {
+            for (XYChart.Data<Long, Double> d: series.getData()) {
                 Tooltip.install(d.getNode(), new Tooltip(
                         d.getYValue().toString()+"%" + "\n" +
-                                Util.convertLongToDate(Long.valueOf(d.getXValue()))));
+                                Util.convertLongToDate(d.getXValue()+ initialTimestamp)));
 
                 d.getNode().setOnMouseEntered(event -> d.getNode().getStyleClass().add("onHover"));
                 d.getNode().setOnMouseExited(event -> d.getNode().getStyleClass().remove("onHover"));

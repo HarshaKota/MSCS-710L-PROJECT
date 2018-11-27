@@ -20,7 +20,7 @@ public class sensorsController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    @FXML AreaChart<String, Number> sensorsChart;
+    @FXML AreaChart<Long, Double> sensorsChart;
     @FXML ChoiceBox<String> sensors_selector_1;
     @FXML ChoiceBox<String> sensors_selector_2;
 
@@ -85,6 +85,7 @@ public class sensorsController implements Initializable {
     private void getSessionMetrics() {
         Long startSession;
         Long endSession;
+        Long initialTimestamp;
 
         startSession = Util.convertDateToLong(sensors_selector_1.getValue().trim().split("to")[0]);
         endSession = Util.convertDateToLong(sensors_selector_1.getValue().trim().split("to")[1]);
@@ -92,19 +93,20 @@ public class sensorsController implements Initializable {
 
         try {
             Database dbObject = new Database();
-            LinkedHashMap<Long, Double> cpuMetrics = dbObject.getSensorsMetrics(startSession, endSession, columnName);
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
-            for (Map.Entry<Long, Double> map: cpuMetrics.entrySet()) {
-                series.getData().add(new XYChart.Data<>(map.getKey().toString(), map.getValue()));
+            LinkedHashMap<Long, Double> sensorsMetrics = dbObject.getSensorsMetrics(startSession, endSession, columnName);
+            initialTimestamp = sensorsMetrics.entrySet().iterator().next().getKey();
+            XYChart.Series<Long, Double> series = new XYChart.Series<>();
+            for (Map.Entry<Long, Double> map: sensorsMetrics.entrySet()) {
+                series.getData().add(new XYChart.Data<>((map.getKey() - initialTimestamp), map.getValue()));
             }
             series.setName(columnName);
             sensorsChart.getData().add(series);
             sensorsChart.getYAxis().setLabel(columnName);
-            for (XYChart.Data<String, Number> d: series.getData()) {
+            for (XYChart.Data<Long, Double> d: series.getData()) {
 
                 Tooltip.install(d.getNode(), new Tooltip(
                         d.getYValue().toString() + "\n" +
-                                Util.convertLongToDate(Long.valueOf(d.getXValue()))));
+                                Util.convertLongToDate(d.getXValue()+ initialTimestamp)));
 
                 d.getNode().setOnMouseEntered(event -> d.getNode().getStyleClass().add("onHover"));
                 d.getNode().setOnMouseExited(event -> d.getNode().getStyleClass().remove("onHover"));

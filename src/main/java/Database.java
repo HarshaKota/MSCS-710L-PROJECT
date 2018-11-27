@@ -4,6 +4,7 @@ import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class Database {
@@ -630,6 +631,7 @@ public class Database {
                 while (rs.next()) {
                     Long timestamp = rs.getLong("TIMESTAMP");
                     Double batteryPercentage = rs.getDouble("BATTERYPERCENTAGE");
+                    //Double.parseDouble(new DecimalFormat("#0.#").format(rs.getDouble(columnName)))
                     powerMetrics.put(timestamp, batteryPercentage);
                 }
                 getPowerMetricsStatement.close();
@@ -681,7 +683,7 @@ public class Database {
                 ResultSet rs = getCpuMetricsStatement.executeQuery();
                 while (rs.next()) {
                     Long timestamp = rs.getLong("TIMESTAMP");
-                    Double columnValue = rs.getDouble(columnName);
+                    Double columnValue = Double.parseDouble(new DecimalFormat("#0.#").format(rs.getDouble(columnName)));
                     cpuMetrics.put(timestamp, columnValue);
                 }
                 getCpuMetricsStatement.close();
@@ -756,7 +758,7 @@ public class Database {
                 ResultSet rs = getMemoryMetricsStatement.executeQuery();
                 while (rs.next()) {
                     Long timestamp = rs.getLong("TIMESTAMP");
-                    Double columnValue = rs.getDouble(columnName);
+                    Double columnValue = Double.parseDouble(new DecimalFormat("#0.#").format(rs.getDouble(columnName)));
                     memoryMetrics.put(timestamp, columnValue);
                 }
                 getMemoryMetricsStatement.close();
@@ -808,8 +810,20 @@ public class Database {
                 ResultSet rs = getNetworkMetricsStatement.executeQuery();
                 while (rs.next()) {
                     Long timestamp = rs.getLong("TIMESTAMP");
-                    Double columnValue = rs.getDouble(columnName);
-                    networkMetrics.put(timestamp, columnValue);
+                    String columnValue = rs.getString(columnName);
+                    if (columnName.equalsIgnoreCase("sizereceived") || columnName.equalsIgnoreCase("sizesent")) {
+                        Double decimalValue = Double.parseDouble(
+                                new DecimalFormat("#0.#").format(
+                                        Double.valueOf(columnValue.split(" ")[0])));
+                        String sizeIndicator = columnValue.split(" ")[1];
+                        Double actualValue = Double.parseDouble(
+                                new DecimalFormat("#0.#").format(
+                                        decimalValue * (sizeIndicator.equalsIgnoreCase("gib") ? 1024 : 1)));
+                        networkMetrics.put(timestamp, actualValue);
+                    } else {
+                        Double actualValue = Double.parseDouble(new DecimalFormat("#0.#").format(rs.getDouble(columnName)));
+                        networkMetrics.put(timestamp, actualValue);
+                    }
                 }
                 getNetworkMetricsStatement.close();
             } catch (Exception e) {
@@ -912,7 +926,7 @@ public class Database {
                 ResultSet rs = getSensorsMetricsStatement.executeQuery();
                 while (rs.next()) {
                     Long timestamp = rs.getLong("TIMESTAMP");
-                    Double columnValue = rs.getDouble(columnName);
+                    Double columnValue = Double.parseDouble(new DecimalFormat("#0.#").format(rs.getDouble(columnName)));
                     sensorsMetrics.put(timestamp, columnValue);
                 }
                 getSensorsMetricsStatement.close();
@@ -988,7 +1002,7 @@ public class Database {
             ResultSet rs = getProcessinfoMetricsStatement.executeQuery();
             while (rs.next()) {
                 Long timestamp = rs.getLong("TIMESTAMP");
-                Double columnValue = rs.getDouble(columnName);
+                Double columnValue = Double.parseDouble(new DecimalFormat("#0.#").format(rs.getDouble(columnName)));
                 processinfoMetrics.put(timestamp, columnValue);
             }
             getProcessinfoMetricsStatement.close();
