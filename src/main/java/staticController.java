@@ -4,6 +4,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +21,7 @@ public class staticController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    @FXML Label staticMetricTextBox;
+    @FXML TextArea staticMetricTextBox;
     @FXML ChoiceBox<String> static_selector_1;
 
     @Override
