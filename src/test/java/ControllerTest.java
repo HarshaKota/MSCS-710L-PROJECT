@@ -87,4 +87,12 @@ public class ControllerTest {
         given(controller.getColumns()).willThrow(new Exception());
         controller.getColumns();
     }
+
+    @Test (expected = Exception.class)
+    public void sensorsControllerFailedToGetSessions() {
+        final sensorsController controller = Mockito.spy(new sensorsController());
+        given(controller.getSessions()).willThrow(new Exception());
+        controller.getSessions();
+    }
+
 }
