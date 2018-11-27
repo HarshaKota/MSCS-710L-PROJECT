@@ -75,6 +75,13 @@ public class ControllerTest {
     }
 
     @Test (expected = Exception.class)
+    public void processInfoControllerFailedToGetSessions() {
+        final processinfoController controller = Mockito.spy(new processinfoController());
+        given(controller.getSessions()).willThrow(new Exception());
+        controller.getSessions();
+    }
+
+    @Test (expected = Exception.class)
     public void processInfoControllerFailedToGetColumns() {
         final processinfoController controller = Mockito.spy(new processinfoController());
         given(controller.getColumns()).willThrow(new Exception());
