@@ -598,7 +598,7 @@ public class Database {
         try {
             Statement getSessionsStatement = connection.createStatement();
             String sql =
-                    "SELECT * FROM SESSION ORDER BY STARTSESSION ASC";
+                    "SELECT * FROM SESSION ORDER BY STARTSESSION DESC";
             ResultSet rs = getSessionsStatement.executeQuery(sql);
             while (rs.next()) {
                 Long startSession = rs.getLong("STARTSESSION");
