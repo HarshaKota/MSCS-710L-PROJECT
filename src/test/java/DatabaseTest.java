@@ -53,6 +53,13 @@ public class DatabaseTest {
         }
     }
 
+
+    @Test(expected = Exception.class)
+    public void nullTimesInProcessMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        dbObj.getProcessMetrics(null,null,"");
+    }
+
     @Test(expected = Exception.class)
     public void failedToGetSensorMetrics() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
@@ -62,7 +69,7 @@ public class DatabaseTest {
     @Test(expected = Exception.class)
     public void nullTimesInSensorMetrics() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
-        given(dbObj.getSensorsMetrics(null,null,""));
+        dbObj.getSensorsMetrics(null,null,"");
     }
 
     @Test(expected = Exception.class)
