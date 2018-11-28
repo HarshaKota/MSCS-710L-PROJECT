@@ -1,4 +1,4 @@
-# Welcome to MetricsCollector2018!
+# Welcome to MetricsCollector!
 
 MetricsCollector interacts with the Linux kernal of a Windows, Mac, or Linux operating system and returns several useful metrics to the user.  This application provides the user with information about the following system metrics:
 
@@ -12,8 +12,6 @@ MetricsCollector interacts with the Linux kernal of a Windows, Mac, or Linux ope
 
 ### Prerequisites
 * Java JVM
-
-There are no preqequsites for installing and running MetricsCollector.
 
 ### Installing
 
