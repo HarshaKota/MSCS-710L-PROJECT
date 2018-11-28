@@ -52,7 +52,7 @@ public class DatabaseTest {
             e.printStackTrace();
         }
     }
-    
+
     @Test(expected = Exception.class)
     public void nullTimesInPowerMetrics() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
@@ -255,6 +255,17 @@ public class DatabaseTest {
         dbObj.insertIntoSensorsTable(sensorsStructure);
     }
 
+    @Test(expected = Exception.class)
+    public void insertIntoSensorsTable_NoFans() throws Exception {
+        MetricCollectionStructures.sensorsStructure sensorsStructure = new MetricCollectionStructures.sensorsStructure();
+        sensorsStructure.setTimestamp(System.currentTimeMillis());
+        sensorsStructure.setCpuTemperature(10d);
+        sensorsStructure.setCpuVoltage(10d);
+        sensorsStructure.setFans(new ArrayList<Integer>());
+        Database dbObj = new Database();
+        dbObj.insertIntoSensorsTable(sensorsStructure);
+    }
+    
     @Test(expected = Exception.class)
     public void insertIntoSensorsTable_EmptyInputs() throws Exception {
         Database dbObj = new Database();
