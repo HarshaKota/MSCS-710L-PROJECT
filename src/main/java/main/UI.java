@@ -1,3 +1,5 @@
+package main;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,18 +14,18 @@ public class UI extends Application implements Runnable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    // Setting up the UI Window
+    // Setting up the main.UI Window
     @Override
     public void start(Stage stage) throws IOException {
         Main.applicationOpen.set(true);
-        Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../main.fxml"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Metric Collector");
         stage.show();
     }
 
-    // Launching the UI Window
+    // Launching the main.UI Window
     @Override
     public void run() {
         launch();
@@ -33,7 +35,7 @@ public class UI extends Application implements Runnable {
     @Override
     public void stop() throws Exception {
         Main.applicationOpen.set(false);
-        System.out.println("UI Closing. Open?:  " + Main.applicationOpen); //Sysout
+        System.out.println("main.UI Closing. Open?:  " + Main.applicationOpen); //Sysout
         super.stop();
     }
 }

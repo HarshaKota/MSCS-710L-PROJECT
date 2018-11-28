@@ -1,3 +1,7 @@
+package controllers;
+
+import main.*;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,7 +18,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.*;
 
 public class processController implements Initializable {
 
@@ -31,7 +34,7 @@ public class processController implements Initializable {
     }
 
     // get sessions from session table
-    LinkedHashMap<Long,Long> getSessions() {
+    public LinkedHashMap<Long,Long> getSessions() {
         LinkedHashMap<Long, Long> sessions = new LinkedHashMap<>();
         try {
             Database dbObject = new Database();
@@ -44,13 +47,13 @@ public class processController implements Initializable {
     // set selectable session options
     private void setSelector_1(LinkedHashMap<Long, Long> session) {
         for (Map.Entry<Long, Long> map: session.entrySet()) {
-            process_selector_1.getItems().add(Util.convertLongToDate(map.getKey()) + " to " +Util.convertLongToDate(map.getValue()));
+            process_selector_1.getItems().add(Util.convertLongToDate(map.getKey()) + " to " + Util.convertLongToDate(map.getValue()));
         }
         process_selector_1.setValue(process_selector_1.getItems().get(0));
     }
 
     // get columns available from the process table
-    ArrayList<String> getColumns() {
+    public ArrayList<String> getColumns() {
         ArrayList<String> columns = new ArrayList<>();
         Database dbObject = new Database();
         try {

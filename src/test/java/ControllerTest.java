@@ -1,11 +1,9 @@
+import controllers.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.LinkedHashMap;
-
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 public class ControllerTest {
 

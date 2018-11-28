@@ -1,16 +1,27 @@
-import javafx.fxml.FXML;
+package controllers;
+
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
 import javafx.stage.Stage;
+import main.*;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Tooltip;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import oshi.util.FormatUtil;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class mainController implements Initializable {
@@ -46,7 +57,7 @@ public class mainController implements Initializable {
         String selectedMetric = metricSelectionBox.getValue();
         Parent root1 = null;
         try {
-            root1 = FXMLLoader.load(getClass().getResource(selectedMetric.toLowerCase()+".fxml"));
+            root1 = FXMLLoader.load(getClass().getResource("../" + selectedMetric.toLowerCase()+".fxml"));
             Stage stage = new Stage();
             stage.setTitle(selectedMetric + " Metrics");
             stage.setScene(new Scene(root1));

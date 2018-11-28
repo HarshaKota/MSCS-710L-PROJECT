@@ -1,12 +1,16 @@
+package controllers;
+
+import javafx.scene.control.TextArea;
+import javafx.scene.text.Font;
+import main.*;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
-import javafx.scene.text.Font;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.util.FormatUtil;
@@ -21,7 +25,8 @@ public class staticController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    @FXML TextArea staticMetricTextBox;
+    @FXML
+    TextArea staticMetricTextBox;
     @FXML ChoiceBox<String> static_selector_1;
 
     @Override

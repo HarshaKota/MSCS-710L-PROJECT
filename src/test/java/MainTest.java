@@ -1,10 +1,5 @@
-import org.junit.Assert;
+import main.Main;
 import org.junit.Test;
-import org.mockito.Mockito;
-
-import java.text.ParseException;
-
-import static org.mockito.BDDMockito.given;
 
 public class MainTest {
 

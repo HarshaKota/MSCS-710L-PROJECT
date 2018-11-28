@@ -1,3 +1,7 @@
+package controllers;
+
+import main.*;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,15 +18,14 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.*;
 
-public class sensorsController implements Initializable {
+public class memoryController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    @FXML AreaChart<Long, Double> sensorsChart;
-    @FXML ChoiceBox<String> sensors_selector_1;
-    @FXML ChoiceBox<String> sensors_selector_2;
+    @FXML AreaChart<Long, Double> memoryChart;
+    @FXML ChoiceBox<String> memory_selector_1;
+    @FXML ChoiceBox<String> memory_selector_2;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -31,7 +34,7 @@ public class sensorsController implements Initializable {
     }
 
     // get sessions from session table
-    LinkedHashMap<Long,Long> getSessions() {
+    public LinkedHashMap<Long,Long> getSessions() {
         LinkedHashMap<Long, Long> sessions = new LinkedHashMap<>();
         try {
             Database dbObject = new Database();
@@ -44,17 +47,17 @@ public class sensorsController implements Initializable {
     // set selectable session options
     private void setSelector_1(LinkedHashMap<Long, Long> session) {
         for (Map.Entry<Long, Long> map: session.entrySet()) {
-            sensors_selector_1.getItems().add(Util.convertLongToDate(map.getKey()) + " to " +Util.convertLongToDate(map.getValue()));
+            memory_selector_1.getItems().add(Util.convertLongToDate(map.getKey()) + " to " + Util.convertLongToDate(map.getValue()));
         }
-        sensors_selector_1.setValue(sensors_selector_1.getItems().get(0));
+        memory_selector_1.setValue(memory_selector_1.getItems().get(0));
     }
 
-    // get columns available from the sensors table
-    ArrayList<String> getColumns() {
+    // get columns available from the memory table
+    public ArrayList<String> getColumns() {
         ArrayList<String> columns = new ArrayList<>();
         Database dbObject = new Database();
         try {
-            columns = dbObject.getSensorsColumns();
+            columns = dbObject.getMemoryColumns();
         } catch (Exception e) {
             log.error("getColumns: Failed to get columns ");
         }
@@ -63,21 +66,19 @@ public class sensorsController implements Initializable {
 
     // set selectable column options
     private void setSelector_2(ArrayList<String> columns) {
-        for (String col: columns) {
-            sensors_selector_2.getItems().add(col);
-        }
-        sensors_selector_2.setValue(sensors_selector_2.getItems().get(0));
+        memory_selector_2.getItems().add(columns.get(0));
+        memory_selector_2.setValue(memory_selector_2.getItems().get(0));
     }
 
     // clear the chart
     @FXML
     private void clearChart() {
-        sensorsChart.getData().clear();
+        memoryChart.getData().clear();
     }
 
     // get table data
     @FXML
-    public void getSensorsMetrics(ActionEvent actionEvent) {
+    public void getMemoryMetrics(ActionEvent actionEvent) {
         getSessionMetrics();
     }
 
@@ -87,32 +88,31 @@ public class sensorsController implements Initializable {
         Long endSession;
         Long initialTimestamp;
 
-        startSession = Util.convertDateToLong(sensors_selector_1.getValue().trim().split("to")[0]);
-        endSession = Util.convertDateToLong(sensors_selector_1.getValue().trim().split("to")[1]);
-        String columnName = sensors_selector_2.getValue();
+        startSession = Util.convertDateToLong(memory_selector_1.getValue().trim().split("to")[0]);
+        endSession = Util.convertDateToLong(memory_selector_1.getValue().trim().split("to")[1]);
+        String columnName = memory_selector_2.getValue();
 
         try {
             Database dbObject = new Database();
-            LinkedHashMap<Long, Double> sensorsMetrics = dbObject.getSensorsMetrics(startSession, endSession, columnName);
-            initialTimestamp = sensorsMetrics.entrySet().iterator().next().getKey();
+            LinkedHashMap<Long, Double> memoryMetrics = dbObject.getMemoryMetrics(startSession, endSession, columnName);
+            initialTimestamp = memoryMetrics.entrySet().iterator().next().getKey();
+            double totalMemory = (double) dbObject.getTotalMemory();
             XYChart.Series<Long, Double> series = new XYChart.Series<>();
-            for (Map.Entry<Long, Double> map: sensorsMetrics.entrySet()) {
+            for (Map.Entry<Long, Double> map: memoryMetrics.entrySet()) {
                 series.getData().add(new XYChart.Data<>((map.getKey() - initialTimestamp), map.getValue()));
             }
-            series.setName(columnName);
-            sensorsChart.getData().add(series);
-            sensorsChart.getYAxis().setLabel(columnName);
+            series.setName("Ram Used / " + totalMemory+"GB");
+            memoryChart.getData().add(series);
+            memoryChart.getYAxis().setLabel(columnName + " (.GB)");
             for (XYChart.Data<Long, Double> d: series.getData()) {
-
                 Tooltip.install(d.getNode(), new Tooltip(
-                        d.getYValue().toString() + "\n" +
-                                Util.convertLongToDate(d.getXValue()+ initialTimestamp)));
-
+                        d.getYValue().toString()+"GB"+"/"+totalMemory+"GB" +
+                                "\n" + Util.convertLongToDate(d.getXValue()+ initialTimestamp)));
                 d.getNode().setOnMouseEntered(event -> d.getNode().getStyleClass().add("onHover"));
                 d.getNode().setOnMouseExited(event -> d.getNode().getStyleClass().remove("onHover"));
             }
-            sensorsChart.getXAxis().setTickLabelsVisible(false);
-            sensorsChart.getXAxis().setTickMarkVisible(false);
+            memoryChart.getXAxis().setTickLabelsVisible(false);
+            memoryChart.getXAxis().setTickMarkVisible(false);
         } catch (Exception e) {
             log.error("getSessionMetrics: Failed ");
         }

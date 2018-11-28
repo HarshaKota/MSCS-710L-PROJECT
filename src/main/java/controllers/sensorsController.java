@@ -1,3 +1,7 @@
+package controllers;
+
+import main.*;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,15 +18,14 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.*;
 
-public class cpuController implements Initializable {
+public class sensorsController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    @FXML AreaChart<Long, Double> cpuChart;
-    @FXML ChoiceBox<String> cpu_selector_1;
-    @FXML ChoiceBox<String> cpu_selector_2;
+    @FXML AreaChart<Long, Double> sensorsChart;
+    @FXML ChoiceBox<String> sensors_selector_1;
+    @FXML ChoiceBox<String> sensors_selector_2;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -31,7 +34,7 @@ public class cpuController implements Initializable {
     }
 
     // get sessions from session table
-    LinkedHashMap<Long,Long> getSessions() {
+    public LinkedHashMap<Long,Long> getSessions() {
         LinkedHashMap<Long, Long> sessions = new LinkedHashMap<>();
         try {
             Database dbObject = new Database();
@@ -44,17 +47,17 @@ public class cpuController implements Initializable {
     // set selectable session options
     private void setSelector_1(LinkedHashMap<Long, Long> session) {
         for (Map.Entry<Long, Long> map: session.entrySet()) {
-            cpu_selector_1.getItems().add(Util.convertLongToDate(map.getKey()) + " to " +Util.convertLongToDate(map.getValue()));
+            sensors_selector_1.getItems().add(Util.convertLongToDate(map.getKey()) + " to " + Util.convertLongToDate(map.getValue()));
         }
-        cpu_selector_1.setValue(cpu_selector_1.getItems().get(0));
+        sensors_selector_1.setValue(sensors_selector_1.getItems().get(0));
     }
 
-    // get columns available from the cpu table
-    ArrayList<String> getColumns() {
+    // get columns available from the sensors table
+    public ArrayList<String> getColumns() {
         ArrayList<String> columns = new ArrayList<>();
         Database dbObject = new Database();
         try {
-            columns = dbObject.getCpuColumns();
+            columns = dbObject.getSensorsColumns();
         } catch (Exception e) {
             log.error("getColumns: Failed to get columns ");
         }
@@ -64,20 +67,20 @@ public class cpuController implements Initializable {
     // set selectable column options
     private void setSelector_2(ArrayList<String> columns) {
         for (String col: columns) {
-            cpu_selector_2.getItems().add(col);
+            sensors_selector_2.getItems().add(col);
         }
-        cpu_selector_2.setValue(cpu_selector_2.getItems().get(0));
+        sensors_selector_2.setValue(sensors_selector_2.getItems().get(0));
     }
 
     // clear the chart
     @FXML
     private void clearChart() {
-        cpuChart.getData().clear();
+        sensorsChart.getData().clear();
     }
 
     // get table data
     @FXML
-    public void getCpuMetrics(ActionEvent actionEvent) {
+    public void getSensorsMetrics(ActionEvent actionEvent) {
         getSessionMetrics();
     }
 
@@ -87,40 +90,32 @@ public class cpuController implements Initializable {
         Long endSession;
         Long initialTimestamp;
 
-        startSession = Util.convertDateToLong(cpu_selector_1.getValue().trim().split("to")[0]);
-        endSession = Util.convertDateToLong(cpu_selector_1.getValue().trim().split("to")[1]);
-        String columnName = cpu_selector_2.getValue();
+        startSession = Util.convertDateToLong(sensors_selector_1.getValue().trim().split("to")[0]);
+        endSession = Util.convertDateToLong(sensors_selector_1.getValue().trim().split("to")[1]);
+        String columnName = sensors_selector_2.getValue();
 
         try {
             Database dbObject = new Database();
-            LinkedHashMap<Long, Double> cpuMetrics = dbObject.getCpuMetrics(startSession, endSession, columnName);
-            initialTimestamp = cpuMetrics.entrySet().iterator().next().getKey();
+            LinkedHashMap<Long, Double> sensorsMetrics = dbObject.getSensorsMetrics(startSession, endSession, columnName);
+            initialTimestamp = sensorsMetrics.entrySet().iterator().next().getKey();
             XYChart.Series<Long, Double> series = new XYChart.Series<>();
-            for (Map.Entry<Long, Double> map: cpuMetrics.entrySet()) {
+            for (Map.Entry<Long, Double> map: sensorsMetrics.entrySet()) {
                 series.getData().add(new XYChart.Data<>((map.getKey() - initialTimestamp), map.getValue()));
             }
             series.setName(columnName);
-            cpuChart.getData().add(series);
-            if (columnName.equalsIgnoreCase("uptime")) {
-                cpuChart.getYAxis().setLabel(columnName + " Seconds");
-            } else {
-                cpuChart.getYAxis().setLabel(columnName + "%");
-            }
+            sensorsChart.getData().add(series);
+            sensorsChart.getYAxis().setLabel(columnName);
             for (XYChart.Data<Long, Double> d: series.getData()) {
-                if (columnName.equalsIgnoreCase("uptime")) {
-                    Tooltip.install(d.getNode(), new Tooltip(
-                            FormatUtil.formatElapsedSecs(d.getYValue().longValue()) + "\n" +
-                                    Util.convertLongToDate(d.getXValue() + initialTimestamp)));
-                } else {
-                    Tooltip.install(d.getNode(), new Tooltip(
-                            d.getYValue().toString()+"%" + "\n" + Util.convertLongToDate(d.getXValue()+ initialTimestamp)));
-                }
+
+                Tooltip.install(d.getNode(), new Tooltip(
+                        d.getYValue().toString() + "\n" +
+                                Util.convertLongToDate(d.getXValue()+ initialTimestamp)));
 
                 d.getNode().setOnMouseEntered(event -> d.getNode().getStyleClass().add("onHover"));
                 d.getNode().setOnMouseExited(event -> d.getNode().getStyleClass().remove("onHover"));
             }
-            cpuChart.getXAxis().setTickLabelsVisible(false);
-            cpuChart.getXAxis().setTickMarkVisible(false);
+            sensorsChart.getXAxis().setTickLabelsVisible(false);
+            sensorsChart.getXAxis().setTickMarkVisible(false);
         } catch (Exception e) {
             log.error("getSessionMetrics: Failed ");
         }

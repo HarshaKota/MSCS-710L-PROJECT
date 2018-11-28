@@ -1,3 +1,5 @@
+package main;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.SystemInfo;
@@ -18,7 +20,7 @@ public class staticMetricCollector {
     private final SystemInfo si = new SystemInfo();
     private final HardwareAbstractionLayer hal = si.getHardware();
 
-    ArrayList<String> getStaticSystemMetrics() {
+    public ArrayList<String> getStaticSystemMetrics() {
         ArrayList<String> metricData = new ArrayList<>();
         ComputerSystem computerSystem = hal.getComputerSystem();
 
@@ -43,7 +45,7 @@ public class staticMetricCollector {
         return metricData;
     }
 
-    ArrayList<String> getStaticProcessorMetrics() {
+    public ArrayList<String> getStaticProcessorMetrics() {
         ArrayList<String> metricData = new ArrayList<>();
         CentralProcessor processor = hal.getProcessor();
 
@@ -58,7 +60,7 @@ public class staticMetricCollector {
         return metricData;
     }
 
-    ArrayList<String> getStaticDiskMetrics() {
+    public ArrayList<String> getStaticDiskMetrics() {
         ArrayList<String> metricData = new ArrayList<>();
         HWDiskStore[] diskStores = hal.getDiskStores();
 
@@ -86,7 +88,7 @@ public class staticMetricCollector {
         return metricData;
     }
 
-    ArrayList<String> getStaticFileSystemMetrics() {
+    public ArrayList<String> getStaticFileSystemMetrics() {
         ArrayList<String> metricData = new ArrayList<>();
         OperatingSystem os = si.getOperatingSystem();
         FileSystem fileSystem = os.getFileSystem();
@@ -113,7 +115,7 @@ public class staticMetricCollector {
         return metricData;
     }
 
-    ArrayList<String> getStaticNetworkMetrics() {
+    public ArrayList<String> getStaticNetworkMetrics() {
         ArrayList<String> metricData = new ArrayList<>();
         OperatingSystem os = si.getOperatingSystem();
         NetworkParams networkParams = os.getNetworkParams();

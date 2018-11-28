@@ -1,3 +1,5 @@
+package main;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.SystemInfo;
@@ -38,7 +40,7 @@ public class Database {
     }
 
     // Establish connection to the sqlite database/ Create if its doesn't exist
-    void establishDatabaseConnection(String databaseUrl) throws Exception {
+    public void establishDatabaseConnection(String databaseUrl) throws Exception {
         try {
             String databaseClassName = "org.sqlite.JDBC";
             Class.forName(databaseClassName);
@@ -51,7 +53,7 @@ public class Database {
     }
 
     // Check if the session table is intact with both the startSession and endSession times
-    void checkSessionTable() throws Exception {
+    public void checkSessionTable() throws Exception {
 
         // Get the start and end times of the last session inserted into the session table
             String selectSql = "SELECT * FROM SESSION ORDER BY STARTSESSION DESC LIMIT 1";
@@ -128,7 +130,7 @@ public class Database {
     }
 
     // Create a Power Sources table
-    void createPowerTable() throws Exception {
+    public void createPowerTable() throws Exception {
 
         if(TableCreationChecks.checkPowerSource(hal.getPowerSources())) {
 
@@ -151,7 +153,7 @@ public class Database {
     }
 
     // Create a new Sensors table
-    void createSensorsTable() throws Exception {
+    public void createSensorsTable() throws Exception {
 
         // Builds the fan column
         int noOfFans = TableCreationChecks.getFans(hal.getSensors());
@@ -195,7 +197,7 @@ public class Database {
     }
 
     // Create a Memory table
-    void createMemoryTable() throws Exception {
+    public void createMemoryTable() throws Exception {
 
         try {
             Statement memoryTableStatement = connection.createStatement();
@@ -233,7 +235,7 @@ public class Database {
     }
 
     // Create a ProcessorInfo table
-    void createProcessTable() throws Exception {
+    public void createProcessTable() throws Exception {
 
         try {
             Statement processorInfoTableStatement = connection.createStatement();
@@ -251,7 +253,7 @@ public class Database {
     }
 
     // Create a CPU table
-    void createCPUTable() throws Exception {
+    public void createCPUTable() throws Exception {
 
         int noOfLogicalCPUs = TableCreationChecks.getLogicalCPUs(hal.getProcessor());
 
@@ -283,7 +285,7 @@ public class Database {
     }
 
     // Create a Network table
-    void createNetworkTable() throws Exception {
+    public void createNetworkTable() throws Exception {
 
         try {
             Statement networkTableStatement = connection.createStatement();
@@ -303,7 +305,7 @@ public class Database {
     }
 
     // Create a Sessions table to hold each user session start and end time
-    void createSessionTable() throws Exception {
+    public void createSessionTable() throws Exception {
 
         try {
             Statement sessionTableStatement = connection.createStatement();
@@ -321,7 +323,7 @@ public class Database {
     }
 
     // Insert values into Power Table
-    void insertIntoPowerTable(MetricCollectionStructures.powerStructure pS) throws Exception {
+    public void insertIntoPowerTable(MetricCollectionStructures.powerStructure pS) throws Exception {
 
         if (pS != null) {
             //Check if the received powerStructure is not empty
@@ -346,7 +348,7 @@ public class Database {
     }
 
     // Insert values into CPU Table
-    void insertIntoCpuTable(MetricCollectionStructures.cpuStructure cS) throws Exception {
+    public void insertIntoCpuTable(MetricCollectionStructures.cpuStructure cS) throws Exception {
 
         if (cS.getTimestamp() < 0 || cS.getUptime() < 0 || cS.getUserLoad() < 0d || cS.getSystemLoad() < 0d ||
                 cS.getIdleLoad() < 0d)
@@ -386,7 +388,7 @@ public class Database {
     }
 
     // Insert values into Sensors Table
-    void insertIntoSensorsTable(MetricCollectionStructures.sensorsStructure sS) throws Exception {
+    public void insertIntoSensorsTable(MetricCollectionStructures.sensorsStructure sS) throws Exception {
 
         if (sS.getTimestamp() ==  0)
         {
@@ -422,7 +424,7 @@ public class Database {
     }
 
     // Insert values into Memory Table
-    void insertIntoMemoryTable(MetricCollectionStructures.memoryStructure mS) throws Exception {
+    public void insertIntoMemoryTable(MetricCollectionStructures.memoryStructure mS) throws Exception {
 
         if (mS.getTimestamp() ==  0 || mS.getUsedMemory() == 0d || mS.getTotalMemory() == 0d)
         {
@@ -444,7 +446,7 @@ public class Database {
     }
 
     // Insert values into Network Table
-    void insertIntoNetworkTable(MetricCollectionStructures.networkStructure nS) throws Exception {
+    public void insertIntoNetworkTable(MetricCollectionStructures.networkStructure nS) throws Exception {
 
         if (nS.getTimestamp() ==  0 || nS.getPacketsReceived() == 0 || nS.getPacketsSent() == 0 ||
                 nS.getSizeReceived().equals("") || nS.getSizeSent().equals(""))
@@ -467,7 +469,7 @@ public class Database {
     }
 
     // Insert values into the Process and Processes tables
-    void insertIntoProcessTable(MetricCollectionStructures.processStructure pS) throws Exception {
+    public void insertIntoProcessTable(MetricCollectionStructures.processStructure pS) throws Exception {
 
         if (pS.getTimestamp() ==  0 || pS.getNoOfThreads() == 0 || pS.getNoOfProcesses() == 0)
         {
@@ -516,7 +518,7 @@ public class Database {
     }
 
     // Insert the start session time into the session table
-    void insertStartSessionIntoSessionTable(final long startSession) throws Exception {
+    public void insertStartSessionIntoSessionTable(final long startSession) throws Exception {
 
         try {
             Statement insertStartSessionIntoSessionTableStatement = connection.createStatement();
@@ -531,7 +533,7 @@ public class Database {
     }
 
     // Update the session end time of previously inserted startSession time
-    void insertEndSessionIntoSessionTable(final long startSession, final long endSession) throws Exception {
+    public void insertEndSessionIntoSessionTable(final long startSession, final long endSession) throws Exception {
 
         String sql = "UPDATE SESSION SET ENDSESSION = ? WHERE STARTSESSION = ?";
 
@@ -551,7 +553,7 @@ public class Database {
     }
 
     // Commit the metrics collected
-    void commit() throws Exception {
+    public void commit() throws Exception {
         try {
             connection.commit();
         } catch (Exception e) {
@@ -563,7 +565,7 @@ public class Database {
 
 
     // Close the connection to the sqlite database
-    void closeDatabaseConnection() throws Exception {
+    public void closeDatabaseConnection() throws Exception {
         try {
             connection.close();
         } catch (Exception e) {
@@ -594,7 +596,7 @@ public class Database {
     }
 
     // Get Sessions
-    LinkedHashMap<Long, Long> getSessions() throws Exception {
+    public LinkedHashMap<Long, Long> getSessions() throws Exception {
         LinkedHashMap<Long,Long> sessions = new LinkedHashMap<>();
         try {
             Statement getSessionsStatement = connection.createStatement();
@@ -617,7 +619,7 @@ public class Database {
     }
 
     // Get power metrics
-    LinkedHashMap<Long, Double> getPowerMetrics(Long startTime, Long endTime) throws Exception {
+    public LinkedHashMap<Long, Double> getPowerMetrics(Long startTime, Long endTime) throws Exception {
 
         LinkedHashMap<Long, Double> powerMetrics = new LinkedHashMap<>();
 
@@ -648,7 +650,7 @@ public class Database {
     }
 
     // Get cpu table columns
-    ArrayList<String> getCpuColumns() throws Exception {
+    public ArrayList<String> getCpuColumns() throws Exception {
         ArrayList<String> cpuColumns = new ArrayList<>();
 
         String sql = "SELECT * FROM CPU";
@@ -671,7 +673,7 @@ public class Database {
     }
 
     // Get cpuMetrics
-    LinkedHashMap<Long, Double> getCpuMetrics(Long startTime, Long endTime, String columnName) throws Exception {
+    public LinkedHashMap<Long, Double> getCpuMetrics(Long startTime, Long endTime, String columnName) throws Exception {
         LinkedHashMap<Long, Double> cpuMetrics = new LinkedHashMap<>();
 
         if (startTime != null && endTime != null) {
@@ -700,7 +702,7 @@ public class Database {
     }
 
     // Get memory table columns
-    ArrayList<String> getMemoryColumns() throws Exception {
+    public ArrayList<String> getMemoryColumns() throws Exception {
         ArrayList<String> memoryColumns = new ArrayList<>();
 
         String sql = "SELECT * FROM MEMORY";
@@ -723,7 +725,7 @@ public class Database {
     }
 
     // Get Total Memory
-    Double getTotalMemory() throws Exception {
+    public Double getTotalMemory() throws Exception {
         Double totalMemory = null;
 
         String sql = "SELECT MAX(TIMESTAMP), TOTALMEMORY FROM MEMORY";
@@ -733,8 +735,7 @@ public class Database {
             ResultSet rs = getTotalMemoryStatement.executeQuery();
             while (rs.next()) {
                 Long timestamp = rs.getLong("MAX(TIMESTAMP)");
-                Double totMemory = rs.getDouble("TOTALMEMORY");
-                totalMemory = totMemory;
+                totalMemory = rs.getDouble("TOTALMEMORY");
             }
             getTotalMemoryStatement.close();
         } catch (SQLException e) {
@@ -746,7 +747,7 @@ public class Database {
     }
 
     // Get memoryMetrics
-    LinkedHashMap<Long, Double> getMemoryMetrics(Long startTime, Long endTime, String columnName) throws Exception {
+    public LinkedHashMap<Long, Double> getMemoryMetrics(Long startTime, Long endTime, String columnName) throws Exception {
         LinkedHashMap<Long, Double> memoryMetrics = new LinkedHashMap<>();
 
         if (startTime != null && endTime != null) {
@@ -775,7 +776,7 @@ public class Database {
     }
 
     // Get network table columns
-    ArrayList<String> getNetworkColumns() throws Exception {
+    public ArrayList<String> getNetworkColumns() throws Exception {
         ArrayList<String> networkColumns = new ArrayList<>();
 
         String sql = "SELECT * FROM NETWORK";
@@ -798,7 +799,7 @@ public class Database {
     }
 
     // Get networkMetrics
-    LinkedHashMap<Long, Double> getNetworkMetrics(Long startTime, Long endTime, String columnName) throws Exception {
+    public LinkedHashMap<Long, Double> getNetworkMetrics(Long startTime, Long endTime, String columnName) throws Exception {
         LinkedHashMap<Long, Double> networkMetrics = new LinkedHashMap<>();
 
         if (startTime != null && endTime != null) {
@@ -839,7 +840,7 @@ public class Database {
     }
 
     // Get process table columns
-    ArrayList<String> getProcessColumns() throws Exception {
+    public ArrayList<String> getProcessColumns() throws Exception {
         ArrayList<String> networkColumns = new ArrayList<>();
 
         String sql = "SELECT * FROM PROCESS";
@@ -862,7 +863,7 @@ public class Database {
     }
 
     // Get processMetrics
-    LinkedHashMap<Long, Long> getProcessMetrics(Long startTime, Long endTime, String columnName) throws Exception {
+    public LinkedHashMap<Long, Long> getProcessMetrics(Long startTime, Long endTime, String columnName) throws Exception {
         LinkedHashMap<Long, Long> processMetrics = new LinkedHashMap<>();
 
         if (startTime != null && endTime != null) {
@@ -891,7 +892,7 @@ public class Database {
     }
 
     // Get sensors table columns
-    ArrayList<String> getSensorsColumns() throws Exception {
+    public ArrayList<String> getSensorsColumns() throws Exception {
         ArrayList<String> sensorsColumns = new ArrayList<>();
 
         String sql = "SELECT * FROM SENSORS";
@@ -914,7 +915,7 @@ public class Database {
     }
 
     // Get sensorsMetrics
-    LinkedHashMap<Long, Double> getSensorsMetrics(Long startTime, Long endTime, String columnName) throws Exception {
+    public LinkedHashMap<Long, Double> getSensorsMetrics(Long startTime, Long endTime, String columnName) throws Exception {
         LinkedHashMap<Long, Double> sensorsMetrics = new LinkedHashMap<>();
 
         if (startTime != null && endTime != null) {
@@ -943,7 +944,7 @@ public class Database {
     }
 
     // Get processinfo table columns
-    ArrayList<String> getProcessinfoColumns() throws Exception {
+    public ArrayList<String> getProcessinfoColumns() throws Exception {
         ArrayList<String> processinfoColumns = new ArrayList<>();
 
         String sql = "SELECT * FROM PROCESSINFO";
@@ -967,7 +968,7 @@ public class Database {
     }
 
     // Get processes names from processinfo table
-    ArrayList<String> getProcessesNames(Long startTime, Long endTime) throws Exception {
+    public ArrayList<String> getProcessesNames(Long startTime, Long endTime) throws Exception {
         ArrayList<String> processesNames = new ArrayList<>();
 
         String sql = "SELECT DISTINCT PROCESSNAME FROM PROCESSINFO WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP ASC";
@@ -990,7 +991,7 @@ public class Database {
     }
 
     // Get sensorsMetrics
-    LinkedHashMap<Long, Double> getProcessinfoMetrics(Long startTime, Long endTime, String columnName, String processName) throws Exception {
+    public LinkedHashMap<Long, Double> getProcessinfoMetrics(Long startTime, Long endTime, String columnName, String processName) throws Exception {
         LinkedHashMap<Long, Double> processinfoMetrics = new LinkedHashMap<>();
 
         String sql = "SELECT * FROM PROCESSINFO WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? AND PROCESSNAME = ? ORDER BY TIMESTAMP ASC";

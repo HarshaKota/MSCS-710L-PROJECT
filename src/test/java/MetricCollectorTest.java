@@ -1,3 +1,4 @@
+import main.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

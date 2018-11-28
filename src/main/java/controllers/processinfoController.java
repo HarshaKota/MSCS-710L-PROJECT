@@ -1,22 +1,24 @@
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+package controllers;
+
+import javafx.scene.control.Button;
+import main.*;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tooltip;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import oshi.util.FormatUtil;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.*;
 
 public class processinfoController implements Initializable {
 
@@ -26,7 +28,8 @@ public class processinfoController implements Initializable {
     @FXML ChoiceBox<String> processinfo_selector_1;
     @FXML ChoiceBox<String> processinfo_selector_2;
     @FXML ChoiceBox<String> processinfo_selector_3;
-    @FXML Button processinfo_selector_1_button;
+    @FXML
+    Button processinfo_selector_1_button;
     @FXML Button processinfo_selector_2_button;
 
     @Override
@@ -38,7 +41,7 @@ public class processinfoController implements Initializable {
     }
 
     // get sessions from session table
-    LinkedHashMap<Long,Long> getSessions() {
+    public LinkedHashMap<Long,Long> getSessions() {
         LinkedHashMap<Long, Long> sessions = new LinkedHashMap<>();
         try {
             Database dbObject = new Database();
@@ -51,7 +54,7 @@ public class processinfoController implements Initializable {
     // set selectable session options
     private void setSelector_1(LinkedHashMap<Long, Long> session) {
         for (Map.Entry<Long, Long> map: session.entrySet()) {
-            processinfo_selector_1.getItems().add(Util.convertLongToDate(map.getKey()) + " to " +Util.convertLongToDate(map.getValue()));
+            processinfo_selector_1.getItems().add(Util.convertLongToDate(map.getKey()) + " to " + Util.convertLongToDate(map.getValue()));
         }
         processinfo_selector_1.setValue(processinfo_selector_1.getItems().get(0));
         processinfo_selector_1.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
@@ -62,7 +65,7 @@ public class processinfoController implements Initializable {
     }
 
     // get columns available from the process table
-    ArrayList<String> getColumns() {
+    public ArrayList<String> getColumns() {
         ArrayList<String> columns = new ArrayList<>();
         Database dbObject = new Database();
         try {

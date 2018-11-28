@@ -1,3 +1,5 @@
+package main;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.SystemInfo;
@@ -11,21 +13,20 @@ public class Main {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
-    static AtomicBoolean applicationOpen = new AtomicBoolean(true);
+    public static AtomicBoolean applicationOpen = new AtomicBoolean(true);
 
-    static  String databaseUrl = "jdbc:sqlite:MetricCollector.db";
+    public static  String databaseUrl = "jdbc:sqlite:MetricCollector.db";
 
-    static boolean hasPowerSource = false;
+    public static boolean hasPowerSource = false;
     static int collectionInterval = 5000;
 
-    private static SystemInfo si;
     private static HardwareAbstractionLayer hal;
     private static OperatingSystem os;
 
     public static void main(String[] args) throws Exception {
 
         //Initialize OSHI Objects
-        si = new SystemInfo();
+        SystemInfo si = new SystemInfo();
         hal = si.getHardware();
         os = si.getOperatingSystem();
 
@@ -37,7 +38,7 @@ public class Main {
         // Check if the session table is intact
         dbObject.checkSessionTable();
 
-        // Start the UI
+        // Start the main.UI
         UI ui = new UI();
         Thread uiThread = new Thread(ui);
         uiThread.start();
@@ -119,6 +120,6 @@ public class Main {
 
         dbObject.closeDatabaseConnection();
 
-        System.out.println("End of Main"); //Sysout
+        System.out.println("End of main.Main"); //Sysout
     }
 }

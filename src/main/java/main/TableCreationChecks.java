@@ -1,17 +1,19 @@
+package main;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.PowerSource;
 import oshi.hardware.Sensors;
 
-class TableCreationChecks {
+public class TableCreationChecks {
 
     private static final Logger log = LogManager.getLogger(TableCreationChecks.class);
 
     /*                  CPU Table                   */
 
     // Check how many Logical CPUs the system has
-    static int getLogicalCPUs(CentralProcessor processor) {
+    public static int getLogicalCPUs(CentralProcessor processor) {
 
         return processor.getLogicalProcessorCount();
     }
@@ -20,7 +22,7 @@ class TableCreationChecks {
     /*                  Power Table                   */
 
     // Check if the system has any power sources.
-    static boolean checkPowerSource(PowerSource[] powerSources) {
+    public static boolean checkPowerSource(PowerSource[] powerSources) {
 
         Main.hasPowerSource = powerSources.length != 0
                 && !powerSources[0].getName().equalsIgnoreCase("Unknown")
@@ -33,7 +35,7 @@ class TableCreationChecks {
     /*                  Sensors  Table                   */
 
     // Check if the system has fans
-    static int getFans(Sensors sensors) {
+    public static int getFans(Sensors sensors) {
 
         int fanArray[] = sensors.getFanSpeeds();
 
@@ -45,7 +47,7 @@ class TableCreationChecks {
         return fanArray.length;
     }
 
-    static double getCpuVoltage(Sensors sensors) {
+    public static double getCpuVoltage(Sensors sensors) {
         double noValue = 999.0;
 
         if (sensors.getCpuVoltage() > 0.0) {

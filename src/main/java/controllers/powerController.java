@@ -1,3 +1,7 @@
+package controllers;
+
+import main.*;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -7,14 +11,13 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tooltip;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import oshi.util.FormatUtil;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.*;
 
 public class powerController implements Initializable {
 
@@ -29,7 +32,7 @@ public class powerController implements Initializable {
     }
 
     // get sessions from session table
-    LinkedHashMap<Long,Long> getSessions() {
+    public LinkedHashMap<Long,Long> getSessions() {
         LinkedHashMap<Long, Long> sessions = new LinkedHashMap<>();
         try {
             Database dbObject = new Database();
@@ -42,7 +45,7 @@ public class powerController implements Initializable {
     // set selectable session options
     private void setSelector(LinkedHashMap<Long, Long> session) {
         for (Map.Entry<Long, Long> map: session.entrySet()) {
-            power_selector.getItems().add(Util.convertLongToDate(map.getKey()) + " to " +Util.convertLongToDate(map.getValue()));
+            power_selector.getItems().add(Util.convertLongToDate(map.getKey()) + " to " + Util.convertLongToDate(map.getValue()));
         }
         power_selector.setValue(power_selector.getItems().get(0));
     }

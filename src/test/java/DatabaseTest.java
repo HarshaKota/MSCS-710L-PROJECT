@@ -1,11 +1,12 @@
+import main.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
+import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.Sensors;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,12 +17,11 @@ import static org.mockito.BDDMockito.given;
 public class DatabaseTest {
 
     private static SystemInfo si;
-    private static String databaseUrl;
+    String databaseUrl = "jdbc:sqlite:main.MetricCollector.db";
 
     @BeforeClass
     public static void setup() {
         si = new SystemInfo();
-        databaseUrl = "jdbc:sqlite:MetricCollector.db";
     }
 
     @Test(expected = Exception.class)
@@ -29,6 +29,12 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.establishDatabaseConnection(null);
     }
+//
+//    @Test(expected = Exception.class)
+//    public void establishDatabaseConnection_Null() throws Exception {
+//        main.Database dbObj = new main.Database();
+//        dbObj.establishDatabaseConnection(databaseUrl);
+//    }
 
     @Test(expected = Exception.class)
     public void checkSessionTable_Null() throws Exception {
@@ -36,12 +42,11 @@ public class DatabaseTest {
         dbObj.checkSessionTable();
     }
 
-    //
     @Test
     public void checkSessionTable_NotNull() {
         try {
             final Database testDatabase = Mockito.spy(new Database());
-            testDatabase.establishDatabaseConnection( "jdbc:sqlite:MetricCollector.db");
+            testDatabase.establishDatabaseConnection( "jdbc:sqlite:main.MetricCollector.db");
 //            testDatabase.createSessionTable();
             Long val = new Random().nextLong();
             testDatabase.insertStartSessionIntoSessionTable(val);
@@ -135,6 +140,17 @@ public class DatabaseTest {
     public void createPowerTable() throws Exception {
         Database dbObj = new Database();
         dbObj.createPowerTable();
+    }
+
+    @Test(expected = Exception.class)
+    public void createSensorsTable_OneFan() throws Exception {
+        HardwareAbstractionLayer hal = si.getHardware();
+        Sensors sensors = hal.getSensors();
+        Database dbObj = Mockito.spy(new Database());
+        ArrayList testFans = new ArrayList<Integer>();
+        testFans.add(1,52);
+        Mockito.when(TableCreationChecks.getFans(sensors)).thenReturn(1);
+        dbObj.createSensorsTable();
     }
 
     @Test(expected = Exception.class)

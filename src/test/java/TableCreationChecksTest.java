@@ -1,3 +1,4 @@
+import main.TableCreationChecks;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;

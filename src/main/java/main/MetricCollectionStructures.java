@@ -1,9 +1,11 @@
+package main;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-class MetricCollectionStructures {
+public class MetricCollectionStructures {
 
     public static class powerStructure {
 
@@ -12,28 +14,28 @@ class MetricCollectionStructures {
         double batteryPercentage;
 
         // Sets
-        void setTimestamp(long timestamp) {
+        public void setTimestamp(long timestamp) {
             this.timestamp = timestamp;
         }
 
-        void setPowerStatus(int powerStatus) {
+        public void setPowerStatus(int powerStatus) {
             this.powerStatus = powerStatus;
         }
 
-        void setBatteryPercentage(double batteryPercentage) {
+        public void setBatteryPercentage(double batteryPercentage) {
             this.batteryPercentage = batteryPercentage;
         }
 
         // Gets
-        int getPowerStatus() {
+        public int getPowerStatus() {
             return powerStatus;
         }
 
-        double getBatteryPercentage() {
+        public double getBatteryPercentage() {
             return batteryPercentage;
         }
 
-        long getTimestamp() {
+        public long getTimestamp() {
             return timestamp;
         }
 
@@ -55,47 +57,47 @@ class MetricCollectionStructures {
         double idleLoad;
         ArrayList<Double> processorLoad;
 
-        long getTimestamp() {
+        public long getTimestamp() {
             return timestamp;
         }
 
-        void setTimestamp(long timestamp) {
+        public void setTimestamp(long timestamp) {
             this.timestamp = timestamp;
         }
 
-        long getUptime() {
+        public long getUptime() {
             return uptime;
         }
 
-        void setUptime(long uptime) {
+        public void setUptime(long uptime) {
             this.uptime = uptime;
         }
 
-        double getUserLoad() {
+        public double getUserLoad() {
             return userLoad;
         }
 
-        void setUserLoad(double userLoad) {
+        public void setUserLoad(double userLoad) {
             this.userLoad = userLoad;
         }
 
-        double getSystemLoad() {
+        public double getSystemLoad() {
             return systemLoad;
         }
 
-        void setSystemLoad(double systemLoad) {
+        public void setSystemLoad(double systemLoad) {
             this.systemLoad = systemLoad;
         }
 
-        double getIdleLoad() {
+        public double getIdleLoad() {
             return idleLoad;
         }
 
-        void setIdleLoad(double idleLoad) {
+        public void setIdleLoad(double idleLoad) {
             this.idleLoad = idleLoad;
         }
 
-        void setProcessorLoad(ArrayList<Double> processorLoad) {
+        public void setProcessorLoad(ArrayList<Double> processorLoad) {
             this.processorLoad = processorLoad;
         }
 
@@ -120,33 +122,33 @@ class MetricCollectionStructures {
         double cpuVoltage = 999d;
         ArrayList<Integer> fans;
 
-        long getTimestamp() {
+        public long getTimestamp() {
             return timestamp;
         }
 
-        void setTimestamp(long timestamp) {
+        public void setTimestamp(long timestamp) {
             this.timestamp = timestamp;
         }
 
-        double getCpuTemperature() {
+        public double getCpuTemperature() {
             return cpuTemperature;
         }
 
-        void setCpuTemperature(double cpuTemperature) {
+        public void setCpuTemperature(double cpuTemperature) {
             this.cpuTemperature = cpuTemperature;
         }
 
-        double getCpuVoltage() {
+        public double getCpuVoltage() {
             return cpuVoltage;
         }
 
-        void setCpuVoltage(double cpuVoltage) {
+        public void setCpuVoltage(double cpuVoltage) {
             this.cpuVoltage = cpuVoltage;
         }
 
-        ArrayList<Integer> getFans() { return fans; }
+        public ArrayList<Integer> getFans() { return fans; }
 
-        void setFans(ArrayList<Integer> fans) { this.fans = fans; }
+        public void setFans(ArrayList<Integer> fans) { this.fans = fans; }
 
         @Override
         public String toString() {
@@ -164,27 +166,27 @@ class MetricCollectionStructures {
         double usedMemory;
         double totalMemory;
 
-        long getTimestamp() {
+        public long getTimestamp() {
             return timestamp;
         }
 
-        void setTimestamp(long timestamp) {
+        public void setTimestamp(long timestamp) {
             this.timestamp = timestamp;
         }
 
-        double getUsedMemory() {
+        public double getUsedMemory() {
             return usedMemory;
         }
 
-        void setUsedMemory(double usedMemory) {
+        public void setUsedMemory(double usedMemory) {
             this.usedMemory = usedMemory;
         }
 
-        double getTotalMemory() {
+        public double getTotalMemory() {
             return totalMemory;
         }
 
-        void setTotalMemory(double totalMemory) {
+        public void setTotalMemory(double totalMemory) {
             this.totalMemory = totalMemory;
         }
 
@@ -205,44 +207,44 @@ class MetricCollectionStructures {
         String sizeReceived;
         String sizeSent;
 
-        long getTimestamp() {
+        public long getTimestamp() {
             return timestamp;
         }
 
-        void setTimestamp(long timestamp) {
+        public void setTimestamp(long timestamp) {
             this.timestamp = timestamp;
         }
 
-        long getPacketsReceived() {
+        public long getPacketsReceived() {
             return packetsReceived;
         }
 
-        void setPacketsReceived(long packetsReceived) {
+        public void setPacketsReceived(long packetsReceived) {
 
             this.packetsReceived = packetsReceived;
         }
 
-        long getPacketsSent() {
+        public long getPacketsSent() {
             return packetsSent;
         }
 
-        void setPacketsSent(long packetsSent) {
+        public void setPacketsSent(long packetsSent) {
             this.packetsSent = packetsSent;
         }
 
-        String getSizeReceived() {
+        public String getSizeReceived() {
             return sizeReceived;
         }
 
-        void setSizeReceived(String sizeReceived) {
+        public void setSizeReceived(String sizeReceived) {
             this.sizeReceived = sizeReceived;
         }
 
-        String getSizeSent() {
+        public String getSizeSent() {
             return sizeSent;
         }
 
-        void setSizeSent(String sizeSent) {
+        public void setSizeSent(String sizeSent) {
             this.sizeSent = sizeSent;
         }
 
@@ -258,37 +260,37 @@ class MetricCollectionStructures {
         }
     }
 
-    static class processStructure {
+    public static class processStructure {
         long timestamp;
         long noOfProcesses;
         long noOfThreads;
-        HashMap<String, List<Double>> processesList;
+        public HashMap<String, List<Double>> processesList;
 
-        long getTimestamp() {
+        public long getTimestamp() {
             return timestamp;
         }
 
-        void setTimestamp(long timestamp) {
+        public void setTimestamp(long timestamp) {
             this.timestamp = timestamp;
         }
 
-        double getNoOfProcesses() {
+        public double getNoOfProcesses() {
             return noOfProcesses;
         }
 
-        void setNoOfProcesses(long noOfProcesses) {
+        public void setNoOfProcesses(long noOfProcesses) {
             this.noOfProcesses = noOfProcesses;
         }
 
-        double getNoOfThreads() {
+        public double getNoOfThreads() {
             return noOfThreads;
         }
 
-        void setNoOfThreads(long noOfThreads) {
+        public void setNoOfThreads(long noOfThreads) {
             this.noOfThreads = noOfThreads;
         }
 
-        void setProcessesList(HashMap<String, List<Double>> processesList) {
+        public void setProcessesList(HashMap<String, List<Double>> processesList) {
             this.processesList = processesList;
         }
 

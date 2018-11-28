@@ -1,6 +1,7 @@
+package main;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import oshi.SystemInfo;
 import oshi.hardware.*;
 import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
@@ -27,7 +28,7 @@ public class MetricCollector {
     //      1 - charging
     //      0 - discharging
     // Returns powerStructure
-    MetricCollectionStructures.powerStructure getPower(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
+    public MetricCollectionStructures.powerStructure getPower(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
 
         if (hasPowerTable()) {
             noOfCallsTogetPower++;
@@ -62,7 +63,7 @@ public class MetricCollector {
     //
     //
     // Returns cpuStructure
-    MetricCollectionStructures.cpuStructure getCPU(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
+    public MetricCollectionStructures.cpuStructure getCPU(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsTogetCPU++;
 
         long[] prevTicks = hal.getProcessor().getSystemCpuLoadTicks();
@@ -110,7 +111,7 @@ public class MetricCollector {
     //
     //
     // Returns sensorsStructure
-    MetricCollectionStructures.sensorsStructure getSensors(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
+    public MetricCollectionStructures.sensorsStructure getSensors(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsTogetSensors++;
 
         MetricCollectionStructures.sensorsStructure sS = new MetricCollectionStructures.sensorsStructure();
@@ -139,7 +140,7 @@ public class MetricCollector {
     //
     //
     // Returns memoryStructure
-    MetricCollectionStructures.memoryStructure getMemory(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
+    public MetricCollectionStructures.memoryStructure getMemory(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsTogetMemory++;
 
         MetricCollectionStructures.memoryStructure mS = new MetricCollectionStructures.memoryStructure();
@@ -161,7 +162,7 @@ public class MetricCollector {
     //
     //
     // Returns networkStructure
-    MetricCollectionStructures.networkStructure getNetwork(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
+    public MetricCollectionStructures.networkStructure getNetwork(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsTogetNetwork++;
 
         MetricCollectionStructures.networkStructure nS = new MetricCollectionStructures.networkStructure();
@@ -199,7 +200,7 @@ public class MetricCollector {
     //
     //
     // Returns processStructure
-    MetricCollectionStructures.processStructure getProcess(final long metricCollectedTime, final HardwareAbstractionLayer hal, final OperatingSystem os) {
+    public MetricCollectionStructures.processStructure getProcess(final long metricCollectedTime, final HardwareAbstractionLayer hal, final OperatingSystem os) {
         noOfCallsTogetProcesses++;
 
         MetricCollectionStructures.processStructure pS = new MetricCollectionStructures.processStructure();
@@ -253,7 +254,7 @@ public class MetricCollector {
     //
     //
     // Returns a double representing how much time the battery has until it is drained.
-    double getTimeRemaining(PowerSource[] powerSources) {
+    public double getTimeRemaining(PowerSource[] powerSources) {
         return powerSources[0].getTimeRemaining();
     }
 
@@ -262,7 +263,7 @@ public class MetricCollector {
     //
     //
     // Returns a Boolean representing if the Power table has been created or not.
-    Boolean hasPowerTable() {
+    public Boolean hasPowerTable() {
         return Main.hasPowerSource;
     }
 
@@ -271,7 +272,7 @@ public class MetricCollector {
     //
     //
     // Returns a double representing the voltage running through the CPU
-    double getCpuVoltage(HardwareAbstractionLayer hal) {
+    public double getCpuVoltage(HardwareAbstractionLayer hal) {
         return TableCreationChecks.getCpuVoltage(hal.getSensors());
     }
 
@@ -280,7 +281,7 @@ public class MetricCollector {
     //
     //
     // Returns a Boolean representing if the Power table has been created or not.
-    int getFans(HardwareAbstractionLayer hal) {
+    public int getFans(HardwareAbstractionLayer hal) {
         return TableCreationChecks.getFans(hal.getSensors());
     }
 
@@ -289,7 +290,7 @@ public class MetricCollector {
     //
     //
     // Returns the current time as a long value
-    long startSession() {
+    public long startSession() {
         return System.currentTimeMillis();
     }
 
@@ -298,7 +299,7 @@ public class MetricCollector {
     //
     //
     // Returns the current time as a long value
-    long endSession() {
+    public long endSession() {
         return System.currentTimeMillis();
     }
 }
