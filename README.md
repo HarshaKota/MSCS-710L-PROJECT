@@ -30,7 +30,7 @@ When you open it on your machine, it will install and open to the welcome page. 
 * sqlite-jdbc
 * log4j-api
 * oshi-core
-* Maven: https://maven.apache.org
+* Maven
 * log4j-core
 * log4j-slf4j-impl
 * javafx-controls
@@ -49,7 +49,9 @@ When you open it on your machine, it will install and open to the welcome page. 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+Do we want to put an open source license on this?
 
 ## Acknowledgments
+
+Many thanks to Prof. Anothy Giorgio and the members of the Capstone project class MSCS 710, Fall 2018.
 
