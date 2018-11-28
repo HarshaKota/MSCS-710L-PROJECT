@@ -14,12 +14,4 @@ public class MainTest {
         Main.main(null);
     }
 
-    @Test
-    public void succeededToParseDate() {
-        final Util util = Mockito.spy(new Util());
-        long testTime = util.convertDateToLong("11/28/2018-02:32:02");
-        Assert.assertEquals(testTime, 1543390322000L);
-    }
-
-
 }
