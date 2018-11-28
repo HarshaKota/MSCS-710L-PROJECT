@@ -11,7 +11,7 @@ MetricsCollector interacts with the kernel of a Windows, Mac, or Linux operating
 * Sensors
 
 ### Prerequisites
-* Java JVM
+* Java Virtual Machine
 
 ### Installing
 
