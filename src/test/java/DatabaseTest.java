@@ -59,7 +59,11 @@ public class DatabaseTest {
         dbObj.getNetworkMetrics(null,null,"");
     }
 
-   
+    @Test(expected = Exception.class)
+    public void failedToGetNetworkMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        given(dbObj.getNetworkMetrics(1L,1L,"")).willThrow(new Exception());
+    }
 
     @Test(expected = Exception.class)
     public void nullTimesInProcessMetrics() throws Exception {
