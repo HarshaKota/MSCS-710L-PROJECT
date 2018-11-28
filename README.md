@@ -1,6 +1,6 @@
 # Welcome to MetricsCollector!
 
-MetricsCollector interacts with the Linux kernal of a Windows, Mac, or Linux operating system and returns several useful metrics to the user.  This application provides the user with information about the following system metrics:
+MetricsCollector interacts with the kernel of a Windows, Mac, or Linux operating system and returns several useful metrics to the user.  This application provides the user with information about the following system metrics:
 
 * Static metrics
 * CPU
