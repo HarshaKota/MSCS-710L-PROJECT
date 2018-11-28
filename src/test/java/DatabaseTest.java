@@ -5,10 +5,13 @@ import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.Sensors;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+
+import static org.mockito.BDDMockito.given;
 
 public class DatabaseTest {
 
@@ -48,6 +51,84 @@ public class DatabaseTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    @Test(expected = Exception.class)
+    public void nullTimesInPowerMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        dbObj.getPowerMetrics(null,null);
+    }
+
+    @Test(expected = Exception.class)
+    public void failedToGetPowerMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        given(dbObj.getPowerMetrics(1L,1L)).willThrow(new Exception());
+    }
+
+    @Test(expected = Exception.class)
+    public void nullTimesInCpuMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        dbObj.getCpuMetrics(null,null,"");
+    }
+
+    @Test(expected = Exception.class)
+    public void failedToGetCpuMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        given(dbObj.getCpuMetrics(1L,1L,"")).willThrow(new Exception());
+    }
+
+    @Test(expected = Exception.class)
+    public void nullTimesInMemoryMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        dbObj.getMemoryMetrics(null,null,"");
+    }
+
+    @Test(expected = Exception.class)
+    public void failedToGetMemoryMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        given(dbObj.getMemoryMetrics(1L,1L,"")).willThrow(new Exception());
+    }
+
+    @Test(expected = Exception.class)
+    public void nullTimesInNetworkMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        dbObj.getNetworkMetrics(null,null,"");
+    }
+
+    @Test(expected = Exception.class)
+    public void failedToGetNetworkMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        given(dbObj.getNetworkMetrics(1L,1L,"")).willThrow(new Exception());
+    }
+
+    @Test(expected = Exception.class)
+    public void nullTimesInProcessMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        dbObj.getProcessMetrics(null,null,"");
+    }
+
+    @Test(expected = Exception.class)
+    public void failedToGetProcessMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        given(dbObj.getProcessMetrics(1L,1L,"")).willThrow(new Exception());
+    }
+
+    @Test(expected = Exception.class)
+    public void failedToGetSensorMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        given(dbObj.getSensorsMetrics(1L,1L,"")).willThrow(new Exception());
+    }
+
+    @Test(expected = Exception.class)
+    public void nullTimesInSensorMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        dbObj.getSensorsMetrics(null,null,"");
+    }
+
+    @Test(expected = Exception.class)
+    public void failedToGetProcessInfoMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        given(dbObj.getProcessinfoMetrics(1L,1L,"","")).willThrow(new Exception());
     }
 
     @Test(expected = Exception.class)

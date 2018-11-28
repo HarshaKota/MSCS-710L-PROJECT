@@ -2,6 +2,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.LinkedHashMap;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -15,6 +17,12 @@ public class ControllerTest {
     public void cpuControllerFailedToGetSessions() {
         final cpuController controller = Mockito.spy(new cpuController());
         given(controller.getSessions()).willThrow(new Exception());
+        controller.getSessions();
+    }
+
+    @Test
+    public void cpuControllerSucceededToGetSessions() {
+        final cpuController controller = Mockito.spy(new cpuController());
         controller.getSessions();
     }
 

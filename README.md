@@ -1,78 +1,38 @@
-# Welcome to MetricsCollector2018!
+# Welcome to MetricsCollector!
 
-This application will interact with the Linux kernal of a Windows, MacOS, or Linux OS and return several useful metrics to the user.
+MetricsCollector interacts with the kernel of a Windows, Mac, or Linux operating system and returns several useful metrics to the user.  This application provides the user with information about the following system metrics:
 
-## Getting Started
-
-To install and run MetricsCollector on your machine, simply follow these instructions.
-Go to www.asdf.com and download the MetricsCollector.jar file
-Open the .jar file on your machine
-
-
+* Static metrics
+* CPU
+* Memory
+* Network
+* Power
+* Process Info
+* Sensors
 
 ### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+* Java Virtual Machine
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+MetricsCollector is very easy to install. Simply download the jar file from [here](https://drive.google.com/drive/folders/1r6Y6kXuzJKM1JHFgEcjQ6OCHv6jitklV?usp=sharing), or save it on a thumb drive.
+When you open it on your machine, it will install and open to the welcome page. From there you can choose which category of metrics you want to display.
 
-Say what the step will be
+## Dependencies
 
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* OSHI Library
-* [Maven](https://maven.apache.org/) - Dependency Management
-* 
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+* sqlite-jdbc
+* log4j-api
+* oshi-core
+* Maven
+* log4j-core
+* log4j-slf4j-impl
+* javafx-controls
+* javafx-graphics. Classifiers for Windows, Mac, and Linux
+* javafx-fxml
+* junit
+* mockito-al
+* maven-compiler-plugin
+* exec-maven-plugin
 
 ## Authors
 
@@ -80,11 +40,11 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 * **Bradley Lamitie**
 * **Christopher Byrnes**
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+Do we want to put an open source license on this?
 
 ## Acknowledgments
+
+Many thanks to Prof. Anothy Giorgio and the members of the Capstone project class MSCS 710, Fall 2018.
 
