@@ -21,53 +21,12 @@ Open the .jar file on your machine
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+There are no preqequsites for installing and running MetricsCollector.
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
+MetricsCollector is very easy to install. Simply download the jar file from our website, or save it on a thumb drive.
+When you open it on your machine, it will install and open to the welcome page. From there you can choose which category of metrics you want to display.
 
 ## Built With
 
