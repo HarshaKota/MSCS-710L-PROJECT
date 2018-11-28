@@ -5,6 +5,7 @@ import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.Sensors;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +51,12 @@ public class DatabaseTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test(expected = Exception.class)
+    public void failedToGetSensorMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        given(dbObj.getSensorsMetrics(1L,1L,"")).willThrow(new Exception());
     }
 
     @Test(expected = Exception.class)
