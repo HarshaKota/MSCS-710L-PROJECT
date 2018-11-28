@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import static org.mockito.BDDMockito.given;
+
 public class DatabaseTest {
 
     private static SystemInfo si;
@@ -48,6 +50,12 @@ public class DatabaseTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test(expected = Exception.class)
+    public void failedToGetProcessInfoMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        given(dbObj.getProcessinfoMetrics(1L,1L,"","")).willThrow(new Exception());
     }
 
     @Test(expected = Exception.class)
