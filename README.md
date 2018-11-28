@@ -15,7 +15,7 @@ MetricsCollector interacts with the kernel of a Windows, Mac, or Linux operating
 
 ### Installing
 
-MetricsCollector is very easy to install. Simply download the jar file from our website, or save it on a thumb drive.
+MetricsCollector is very easy to install. Simply download the jar file from [here] (https://drive.google.com/drive/folders/1r6Y6kXuzJKM1JHFgEcjQ6OCHv6jitklV?usp=sharing), or save it on a thumb drive.
 When you open it on your machine, it will install and open to the welcome page. From there you can choose which category of metrics you want to display.
 
 ## Dependencies
