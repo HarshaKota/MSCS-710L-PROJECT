@@ -29,12 +29,13 @@ public class DatabaseTest {
         Database dbObj = new Database();
         dbObj.establishDatabaseConnection(null);
     }
-//
-//    @Test(expected = Exception.class)
-//    public void establishDatabaseConnection_Null() throws Exception {
-//        main.Database dbObj = new main.Database();
-//        dbObj.establishDatabaseConnection(databaseUrl);
-//    }
+
+    @Test
+    public void establishDatabaseConnection_NotNull() throws Exception {
+        main.Database dbObj = new main.Database();
+        dbObj.establishDatabaseConnection(databaseUrl);
+        dbObj.closeDatabaseConnection();
+    }
 
     @Test(expected = Exception.class)
     public void checkSessionTable_Null() throws Exception {
@@ -169,6 +170,7 @@ public class DatabaseTest {
     public void createProcessTable() throws Exception {
         Database dbObj = new Database();
         dbObj.createProcessTable();
+        dbObj.closeDatabaseConnection();
     }
 
     @Test(expected = Exception.class)
