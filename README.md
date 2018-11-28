@@ -10,13 +10,8 @@ MetricsCollector interacts with the Linux kernal of a Windows, Mac, or Linux ope
 * Process Info
 * Sensors
 
-## Getting Started
-
-To install and run MetricsCollector on your machine, simply follow these instructions.
-Go to www.asdf.com and download the MetricsCollector.jar file
-Open the .jar file on your machine
-
 ### Prerequisites
+* Java JVM
 
 There are no preqequsites for installing and running MetricsCollector.
 
