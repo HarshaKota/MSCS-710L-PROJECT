@@ -53,7 +53,12 @@ public class DatabaseTest {
         }
     }
 
- 
+    
+    @Test(expected = Exception.class)
+    public void nullTimesInMemoryMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        dbObj.getMemoryMetrics(null,null,"");
+    }
 
     @Test(expected = Exception.class)
     public void failedToGetMemoryMetrics() throws Exception {
