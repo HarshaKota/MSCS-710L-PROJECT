@@ -52,7 +52,12 @@ public class DatabaseTest {
             e.printStackTrace();
         }
     }
-
+    
+    @Test(expected = Exception.class)
+    public void nullTimesInPowerMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        dbObj.getPowerMetrics(null,null);
+    }
 
     @Test(expected = Exception.class)
     public void failedToGetPowerMetrics() throws Exception {
