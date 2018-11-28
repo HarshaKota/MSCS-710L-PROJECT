@@ -115,6 +115,8 @@ public class Main {
         final long endSessionTime = metricCollector.endSession();
         dbObject.insertEndSessionIntoSessionTable(startSessionTime, endSessionTime);
 
+        dbObject.commit();
+
         dbObject.closeDatabaseConnection();
 
         System.out.println("End of Main"); //Sysout
