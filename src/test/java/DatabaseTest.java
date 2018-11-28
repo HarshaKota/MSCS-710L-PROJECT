@@ -279,6 +279,20 @@ public class DatabaseTest {
     }
 
     @Test(expected = Exception.class)
+    public void insertIntoSensorsTable_HasMultipleFans() throws Exception {
+        MetricCollectionStructures.sensorsStructure sensorsStructure = new MetricCollectionStructures.sensorsStructure();
+        sensorsStructure.setTimestamp(System.currentTimeMillis());
+        sensorsStructure.setCpuTemperature(10d);
+        sensorsStructure.setCpuVoltage(10d);
+        ArrayList testFans = new ArrayList<Integer>();
+        testFans.add(0,52);
+        testFans.add(1,56);
+        sensorsStructure.setFans(testFans);
+        Database dbObj = new Database();
+        dbObj.insertIntoSensorsTable(sensorsStructure);
+    }
+
+    @Test(expected = Exception.class)
     public void insertIntoSensorsTable_EmptyInputs() throws Exception {
         Database dbObj = new Database();
         dbObj.insertIntoSensorsTable(new MetricCollectionStructures.sensorsStructure());
