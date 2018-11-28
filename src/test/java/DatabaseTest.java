@@ -53,7 +53,12 @@ public class DatabaseTest {
         }
     }
 
-    
+    @Test(expected = Exception.class)
+    public void nullTimesInCpuMetrics() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        dbObj.getCpuMetrics(null,null,"");
+    }
+
     @Test(expected = Exception.class)
     public void failedToGetCpuMetrics() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
