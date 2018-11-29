@@ -8,6 +8,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * This class launches the main UI of the program
+ * and ensures to notify the main program of its status
+ * by updating the applicationOpen
+ */
 public class UI extends Application implements Runnable {
 
     // Setting up the main.UI Window

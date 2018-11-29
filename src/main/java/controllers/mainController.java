@@ -17,6 +17,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+/**
+ * This class controls the main.fxml file and populates options
+ * for available metric that can be selected and launches them
+ */
 public class mainController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);

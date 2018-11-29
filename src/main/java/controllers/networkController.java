@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+/**
+ * This class controls the network.fxml file and populates data
+ */
 public class networkController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);

@@ -14,6 +14,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+/**
+ * This class controls the static.fxml file and populates data
+ */
 public class staticController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
@@ -30,7 +33,7 @@ public class staticController implements Initializable {
         setSelector_1(getStaticMetricNames());
     }
 
-    // gives the names of all the static metrics that will be available
+    // sets the names of all the static metrics that will be available
     private ArrayList<String> getStaticMetricNames() {
         ArrayList<String> staticMetricNames = new ArrayList<>();
         staticMetricNames.add("System Metrics");

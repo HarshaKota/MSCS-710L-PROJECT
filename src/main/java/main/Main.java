@@ -9,11 +9,15 @@ import oshi.software.os.OperatingSystem;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * The Main class initiates the metric collection and UI
+ */
 @SuppressWarnings("CanBeFinal")
 public class Main {
 
     private static final Logger log = LogManager.getLogger(UI.class);
 
+    // Keep track of the application status so metric collection can be stopped when quit
     public static AtomicBoolean applicationOpen = new AtomicBoolean(true);
 
     public static  String databaseUrl = "jdbc:sqlite:MetricCollector.db";
@@ -51,6 +55,7 @@ public class Main {
         final long startSessionTime = metricCollector.startSession();
         dbObject.insertStartSessionIntoSessionTable(startSessionTime);
 
+        // Creating Future Thread that perform collection and return metric data
         while (Main.applicationOpen.get()) {
 
             final long metricCollectedTime = metricCollector.startSession();
@@ -121,6 +126,6 @@ public class Main {
 
         dbObject.closeDatabaseConnection();
 
-        System.out.println("End of main.Main");
+        System.out.println("End of Main");
     }
 }

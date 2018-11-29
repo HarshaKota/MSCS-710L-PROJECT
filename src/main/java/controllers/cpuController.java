@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+/**
+ * This class controls the cpu.fxml file and populates data
+ */
 public class cpuController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
