@@ -11,11 +11,20 @@ import oshi.util.FormatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * This class uses methods from the OSHI Library to access Hardware and Operating system
+ * to gather static metrics
+ */
 public class staticMetricCollector {
 
     private final SystemInfo si = new SystemInfo();
     private final HardwareAbstractionLayer hal = si.getHardware();
 
+    /**
+     * Gathers Static System Metrics
+     *
+     * @return A Structured list of system metrics
+     */
     public ArrayList<String> getStaticSystemMetrics() {
         ArrayList<String> metricData = new ArrayList<>();
         ComputerSystem computerSystem = hal.getComputerSystem();
@@ -41,6 +50,11 @@ public class staticMetricCollector {
         return metricData;
     }
 
+    /**
+     * Gathers Static Process Metrics
+     *
+     * @return A Structured list of process metrics
+     */
     public ArrayList<String> getStaticProcessorMetrics() {
         ArrayList<String> metricData = new ArrayList<>();
         CentralProcessor processor = hal.getProcessor();
@@ -56,6 +70,11 @@ public class staticMetricCollector {
         return metricData;
     }
 
+    /**
+     * Gathers Static Disk Metrics
+     *
+     * @return A Structured list of disk metrics
+     */
     public ArrayList<String> getStaticDiskMetrics() {
         ArrayList<String> metricData = new ArrayList<>();
         HWDiskStore[] diskStores = hal.getDiskStores();
@@ -84,6 +103,11 @@ public class staticMetricCollector {
         return metricData;
     }
 
+    /**
+     * Gathers Static File System Metrics
+     *
+     * @return A Structured list of file system metrics
+     */
     public ArrayList<String> getStaticFileSystemMetrics() {
         ArrayList<String> metricData = new ArrayList<>();
         OperatingSystem os = si.getOperatingSystem();
@@ -111,6 +135,11 @@ public class staticMetricCollector {
         return metricData;
     }
 
+    /**
+     * Gathers Static Network Metrics
+     *
+     * @return A Structured list of network metrics
+     */
     public ArrayList<String> getStaticNetworkMetrics() {
         ArrayList<String> metricData = new ArrayList<>();
         OperatingSystem os = si.getOperatingSystem();
