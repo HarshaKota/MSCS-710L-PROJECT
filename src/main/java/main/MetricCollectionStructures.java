@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * MetricCollectionStructures class provides structured classes for each metric
+ * such that objects of these classes can be passed around when populated
+ */
 public class MetricCollectionStructures {
 
     public static class powerStructure {
