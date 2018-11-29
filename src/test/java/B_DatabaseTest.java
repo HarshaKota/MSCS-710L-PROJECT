@@ -214,6 +214,14 @@ public class B_DatabaseTest {
     }
 
     @Test(expected = Exception.class)
+    public void insertIntoCpuTable_EmptyStructure() throws Exception {
+        Database dbObj = new Database();
+        MetricCollectionStructures.cpuStructure cpuStructure = new MetricCollectionStructures.cpuStructure();
+        cpuStructure.setIdleLoad(-1d);
+        dbObj.insertIntoCpuTable(cpuStructure);
+    }
+
+    @Test(expected = Exception.class)
     public void insertIntoCpuTable_EmptyInputs1() throws Exception {
         Database dbObj = new Database();
         dbObj.insertIntoCpuTable(new MetricCollectionStructures.cpuStructure());

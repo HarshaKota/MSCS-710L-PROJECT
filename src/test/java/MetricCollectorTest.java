@@ -224,7 +224,6 @@ public class MetricCollectorTest {
         assertTrue(!networkS.getSizeSent().equals(""));
     }
 
-
     @Test
     public void getProcess_ThreadCount() {
         assertTrue(os.getThreadCount() >= 1);
