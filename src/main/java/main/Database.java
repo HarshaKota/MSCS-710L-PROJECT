@@ -9,6 +9,17 @@ import java.sql.*;
 import java.text.DecimalFormat;
 import java.util.*;
 
+/**
+ * <h1>Create and Retrieve Data From the Database</h1>
+ * The Database Class creates the database in which we
+ * store metric information. This class also can be used
+ * access and retrieve data from the database.
+ * <p>
+ *
+ * @author Harsha Kota, Christopher Byrnes, Bradley Lamitie
+ * @version 1.0
+ * @since   2018-11-29
+ */
 public class Database {
 
     private static Connection connection = null;
@@ -19,6 +30,9 @@ public class Database {
 
     public Database() { }
 
+    /**
+     * This method is used to create each of the database tables
+     */
     void createTables() throws Exception {
         createSensorsTable();
 
@@ -39,7 +53,13 @@ public class Database {
         getTablesAvailable();
     }
 
-    // Establish connection to the sqlite database/ Create if its doesn't exist
+    /**
+     * This method is used to establish a connection between the application
+     * and the sqlite database. If one does not exist already, we will create
+     * one.
+     * @param databaseUrl This is the url used to develop the connection
+     * @throws Exception On failure to connect to the database
+     */
     public void establishDatabaseConnection(String databaseUrl) throws Exception {
         try {
             String databaseClassName = "org.sqlite.JDBC";
@@ -52,7 +72,15 @@ public class Database {
         }
     }
 
-    // Check if the session table is intact with both the startSession and endSession times
+    /**
+     * This method ensures the session table is intact and the timestamp value is correct.
+     * We ensure the integrity of the session timestamp by retrieving the last timestamp
+     * and cross referencing the sensors and memory table to ensure that they match.
+     * @throws NullPointerException On failure to retrieve the last inserted session
+     * @throws Exception On failure to retrieve the last session timestamp from the Sensors Table
+     * @throws Exception On failure to retrieve the last session timestamp from the Memory Table
+     * @throws Exception On failure to fix the last session timestamp
+     */
     public void checkSessionTable() throws Exception {
 
         // Get the start and end times of the last session inserted into the session table
@@ -90,8 +118,8 @@ public class Database {
                 }
                 getEndTimeFromSensorsStatement.close();
             } catch (Exception e) {
-                log.error("checkSessionTable: Failed to last timestamp from the sensors table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception("checkSessionTable: Failed to last timestamp from the sensors table " + e.getClass().getName() + ": " + e.getMessage());
+                log.error("checkSessionTable: Failed to retrieve last timestamp from the sensors table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("checkSessionTable: Failed to retrieve last timestamp from the sensors table " + e.getClass().getName() + ": " + e.getMessage());
             }
 
             try {
@@ -102,8 +130,8 @@ public class Database {
                 }
                 getEndTimeFromMemoryStatement.close();
             } catch (Exception e) {
-                log.error("checkSessionTable: Failed to last timestamp from the memory table " + e.getClass().getName() + ": " + e.getMessage());
-                throw new Exception("checkSessionTable: Failed to last timestamp from the memory table " + e.getClass().getName() + ": " + e.getMessage());
+                log.error("checkSessionTable: Failed to retrieve last timestamp from the memory table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("checkSessionTable: Failed to retrieve last timestamp from the memory table " + e.getClass().getName() + ": " + e.getMessage());
             }
 
             if (sensorLastTimestamp != memoryLastTimestamp) {
@@ -129,7 +157,12 @@ public class Database {
         }
     }
 
-    // Create a Power Sources table
+    /**
+     * This method is used to create the Power table. However,
+     * if the user does not have a battery to retrieve metrics
+     * the power table is not created.
+     * @throws Exception On failure to create the Power Table
+     */
     public void createPowerTable() throws Exception {
 
         if(TableCreationChecks.checkPowerSource(hal.getPowerSources())) {
@@ -152,7 +185,12 @@ public class Database {
         }
     }
 
-    // Create a new Sensors table
+    /**
+     * This method is used to create the Sensors table. However,
+     * if the user does not have fans or valid cpu voltage it will
+     * exclude those when creating the table.
+     * @throws Exception On failure to create the Sessions Table
+     */
     public void createSensorsTable() throws Exception {
 
         // Builds the fan column
@@ -196,7 +234,10 @@ public class Database {
         }
     }
 
-    // Create a Memory table
+    /**
+     * This method is used to create the Memory table.
+     * @throws Exception On failure to create the Memory Table
+     */
     public void createMemoryTable() throws Exception {
 
         try {
@@ -214,7 +255,10 @@ public class Database {
         }
     }
 
-    // Create a Processes table
+    /**
+     * This method is used to create the ProcessInfo table.
+     * @throws Exception On failure to create the ProcessInfo Table
+     */
     private void createProcessInfoTable() throws Exception {
 
         try {
@@ -234,7 +278,10 @@ public class Database {
         }
     }
 
-    // Create a ProcessorInfo table
+    /**
+     * This method is used to create the Process table.
+     * @throws Exception On failure to create the Process Table
+     */
     public void createProcessTable() throws Exception {
 
         try {
@@ -252,7 +299,11 @@ public class Database {
         }
     }
 
-    // Create a CPU table
+    /**
+     * This method is used to create the CPU table. Additionally,
+     * this method creates a database column for each logical CPU
+     * @throws Exception On failure to create the CPU Table
+     */
     public void createCPUTable() throws Exception {
 
         int noOfLogicalCPUs = TableCreationChecks.getLogicalCPUs(hal.getProcessor());
@@ -284,7 +335,10 @@ public class Database {
         }
     }
 
-    // Create a Network table
+    /**
+     * This method is used to create the Network table.
+     * @throws Exception On failure to create the Network Table
+     */
     public void createNetworkTable() throws Exception {
 
         try {
@@ -304,6 +358,10 @@ public class Database {
         }
     }
 
+    /**
+     * This method is used to create the Session table.
+     * @throws Exception On failure to create the Session Table
+     */
     // Create a Sessions table to hold each user session start and end time
     public void createSessionTable() throws Exception {
 
@@ -322,6 +380,12 @@ public class Database {
 
     }
 
+    /**
+     * This method is used to insert metrics data into the power table.
+     * @param pS a structure used to store and pass Power metrics between methods and classes
+     * @throws Exception On powerStructure lacking valid metrics
+     * @throws Exception On failure to insert into the Power Table
+     */
     // Insert values into Power Table
     public void insertIntoPowerTable(MetricCollectionStructures.powerStructure pS) throws Exception {
 
@@ -347,7 +411,15 @@ public class Database {
         }
     }
 
-    // Insert values into CPU Table
+    /**
+     * This method is used to insert metrics data into the Cpu table. The insert statement is
+     * derived based on how many logical processors the user has.
+     * @param cS a structure used to store and pass Cpu metrics between methods and classes
+     * @throws Exception On passing in an empty cpuStructure
+     * @throws Exception On passing in an empty cpuStructure with empty processorLoad
+     * @throws Exception On passing in a cpuStructure with inaccurate number of logical Processors
+     * @throws Exception On failure to insert metrics into Cpu table
+     */
     public void insertIntoCpuTable(MetricCollectionStructures.cpuStructure cS) throws Exception {
 
         if (cS.getTimestamp() < 0 || cS.getUptime() < 0 || cS.getUserLoad() < 0d || cS.getSystemLoad() < 0d ||
@@ -387,7 +459,13 @@ public class Database {
         }
     }
 
-    // Insert values into Sensors Table
+    /**
+     * This method is used to insert metrics data into the Sensors table. The insert statement is
+     * derived based on how many fans the user has, as well as if cpu voltage is available.
+     * @param sS a structure used to store and pass sensor metrics between methods and classes
+     * @throws Exception On passing in an empty sensorsStructure
+     * @throws Exception On failure to insert metrics into Sensors table
+     */
     public void insertIntoSensorsTable(MetricCollectionStructures.sensorsStructure sS) throws Exception {
 
         if (sS.getTimestamp() ==  0)
@@ -423,7 +501,12 @@ public class Database {
         }
     }
 
-    // Insert values into Memory Table
+    /**
+     * This method is used to insert metrics data into the Memory table.
+     * @param mS a structure used to store and pass Memory metrics between methods and classes
+     * @throws Exception On passing in an empty memoryStructure
+     * @throws Exception On failure to insert metrics into Memory table
+     */
     public void insertIntoMemoryTable(MetricCollectionStructures.memoryStructure mS) throws Exception {
 
         if (mS.getTimestamp() ==  0 || mS.getUsedMemory() == 0d || mS.getTotalMemory() == 0d)
@@ -445,6 +528,12 @@ public class Database {
         }
     }
 
+    /**
+     * This method is used to insert metrics data into the Network table.
+     * @param nS a structure used to store and pass network metrics between methods and classes
+     * @throws Exception On passing in an empty networkStructure
+     * @throws Exception On failure to insert metrics into Network table
+     */
     // Insert values into Network Table
     public void insertIntoNetworkTable(MetricCollectionStructures.networkStructure nS) throws Exception {
 
@@ -468,7 +557,15 @@ public class Database {
         }
     }
 
-    // Insert values into the Process and Processes tables
+    /**
+     * This method is used to insert metrics data into the Process and ProcessInfo tables.
+     * @param pS a structure used to store and pass sensor metrics between methods and classes
+     * @throws Exception On passing in an empty sensorsStructure
+     * @throws Exception On passing in an empty sensorsStructure with null processesList
+     * @throws Exception On passing in an empty sensorsStructure with an empty processesList
+     * @throws Exception On failure to insert metrics into Process table
+     * @throws Exception On failure to insert metrics into ProcessInfo table
+     */
     public void insertIntoProcessTable(MetricCollectionStructures.processStructure pS) throws Exception {
 
         if (pS.getTimestamp() ==  0 || pS.getNoOfThreads() == 0 || pS.getNoOfProcesses() == 0)
@@ -517,7 +614,11 @@ public class Database {
         }
     }
 
-    // Insert the start session time into the session table
+    /**
+     * This method is used to insert the timestamp representing the start of a session.
+     * @param startSession a long representing the time the session started in milliseconds
+     * @throws Exception On failure to insert start session time into the Session table
+     */
     public void insertStartSessionIntoSessionTable(final long startSession) throws Exception {
 
         try {
@@ -532,7 +633,14 @@ public class Database {
         }
     }
 
-    // Update the session end time of previously inserted startSession time
+    /**
+     * This method is used to insert the end timestamp representing the start and end of a session.
+     * This is accomplished by finding the matching session in the database and adding the end session
+     * time to the table.
+     * @param startSession a long representing the time the session started in milliseconds
+     * @param endSession a long representing the time the session ended in milliseconds
+     * @throws Exception On failure to update session table with end session time into the Session table
+     */
     public void insertEndSessionIntoSessionTable(final long startSession, final long endSession) throws Exception {
 
         String sql = "UPDATE SESSION SET ENDSESSION = ? WHERE STARTSESSION = ?";
@@ -552,7 +660,11 @@ public class Database {
         }
     }
 
-    // Commit the metrics collected
+    /**
+     * This method is used to make all queries executed on the database in the time since the last rollback.
+     * This method also releases locks on the database.
+     * @throws Exception On failure to commit the queries executed to the database
+     */
     public void commit() throws Exception {
         try {
             connection.commit();
@@ -562,9 +674,10 @@ public class Database {
         }
     }
 
-
-
-    // Close the connection to the sqlite database
+    /**
+     * This method is used to close the connection to the database.
+     * @throws Exception On failure to close the connection to the database
+     */
     public void closeDatabaseConnection() throws Exception {
         try {
             connection.close();
@@ -574,8 +687,12 @@ public class Database {
         }
     }
 
-    // Get available Tables
-    private void getTablesAvailable() {
+    /**
+     * This method is used to retrieve what tables are available to the user. This method is used
+     * to populate the main dropdown box in the UI.
+     * @throws Exception On failure to retrieve tables
+     */
+    private void getTablesAvailable() throws Exception {
         tablesAvailable = new ArrayList<>();
 
         try {
@@ -587,15 +704,16 @@ public class Database {
             }
         } catch (SQLException e) {
             log.error("getTables: Failed to get table names " + e.getClass().getName() + ": " + e.getMessage());
-            try {
-                throw new Exception("getTables: Failed to get table names " + e.getClass().getName() + ": " + e.getMessage());
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
+            throw new Exception("getTables: Failed to get table names " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
-    // Get Sessions
+    /**
+     * This method is used to retrieve the sessions and sort them by time. This method is used to
+     * create the list of available metrics in the UI
+     * @return A linked hash map containing the start and end times associated with the session
+     * @throws Exception On failure to retrieve the sessions from the table.
+     */
     public LinkedHashMap<Long, Long> getSessions() throws Exception {
         LinkedHashMap<Long,Long> sessions = new LinkedHashMap<>();
         try {
@@ -618,7 +736,14 @@ public class Database {
         return sessions;
     }
 
-    // Get power metrics
+    /**
+     * This method is used to retrieve data from the power table for use in the UI
+     * @return A linked hash map holding the timeStamp, and the value of the column
+     * @param startTime This is the start time of the session we are retrieving for
+     * @param endTime This is the end time of the session we are retrieving for
+     * @throws Exception On failure to retrieve power metrics from the table
+     * @throws Exception On start and end time being null
+     */
     public LinkedHashMap<Long, Double> getPowerMetrics(Long startTime, Long endTime) throws Exception {
 
         LinkedHashMap<Long, Double> powerMetrics = new LinkedHashMap<>();
@@ -649,7 +774,11 @@ public class Database {
         return powerMetrics;
     }
 
-    // Get cpu table columns
+    /**
+     * This method is used to retrieve the names of columns present in the Cpu table.
+     * @return An array list containing the names of each column in the cpu table
+     * @throws Exception On failure to retrieve cpu columns
+     */
     public ArrayList<String> getCpuColumns() throws Exception {
         ArrayList<String> cpuColumns = new ArrayList<>();
 
@@ -672,7 +801,15 @@ public class Database {
         return cpuColumns;
     }
 
-    // Get cpuMetrics
+    /**
+     * This method is used to retrieve data from the cpu table for use in the UI
+     * @return A linked hash map holding the timeStamp, and the value of the column
+     * @param startTime This is the start time of the session we are retrieving for
+     * @param endTime This is the end time of the session we are retrieving for
+     * @param columnName This is the name of the metric we are retrieving
+     * @throws Exception On failure to retrieve cpu metrics from the table
+     * @throws Exception On start and end time being null
+     */
     public LinkedHashMap<Long, Double> getCpuMetrics(Long startTime, Long endTime, String columnName) throws Exception {
         LinkedHashMap<Long, Double> cpuMetrics = new LinkedHashMap<>();
 
@@ -701,7 +838,11 @@ public class Database {
         return cpuMetrics;
     }
 
-    // Get memory table columns
+    /**
+     * This method is used to retrieve the names of columns present in the Memory table.
+     * @return An array list containing the names of each column in the memory table
+     * @throws Exception On failure to retrieve memory columns
+     */
     public ArrayList<String> getMemoryColumns() throws Exception {
         ArrayList<String> memoryColumns = new ArrayList<>();
 
@@ -724,7 +865,11 @@ public class Database {
         return memoryColumns;
     }
 
-    // Get Total Memory
+    /**
+     * This method is used to retrieve the total memory from the memory table for use in the UI
+     * @return A double value representing the total memory
+     * @throws Exception On failure to retrieve total memory from the table
+     */
     public Double getTotalMemory() throws Exception {
         Double totalMemory = null;
 
@@ -745,7 +890,15 @@ public class Database {
         return totalMemory;
     }
 
-    // Get memoryMetrics
+    /**
+     * This method is used to retrieve data from the memory table for use in the UI
+     * @return A linked hash map holding the timeStamp, and the value of the column
+     * @param startTime This is the start time of the session we are retrieving for
+     * @param endTime This is the end time of the session we are retrieving for
+     * @param columnName This is the name of the metric we are retrieving
+     * @throws Exception On failure to retrieve memory metrics from the table
+     * @throws Exception On start and end time being null
+     */
     public LinkedHashMap<Long, Double> getMemoryMetrics(Long startTime, Long endTime, String columnName) throws Exception {
         LinkedHashMap<Long, Double> memoryMetrics = new LinkedHashMap<>();
 
@@ -774,7 +927,11 @@ public class Database {
         return memoryMetrics;
     }
 
-    // Get network table columns
+    /**
+     * This method is used to retrieve the names of columns present in the Network table.
+     * @return An array list containing the names of each column in the network table
+     * @throws Exception On failure to retrieve network columns
+     */
     public ArrayList<String> getNetworkColumns() throws Exception {
         ArrayList<String> networkColumns = new ArrayList<>();
 
@@ -797,7 +954,15 @@ public class Database {
         return networkColumns;
     }
 
-    // Get networkMetrics
+    /**
+     * This method is used to retrieve data from the network table for use in the UI
+     * @return A linked hash map holding the timeStamp, and the value of the column
+     * @param startTime This is the start time of the session we are retrieving for
+     * @param endTime This is the end time of the session we are retrieving for
+     * @param columnName This is the name of the metric we are retrieving
+     * @throws Exception On failure to retrieve network metrics from the table
+     * @throws Exception On start and end time being null
+     */
     public LinkedHashMap<Long, Double> getNetworkMetrics(Long startTime, Long endTime, String columnName) throws Exception {
         LinkedHashMap<Long, Double> networkMetrics = new LinkedHashMap<>();
 
@@ -838,7 +1003,11 @@ public class Database {
         return networkMetrics;
     }
 
-    // Get process table columns
+    /**
+     * This method is used to retrieve the names of columns present in the Process table.
+     * @return An array list containing the names of each column in the process table
+     * @throws Exception On failure to retrieve process columns
+     */
     public ArrayList<String> getProcessColumns() throws Exception {
         ArrayList<String> networkColumns = new ArrayList<>();
 
@@ -861,7 +1030,15 @@ public class Database {
         return networkColumns;
     }
 
-    // Get processMetrics
+    /**
+     * This method is used to retrieve data from the process table for use in the UI
+     * @return A linked hash map holding the timeStamp, and the value of the column
+     * @param startTime This is the start time of the session we are retrieving for
+     * @param endTime This is the end time of the session we are retrieving for
+     * @param columnName This is the name of the metric we are retrieving
+     * @throws Exception On failure to retrieve process metrics from the table
+     * @throws Exception On start and end time being null
+     */
     public LinkedHashMap<Long, Long> getProcessMetrics(Long startTime, Long endTime, String columnName) throws Exception {
         LinkedHashMap<Long, Long> processMetrics = new LinkedHashMap<>();
 
@@ -890,7 +1067,11 @@ public class Database {
         return processMetrics;
     }
 
-    // Get sensors table columns
+    /**
+     * This method is used to retrieve the names of columns present in the Sensors table.
+     * @return An array list containing the names of each column in the sensors table
+     * @throws Exception On failure to retrieve sensors columns
+     */
     public ArrayList<String> getSensorsColumns() throws Exception {
         ArrayList<String> sensorsColumns = new ArrayList<>();
 
@@ -913,7 +1094,15 @@ public class Database {
         return sensorsColumns;
     }
 
-    // Get sensorsMetrics
+    /**
+     * This method is used to retrieve data from the sensors table for use in the UI
+     * @return A linked hash map holding the timeStamp, and the value of the column
+     * @param startTime This is the start time of the session we are retrieving for
+     * @param endTime This is the end time of the session we are retrieving for
+     * @param columnName This is the name of the metric we are retrieving
+     * @throws Exception On failure to retrieve sensors metrics from the table
+     * @throws Exception On start and end time being null
+     */
     public LinkedHashMap<Long, Double> getSensorsMetrics(Long startTime, Long endTime, String columnName) throws Exception {
         LinkedHashMap<Long, Double> sensorsMetrics = new LinkedHashMap<>();
 
@@ -942,7 +1131,11 @@ public class Database {
         return sensorsMetrics;
     }
 
-    // Get processinfo table columns
+    /**
+     * This method is used to retrieve the names of columns present in the ProcessInfo table.
+     * @return An array list containing the names of each column in the ProcessInfo table
+     * @throws Exception On failure to retrieve ProcessInfo columns
+     */
     public ArrayList<String> getProcessinfoColumns() throws Exception {
         ArrayList<String> processinfoColumns = new ArrayList<>();
 
@@ -966,7 +1159,11 @@ public class Database {
         return processinfoColumns;
     }
 
-    // Get processes names from processinfo table
+    /**
+     * This method is used to retrieve the list of processes running on the system.
+     * @return An array list containing names of processes present in the ProcessInfo table.
+     * @throws Exception On failure to retrieve the processes' names.
+     */
     public ArrayList<String> getProcessesNames(Long startTime, Long endTime) throws Exception {
         ArrayList<String> processesNames = new ArrayList<>();
 
@@ -989,28 +1186,40 @@ public class Database {
         return processesNames;
     }
 
-    // Get sensorsMetrics
+    /**
+     * This method is used to retrieve data from the processInfo table about a single process for use in the UI
+     * @return A linked hash map holding the timeStamp, and the value of the column
+     * @param startTime This is the start time of the session we are retrieving for
+     * @param endTime This is the end time of the session we are retrieving for
+     * @param columnName This is the name of the metric we are retrieving
+     * @param processName This is the name of a particular process
+     * @throws Exception On failure to retrieve processInfo metrics from the table
+     * @throws Exception On start and end time being null
+     */
     public LinkedHashMap<Long, Double> getProcessinfoMetrics(Long startTime, Long endTime, String columnName, String processName) throws Exception {
         LinkedHashMap<Long, Double> processinfoMetrics = new LinkedHashMap<>();
-
-        String sql = "SELECT * FROM PROCESSINFO WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? AND PROCESSNAME = ? ORDER BY TIMESTAMP ASC";
-        try {
-            PreparedStatement getProcessinfoMetricsStatement = connection.prepareStatement(sql);
-            getProcessinfoMetricsStatement.setLong(1, startTime);
-            getProcessinfoMetricsStatement.setLong(2, endTime);
-            getProcessinfoMetricsStatement.setString(3, processName);
-            ResultSet rs = getProcessinfoMetricsStatement.executeQuery();
-            while (rs.next()) {
-                Long timestamp = rs.getLong("TIMESTAMP");
-                Double columnValue = Double.parseDouble(new DecimalFormat("#0.#").format(rs.getDouble(columnName)));
-                processinfoMetrics.put(timestamp, columnValue);
+        if (startTime != null && endTime != null) {
+            String sql = "SELECT * FROM PROCESSINFO WHERE TIMESTAMP >= ? AND TIMESTAMP <= ? AND PROCESSNAME = ? ORDER BY TIMESTAMP ASC";
+            try {
+                PreparedStatement getProcessinfoMetricsStatement = connection.prepareStatement(sql);
+                getProcessinfoMetricsStatement.setLong(1, startTime);
+                getProcessinfoMetricsStatement.setLong(2, endTime);
+                getProcessinfoMetricsStatement.setString(3, processName);
+                ResultSet rs = getProcessinfoMetricsStatement.executeQuery();
+                while (rs.next()) {
+                    Long timestamp = rs.getLong("TIMESTAMP");
+                    Double columnValue = Double.parseDouble(new DecimalFormat("#0.#").format(rs.getDouble(columnName)));
+                    processinfoMetrics.put(timestamp, columnValue);
+                }
+                getProcessinfoMetricsStatement.close();
+            } catch (Exception e) {
+                log.error("getProcessinfoMetrics: Failed to get processinfo metrics from processinfo table " + e.getClass().getName() + ": " + e.getMessage());
+                throw new Exception("getProcessinfoMetrics: Failed to get processinfo metrics from processinfo table " + e.getClass().getName() + ": " + e.getMessage());
             }
-            getProcessinfoMetricsStatement.close();
-        } catch (Exception e) {
-            log.error("getProcessinfoMetrics: Failed to get processinfo metrics from processinfo table " + e.getClass().getName() + ": " + e.getMessage());
-            throw new Exception("getProcessinfoMetrics: Failed to get processinfo metrics from processinfo table " + e.getClass().getName() + ": " + e.getMessage());
+        } else {
+            log.error("getProcessinfoMetrics: startTime and endTime are null ");
+            throw new Exception("getProcessinfoMetrics: startTime and endTime are null ");
         }
-
         return processinfoMetrics;
     }
 
