@@ -19,6 +19,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+/**
+ * This class controls the processinfo.fxml file and populates data
+ */
 public class processinfoController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);

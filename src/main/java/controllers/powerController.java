@@ -17,6 +17,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+/**
+ * This class controls the power.fxml file and populates data
+ */
 public class powerController implements Initializable {
 
     private static final Logger log = LogManager.getLogger(UI.class);
@@ -48,6 +51,7 @@ public class powerController implements Initializable {
         power_selector.setValue(power_selector.getItems().get(0));
     }
 
+    // clear the chart
     @FXML
     private void clearChart() {
         powerChart.getData().clear();
