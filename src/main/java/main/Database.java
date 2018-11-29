@@ -112,13 +112,13 @@ public class Database {
             } else {
                 String fixEndSessionTimeSql = "UPDATE SESSION SET ENDSESSION = ? WHERE STARTSESSION = ?";
                 try {
-                    PreparedStatement fixEndSesionTimeStatement = connection.prepareStatement(fixEndSessionTimeSql);
+                    PreparedStatement fixEndSessionTimeStatement = connection.prepareStatement(fixEndSessionTimeSql);
 
-                    fixEndSesionTimeStatement.setLong(1, sensorLastTimestamp);
-                    fixEndSesionTimeStatement.setLong(2, startSessionTime);
+                    fixEndSessionTimeStatement.setLong(1, sensorLastTimestamp);
+                    fixEndSessionTimeStatement.setLong(2, startSessionTime);
 
-                    fixEndSesionTimeStatement.executeUpdate();
-                    fixEndSesionTimeStatement.close();
+                    fixEndSessionTimeStatement.executeUpdate();
+                    fixEndSessionTimeStatement.close();
                     connection.commit();
                 } catch (Exception e) {
                     log.error("checkSessionTable: Failed to fix the endSession time in Session Table " + e.getClass().getName() + ": " + e.getMessage());
@@ -575,7 +575,7 @@ public class Database {
     }
 
     // Get available Tables
-    void getTablesAvailable() {
+    private void getTablesAvailable() {
         tablesAvailable = new ArrayList<>();
 
         try {
@@ -605,8 +605,8 @@ public class Database {
             ResultSet rs = getSessionsStatement.executeQuery(sql);
             while (rs.next()) {
                 Long startSession = rs.getLong("STARTSESSION");
-                Long endSession = rs.getLong("ENDSESSION");
-                if (endSession == 0 || endSession == null) continue;
+                long endSession = rs.getLong("ENDSESSION");
+                if (endSession == 0) continue;
                 sessions.put(startSession, endSession);
             }
             getSessionsStatement.close();
@@ -657,10 +657,10 @@ public class Database {
         try {
             PreparedStatement getCpuTableColumnsStatement = connection.prepareStatement(sql);
             ResultSet rs = getCpuTableColumnsStatement.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
             for (int i=1; i<=columnCount; i++) {
-                cpuColumns.add(rsmd.getColumnName(i));
+                cpuColumns.add(metaData.getColumnName(i));
             }
             cpuColumns.remove(0);
             getCpuTableColumnsStatement.close();
@@ -709,10 +709,10 @@ public class Database {
         try {
             PreparedStatement getMemoryTableColumnsStatement = connection.prepareStatement(sql);
             ResultSet rs = getMemoryTableColumnsStatement.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
             for (int i=1; i<=columnCount; i++) {
-                memoryColumns.add(rsmd.getColumnName(i));
+                memoryColumns.add(metaData.getColumnName(i));
             }
             memoryColumns.remove(0);
             getMemoryTableColumnsStatement.close();
@@ -734,8 +734,7 @@ public class Database {
             PreparedStatement getTotalMemoryStatement = connection.prepareStatement(sql);
             ResultSet rs = getTotalMemoryStatement.executeQuery();
             while (rs.next()) {
-                Long timestamp = rs.getLong("MAX(TIMESTAMP)");
-                totalMemory = rs.getDouble("TOTALMEMORY");
+                totalMemory = Double.parseDouble(new DecimalFormat("#0.#").format(rs.getDouble("TOTALMEMORY")));
             }
             getTotalMemoryStatement.close();
         } catch (SQLException e) {
@@ -783,10 +782,10 @@ public class Database {
         try {
             PreparedStatement getNetworkTableColumnsStatement = connection.prepareStatement(sql);
             ResultSet rs = getNetworkTableColumnsStatement.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
             for (int i=1; i<=columnCount; i++) {
-                networkColumns.add(rsmd.getColumnName(i));
+                networkColumns.add(metaData.getColumnName(i));
             }
             networkColumns.remove(0);
             getNetworkTableColumnsStatement.close();
@@ -847,10 +846,10 @@ public class Database {
         try {
             PreparedStatement getProcessTableColumnsStatement = connection.prepareStatement(sql);
             ResultSet rs = getProcessTableColumnsStatement.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
             for (int i=1; i<=columnCount; i++) {
-                networkColumns.add(rsmd.getColumnName(i));
+                networkColumns.add(metaData.getColumnName(i));
             }
             networkColumns.remove(0);
             getProcessTableColumnsStatement.close();
@@ -899,10 +898,10 @@ public class Database {
         try {
             PreparedStatement getSensorsTableColumnsStatement = connection.prepareStatement(sql);
             ResultSet rs = getSensorsTableColumnsStatement.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
             for (int i=1; i<=columnCount; i++) {
-                sensorsColumns.add(rsmd.getColumnName(i));
+                sensorsColumns.add(metaData.getColumnName(i));
             }
             sensorsColumns.remove(0);
             getSensorsTableColumnsStatement.close();
@@ -951,10 +950,10 @@ public class Database {
         try {
             PreparedStatement getProcessinfoTableColumnsStatement = connection.prepareStatement(sql);
             ResultSet rs = getProcessinfoTableColumnsStatement.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
             for (int i=1; i<=columnCount; i++) {
-                processinfoColumns.add(rsmd.getColumnName(i));
+                processinfoColumns.add(metaData.getColumnName(i));
             }
             processinfoColumns.remove(0);
             processinfoColumns.remove(0);

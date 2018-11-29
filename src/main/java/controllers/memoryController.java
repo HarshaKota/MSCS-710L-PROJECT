@@ -11,7 +11,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tooltip;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import oshi.util.FormatUtil;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -96,7 +95,7 @@ public class memoryController implements Initializable {
             Database dbObject = new Database();
             LinkedHashMap<Long, Double> memoryMetrics = dbObject.getMemoryMetrics(startSession, endSession, columnName);
             initialTimestamp = memoryMetrics.entrySet().iterator().next().getKey();
-            double totalMemory = (double) dbObject.getTotalMemory();
+            double totalMemory = dbObject.getTotalMemory();
             XYChart.Series<Long, Double> series = new XYChart.Series<>();
             for (Map.Entry<Long, Double> map: memoryMetrics.entrySet()) {
                 series.getData().add(new XYChart.Data<>((map.getKey() - initialTimestamp), map.getValue()));

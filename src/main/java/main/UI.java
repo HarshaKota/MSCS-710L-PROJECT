@@ -5,14 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
 public class UI extends Application implements Runnable {
-
-    private static final Logger log = LogManager.getLogger(UI.class);
 
     // Setting up the main.UI Window
     @Override
@@ -35,7 +31,6 @@ public class UI extends Application implements Runnable {
     @Override
     public void stop() throws Exception {
         Main.applicationOpen.set(false);
-        System.out.println("main.UI Closing. Open?:  " + Main.applicationOpen); //Sysout
         super.stop();
     }
 }

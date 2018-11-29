@@ -27,14 +27,12 @@ public class TableCreationChecksTest {
 
     @Test
     public void checkPowerSource_InvalidPowerSource() {
-        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
         PowerSource[] powerSources = new PowerSource[0];
         TableCreationChecks.checkPowerSource(powerSources);
     }
 
     @Test
     public void checkPowerSource_ValidPowerSource() {
-        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
         PowerSource[] powerSources = new PowerSource[1];
         powerSources[0] = new WindowsPowerSource("TestBatteryName", 0.99d, 52.0d);
         TableCreationChecks.checkPowerSource(powerSources);
@@ -43,7 +41,6 @@ public class TableCreationChecksTest {
     @Test
     public void getFans_ValidFanSpeeds() {
         final Sensors testSensors = Mockito.spy(hal.getSensors());
-        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
         int[] fanArray =new int[1];
         Mockito.when(testSensors.getFanSpeeds()).thenReturn(fanArray);
         TableCreationChecks.getFans(testSensors);
@@ -52,7 +49,6 @@ public class TableCreationChecksTest {
     @Test
     public void getFans_InvalidFanSpeeds() {
         final Sensors testSensors = Mockito.spy(hal.getSensors());
-        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
         int[] fanArray =new int[1];
         fanArray[0] = 1;
         Mockito.when(testSensors.getFanSpeeds()).thenReturn(fanArray);
@@ -62,7 +58,6 @@ public class TableCreationChecksTest {
     @Test
     public void getCpuVoltage_InvalidVoltage() {
         final Sensors testSensors = Mockito.spy(hal.getSensors());
-        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
         Mockito.when(testSensors.getCpuVoltage()).thenReturn(999.0d);
         TableCreationChecks.getCpuVoltage(testSensors);
     }
@@ -70,7 +65,6 @@ public class TableCreationChecksTest {
     @Test
     public void getCpuVoltage_ValidVoltage() {
         final Sensors testSensors = Mockito.spy(hal.getSensors());
-        final TableCreationChecks testTableChecks = Mockito.spy(new TableCreationChecks());
         Mockito.when(testSensors.getCpuVoltage()).thenReturn(0.0d);
         TableCreationChecks.getCpuVoltage(testSensors);
     }

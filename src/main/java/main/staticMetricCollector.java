@@ -1,7 +1,5 @@
 package main;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import oshi.SystemInfo;
 import oshi.hardware.*;
 import oshi.software.os.FileSystem;
@@ -14,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class staticMetricCollector {
-
-    private static final Logger log = LogManager.getLogger(UI.class);
 
     private final SystemInfo si = new SystemInfo();
     private final HardwareAbstractionLayer hal = si.getHardware();
@@ -67,7 +63,7 @@ public class staticMetricCollector {
         metricData.add("Disks:");
         for (HWDiskStore disk : diskStores) {
             boolean readwrite = disk.getReads() > 0 || disk.getWrites() > 0;
-            metricData.add(String.format(" %s: (model: %s - S/N: %s) size: %s, reads: %s (%s),\n writes: %s (%s), xfer: %s ms%n",
+            metricData.add(String.format(" %s: (model: %s - S/N: %s) size: %s, reads: %s (%s),\n writes: %s (%s), transfer: %s ms%n",
                     disk.getName(), disk.getModel(), disk.getSerial(),
                     disk.getSize() > 0 ? FormatUtil.formatBytesDecimal(disk.getSize()) : "?",
                     readwrite ? disk.getReads() : "?", readwrite ? FormatUtil.formatBytes(disk.getReadBytes()) : "?",

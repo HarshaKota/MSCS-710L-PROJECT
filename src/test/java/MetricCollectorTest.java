@@ -75,7 +75,6 @@ public class MetricCollectorTest {
     @Test //(expected = InterruptedException.class)
     public void getCPU_ThrowInterruptException() {
         ExpectedException thrown = ExpectedException.none();
-        CentralProcessor processor = hal.getProcessor();
         final long metricCollectedTime = testCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Thread.currentThread().interrupt();
@@ -133,7 +132,6 @@ public class MetricCollectorTest {
 
     @Test
     public void getSensors_ValidCpuVoltage() {
-        Sensors testSensors = hal.getSensors();
         final long metricCollectedTime = testCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Mockito.when(testCollector.getCpuVoltage(hal)).thenReturn(100.0);
@@ -142,7 +140,6 @@ public class MetricCollectorTest {
 
     @Test
     public void getSensors_InvalidCpuVoltage() {
-        Sensors testSensors = hal.getSensors();
         final long metricCollectedTime = testCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Mockito.when(testCollector.getCpuVoltage(hal)).thenReturn(999.0);
@@ -151,7 +148,6 @@ public class MetricCollectorTest {
 
     @Test
     public void getSensors_ValidFanSpeeds() {
-        Sensors testSensors = hal.getSensors();
         final long metricCollectedTime = testCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Mockito.when(testCollector.getFans(hal)).thenReturn(100);
@@ -160,7 +156,6 @@ public class MetricCollectorTest {
 
     @Test
     public void getSensors_InvalidFanSpeeds() {
-        Sensors testSensors = hal.getSensors();
         final long metricCollectedTime = testCollector.startSession();
         final MetricCollector testCollector = Mockito.spy(new MetricCollector());
         Mockito.when(testCollector.getFans(hal)).thenReturn(0);
@@ -190,7 +185,7 @@ public class MetricCollectorTest {
     }
 
     @Test
-    public void getMemory_getAvaialbleMemory() {
+    public void getMemory_getAvailableMemory() {
         GlobalMemory memory = hal.getMemory();
         assertTrue(memory.getAvailable() >= 0);
     }
@@ -205,7 +200,7 @@ public class MetricCollectorTest {
     }
 
     @Test
-    public void getNetwork_getBytesRecv() {
+    public void getNetwork_getBytesReceived() {
         for (NetworkIF net : si.getHardware().getNetworkIFs()) {
             assertTrue(net.getBytesRecv() >= 0);
         }
@@ -231,7 +226,7 @@ public class MetricCollectorTest {
 
 
     @Test
-    public void getProcess_ThreadCound() {
+    public void getProcess_ThreadCount() {
         assertTrue(os.getThreadCount() >= 1);
     }
 
@@ -250,38 +245,38 @@ public class MetricCollectorTest {
 
     @Test
     public void getProcess_GetName() {
-        OSProcess proc = os.getProcess(os.getProcessId());
-        assertTrue(proc.getName().length() > 0);
+        OSProcess process = os.getProcess(os.getProcessId());
+        assertTrue(process.getName().length() > 0);
     }
 
     @Test
     public void getProcess_ProcessHasThread() {
-        OSProcess proc = os.getProcess(os.getProcessId());
-        assertTrue(proc.getThreadCount() > 0);
+        OSProcess process = os.getProcess(os.getProcessId());
+        assertTrue(process.getThreadCount() > 0);
     }
 
     @Test
     public void getProcess_GetKernelTime() {
-        OSProcess proc = os.getProcess(os.getProcessId());
-        assertTrue(proc.getThreadCount() > 0);
+        OSProcess process = os.getProcess(os.getProcessId());
+        assertTrue(process.getThreadCount() > 0);
     }
 
     @Test
     public void getProcess_GetUserTime() {
-        OSProcess proc = os.getProcess(os.getProcessId());
-        assertTrue(proc.getUserTime() >= 0);
+        OSProcess process = os.getProcess(os.getProcessId());
+        assertTrue(process.getUserTime() >= 0);
     }
 
     @Test
     public void getProcess_GetUpTime() {
-        OSProcess proc = os.getProcess(os.getProcessId());
-        assertTrue(proc.getUpTime() >= 0);
+        OSProcess process = os.getProcess(os.getProcessId());
+        assertTrue(process.getUpTime() >= 0);
     }
 
     @Test
     public void getProcess_GetResidentSetSize() {
-        OSProcess proc = os.getProcess(os.getProcessId());
-        assertTrue(proc.getResidentSetSize() >= 0);
+        OSProcess process = os.getProcess(os.getProcessId());
+        assertTrue(process.getResidentSetSize() >= 0);
     }
 
     @Test

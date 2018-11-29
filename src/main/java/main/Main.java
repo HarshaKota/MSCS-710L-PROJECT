@@ -9,6 +9,7 @@ import oshi.software.os.OperatingSystem;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@SuppressWarnings("CanBeFinal")
 public class Main {
 
     private static final Logger log = LogManager.getLogger(UI.class);
@@ -18,7 +19,7 @@ public class Main {
     public static  String databaseUrl = "jdbc:sqlite:MetricCollector.db";
 
     public static boolean hasPowerSource = false;
-    static int collectionInterval = 5000;
+    private static final int collectionInterval = 5000;
 
     private static HardwareAbstractionLayer hal;
     private static OperatingSystem os;
@@ -107,9 +108,9 @@ public class Main {
                 log.error("Future Execution Failed" + e.getClass().getName() + ": " + e.getMessage());
             }
 
-            System.out.println("----->Started to count down 5 seconds"); //Sysout
+            System.out.println("----->Started to count down 5 seconds");
             Thread.sleep(collectionInterval);
-            System.out.println("<-----Finished countdown of 5 seconds"); //Sysout
+            System.out.println("<-----Finished countdown of 5 seconds");
         }
 
         // Record the session end time in the session table
@@ -120,6 +121,6 @@ public class Main {
 
         dbObject.closeDatabaseConnection();
 
-        System.out.println("End of main.Main"); //Sysout
+        System.out.println("End of main.Main");
     }
 }

@@ -1,15 +1,10 @@
 import controllers.*;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.mockito.BDDMockito.given;
 
 public class ControllerTest {
-
-    @BeforeClass
-    public static void setup() {
-    }
 
     @Test (expected = Exception.class)
     public void cpuControllerFailedToGetSessions() {
@@ -53,7 +48,7 @@ public class ControllerTest {
     }
 
     @Test (expected = Exception.class)
-    public void networkmemoryControllerFailedToGetColumns() {
+    public void networkMemoryControllerFailedToGetColumns() {
         final networkController controller = Mockito.spy(new networkController());
         given(controller.getColumns()).willThrow(new Exception());
         controller.getColumns();

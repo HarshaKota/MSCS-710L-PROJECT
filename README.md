@@ -46,5 +46,5 @@ Do we want to put an open source license on this?
 
 ## Acknowledgments
 
-Many thanks to Prof. Anothy Giorgio and the members of the Capstone project class MSCS 710, Fall 2018.
+Many thanks to Prof. Anthony Giorgio and the members of the Capstone project class MSCS 710, Fall 2018.
 

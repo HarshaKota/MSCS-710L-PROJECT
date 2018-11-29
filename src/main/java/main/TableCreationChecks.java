@@ -1,14 +1,10 @@
 package main;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.PowerSource;
 import oshi.hardware.Sensors;
 
 public class TableCreationChecks {
-
-    private static final Logger log = LogManager.getLogger(TableCreationChecks.class);
 
     /*                  CPU Table                   */
 

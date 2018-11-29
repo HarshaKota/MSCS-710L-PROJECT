@@ -4,8 +4,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.hardware.Sensors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,10 +12,10 @@ import java.util.Random;
 
 import static org.mockito.BDDMockito.given;
 
+@SuppressWarnings("ALL")
 public class DatabaseTest {
 
     private static SystemInfo si;
-    String databaseUrl = "jdbc:sqlite:main.MetricCollector.db";
 
     @BeforeClass
     public static void setup() {
@@ -33,6 +31,7 @@ public class DatabaseTest {
     @Test
     public void establishDatabaseConnection_NotNull() throws Exception {
         main.Database dbObj = new main.Database();
+        String databaseUrl = "jdbc:sqlite:main.MetricCollector.db";
         dbObj.establishDatabaseConnection(databaseUrl);
         dbObj.closeDatabaseConnection();
     }
@@ -48,8 +47,7 @@ public class DatabaseTest {
         try {
             final Database testDatabase = Mockito.spy(new Database());
             testDatabase.establishDatabaseConnection( "jdbc:sqlite:main.MetricCollector.db");
-//            testDatabase.createSessionTable();
-            Long val = new Random().nextLong();
+            long val = new Random().nextLong();
             testDatabase.insertStartSessionIntoSessionTable(val);
             testDatabase.insertEndSessionIntoSessionTable(val,5);
             testDatabase.checkSessionTable();
@@ -141,17 +139,6 @@ public class DatabaseTest {
     public void createPowerTable() throws Exception {
         Database dbObj = new Database();
         dbObj.createPowerTable();
-    }
-
-    @Test(expected = Exception.class)
-    public void createSensorsTable_OneFan() throws Exception {
-        HardwareAbstractionLayer hal = si.getHardware();
-        Sensors sensors = hal.getSensors();
-        Database dbObj = Mockito.spy(new Database());
-        ArrayList testFans = new ArrayList<Integer>();
-        testFans.add(1,52);
-        Mockito.when(TableCreationChecks.getFans(sensors)).thenReturn(1);
-        dbObj.createSensorsTable();
     }
 
     @Test(expected = Exception.class)
@@ -268,7 +255,7 @@ public class DatabaseTest {
         sensorsStructure.setTimestamp(System.currentTimeMillis());
         sensorsStructure.setCpuTemperature(10d);
         sensorsStructure.setCpuVoltage(10d);
-        sensorsStructure.setFans(new ArrayList<Integer>());
+        sensorsStructure.setFans(new ArrayList<>());
         Database dbObj = new Database();
         dbObj.insertIntoSensorsTable(sensorsStructure);
     }
@@ -279,7 +266,7 @@ public class DatabaseTest {
         sensorsStructure.setTimestamp(System.currentTimeMillis());
         sensorsStructure.setCpuTemperature(10d);
         sensorsStructure.setCpuVoltage(10d);
-        sensorsStructure.setFans(new ArrayList<Integer>());
+        sensorsStructure.setFans(new ArrayList<>());
         Database dbObj = new Database();
         dbObj.insertIntoSensorsTable(sensorsStructure);
     }

@@ -15,12 +15,12 @@ import java.util.List;
 public class MetricCollector {
 
     private static final Logger log = LogManager.getLogger(UI.class);
-    private static int noOfCallsTogetPower = 0;
-    private static int noOfCallsTogetCPU = 0;
-    private static int noOfCallsTogetSensors = 0;
-    private static int noOfCallsTogetMemory = 0;
-    private static int noOfCallsTogetNetwork = 0;
-    private static int noOfCallsTogetProcesses = 0;
+    private static int noOfCallsToGetPower = 0;
+    private static int noOfCallsToGetCPU = 0;
+    private static int noOfCallsToGetSensors = 0;
+    private static int noOfCallsToGetMemory = 0;
+    private static int noOfCallsToGetNetwork = 0;
+    private static int noOfCallsToGetProcesses = 0;
 
 
 
@@ -31,7 +31,7 @@ public class MetricCollector {
     public MetricCollectionStructures.powerStructure getPower(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
 
         if (hasPowerTable()) {
-            noOfCallsTogetPower++;
+            noOfCallsToGetPower++;
 
             MetricCollectionStructures.powerStructure pS = new MetricCollectionStructures.powerStructure();
 
@@ -51,8 +51,6 @@ public class MetricCollector {
                 pS.setBatteryPercentage(Math.round((pSource.getRemainingCapacity() * 100d) * 10.0) / 10.0);
             }
 
-            System.out.println(String.format("%1$20s  %2$d", "getPower calls:", noOfCallsTogetPower)); //Sysout
-
             return pS;
         }
 
@@ -64,7 +62,7 @@ public class MetricCollector {
     //
     // Returns cpuStructure
     public MetricCollectionStructures.cpuStructure getCPU(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
-        noOfCallsTogetCPU++;
+        noOfCallsToGetCPU++;
 
         long[] prevTicks = hal.getProcessor().getSystemCpuLoadTicks();
         try {
@@ -82,11 +80,11 @@ public class MetricCollector {
         long nice = ticks[CentralProcessor.TickType.NICE.getIndex()] - prevTicks[CentralProcessor.TickType.NICE.getIndex()];
         long sys = ticks[CentralProcessor.TickType.SYSTEM.getIndex()] - prevTicks[CentralProcessor.TickType.SYSTEM.getIndex()];
         long idle = ticks[CentralProcessor.TickType.IDLE.getIndex()] - prevTicks[CentralProcessor.TickType.IDLE.getIndex()];
-        long iowait = ticks[CentralProcessor.TickType.IOWAIT.getIndex()] - prevTicks[CentralProcessor.TickType.IOWAIT.getIndex()];
+        long ioWait = ticks[CentralProcessor.TickType.IOWAIT.getIndex()] - prevTicks[CentralProcessor.TickType.IOWAIT.getIndex()];
         long irq = ticks[CentralProcessor.TickType.IRQ.getIndex()] - prevTicks[CentralProcessor.TickType.IRQ.getIndex()];
         long softirq = ticks[CentralProcessor.TickType.SOFTIRQ.getIndex()] - prevTicks[CentralProcessor.TickType.SOFTIRQ.getIndex()];
         long steal = ticks[CentralProcessor.TickType.STEAL.getIndex()] - prevTicks[CentralProcessor.TickType.STEAL.getIndex()];
-        long totalCpu = user + nice + sys + idle + iowait + irq + softirq + steal;
+        long totalCpu = user + nice + sys + idle + ioWait + irq + softirq + steal;
 
         MetricCollectionStructures.cpuStructure cS = new MetricCollectionStructures.cpuStructure();
 
@@ -102,8 +100,6 @@ public class MetricCollector {
         }
         cS.setProcessorLoad(individualProcessorLoad);
 
-        System.out.println(String.format("%1$20s  %2$d", "getCPU calls:", noOfCallsTogetCPU)); //Sysout
-
         return cS;
     }
 
@@ -112,7 +108,7 @@ public class MetricCollector {
     //
     // Returns sensorsStructure
     public MetricCollectionStructures.sensorsStructure getSensors(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
-        noOfCallsTogetSensors++;
+        noOfCallsToGetSensors++;
 
         MetricCollectionStructures.sensorsStructure sS = new MetricCollectionStructures.sensorsStructure();
 
@@ -131,8 +127,6 @@ public class MetricCollector {
         }
         sS.setFans(fans);
 
-        System.out.println(String.format("%1$20s  %2$d", "getSensors calls:", noOfCallsTogetSensors)); //Sysout
-
         return sS;
     }
 
@@ -141,7 +135,7 @@ public class MetricCollector {
     //
     // Returns memoryStructure
     public MetricCollectionStructures.memoryStructure getMemory(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
-        noOfCallsTogetMemory++;
+        noOfCallsToGetMemory++;
 
         MetricCollectionStructures.memoryStructure mS = new MetricCollectionStructures.memoryStructure();
 
@@ -153,8 +147,6 @@ public class MetricCollector {
         mS.setUsedMemory(usedMemory);
         mS.setTotalMemory(totalMemory);
 
-        System.out.println(String.format("%1$20s  %2$d", "getMemory calls:", noOfCallsTogetMemory)); //Sysout
-
         return mS;
     }
 
@@ -163,7 +155,7 @@ public class MetricCollector {
     //
     // Returns networkStructure
     public MetricCollectionStructures.networkStructure getNetwork(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
-        noOfCallsTogetNetwork++;
+        noOfCallsToGetNetwork++;
 
         MetricCollectionStructures.networkStructure nS = new MetricCollectionStructures.networkStructure();
 
@@ -191,8 +183,6 @@ public class MetricCollector {
         nS.setSizeReceived(sizeReceived);
         nS.setSizeSent(sizeSent);
 
-        System.out.println(String.format("%1$20s  %2$d", "getNetwork calls:", noOfCallsTogetNetwork)); //Sysout
-
         return nS;
     }
 
@@ -201,7 +191,7 @@ public class MetricCollector {
     //
     // Returns processStructure
     public MetricCollectionStructures.processStructure getProcess(final long metricCollectedTime, final HardwareAbstractionLayer hal, final OperatingSystem os) {
-        noOfCallsTogetProcesses++;
+        noOfCallsToGetProcesses++;
 
         MetricCollectionStructures.processStructure pS = new MetricCollectionStructures.processStructure();
 
@@ -243,8 +233,6 @@ public class MetricCollector {
         }
 
         pS.setProcessesList(processesMap);
-
-        System.out.println(String.format("%1$20s  %2$d", "getProcess calls:", noOfCallsTogetProcesses)); //Sysout
 
         return pS;
 

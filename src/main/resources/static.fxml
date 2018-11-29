@@ -8,23 +8,17 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.staticController">
-   <content>
-      <AnchorPane prefHeight="1000.0" prefWidth="1600.0">
-          <children>
-              <VBox prefHeight="1000.0" prefWidth="1600.0">
-                  <children>
-                      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
-                          <children>
-                              <ChoiceBox fx:id="static_selector_1" prefHeight="25.0" prefWidth="300.0" />
-                              <Button mnemonicParsing="false" onAction="#getStaticMetrics" text="SUBMIT" />
-                              <Button layoutX="981.0" layoutY="35.0" mnemonicParsing="false" onAction="#clearTextArea" text="CLEAR" />
-                          </children>
-                      </HBox>
-                  <TextArea fx:id="staticMetricTextBox" prefHeight="901.0" prefWidth="1599.0" />
-                  </children>
-              </VBox>
-          </children>
-      </AnchorPane>
-   </content>
+<ScrollPane xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.staticController">
+    <AnchorPane prefHeight="1000.0" prefWidth="1600.0">
+        <VBox prefHeight="1000.0" prefWidth="1600.0">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
+                <ChoiceBox fx:id="static_selector_1" prefHeight="25.0" prefWidth="300.0"/>
+                <Button mnemonicParsing="false" onAction="#getStaticMetrics" text="SUBMIT"/>
+                <Button layoutX="981.0" layoutY="35.0" mnemonicParsing="false" onAction="#clearTextArea"
+                        text="CLEAR"/>
+            </HBox>
+            <TextArea fx:id="staticMetricTextBox" prefHeight="901.0" prefWidth="1599.0"/>
+        </VBox>
+    </AnchorPane>
 </ScrollPane>
