@@ -16,7 +16,7 @@ import static org.mockito.BDDMockito.given;
 public class B_DatabaseTest {
 
     private static SystemInfo si= new SystemInfo();;
-    static String databaseUrl = "jdbc:sqlite:main.MetricCollector.db";
+    static String databaseUrl = "jdbc:sqlite:MetricCollector.db";
 
     @BeforeClass
     static public void establishDatabaseConnection_NotNull() throws Exception {
