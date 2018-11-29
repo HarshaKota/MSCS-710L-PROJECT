@@ -92,7 +92,7 @@ public class processinfoController implements Initializable {
     }
 
     // get processes names during the selected session time
-    private ArrayList<String> getProcessesNames() {
+    public ArrayList<String> getProcessesNames() {
         ArrayList<String> processNames = new ArrayList<>();
         try {
             Database dbObject = new Database();

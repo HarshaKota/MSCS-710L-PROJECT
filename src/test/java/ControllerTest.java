@@ -2,6 +2,8 @@ import controllers.*;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+
 import static org.mockito.BDDMockito.given;
 
 public class ControllerTest {
@@ -73,6 +75,13 @@ public class ControllerTest {
         final processController controller = Mockito.spy(new processController());
         given(controller.getColumns()).willThrow(new Exception());
         controller.getColumns();
+    }
+
+    @Test (expected = Exception.class)
+    public void processInfoControllerFailedToGetNames() {
+        final processinfoController controller = Mockito.spy(new processinfoController());
+        given(controller.getProcessesNames()).willThrow(new Exception());
+        controller.getProcessesNames();
     }
 
     @Test (expected = Exception.class)
