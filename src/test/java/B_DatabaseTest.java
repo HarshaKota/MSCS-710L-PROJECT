@@ -13,7 +13,7 @@ import java.util.Random;
 import static org.mockito.BDDMockito.given;
 
 @SuppressWarnings("ALL")
-public class DatabaseTest {
+public class B_DatabaseTest {
 
     private static SystemInfo si;
 
@@ -403,9 +403,4 @@ public class DatabaseTest {
         dbObj.commit();
     }
 
-    @Test(expected = Exception.class)
-    public void closeDatabaseConnection_NoConnection() throws Exception {
-        Database dbObj = new Database();
-        dbObj.closeDatabaseConnection();
-    }
 }
