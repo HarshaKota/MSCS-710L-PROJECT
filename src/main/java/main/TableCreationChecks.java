@@ -4,6 +4,10 @@ import oshi.hardware.CentralProcessor;
 import oshi.hardware.PowerSource;
 import oshi.hardware.Sensors;
 
+/**
+ * This class provides methods that will be used to
+ * determine what tables/columns are needed when creating the tables
+ */
 public class TableCreationChecks {
 
     /**
