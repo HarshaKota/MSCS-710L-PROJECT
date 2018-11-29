@@ -12,6 +12,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * MetricCollector class provides methods to collect metric data for each of the metric
+ * using the OSHI library methods
+ */
 public class MetricCollector {
 
     private static final Logger log = LogManager.getLogger(UI.class);
@@ -23,11 +27,13 @@ public class MetricCollector {
     private static int noOfCallsToGetProcesses = 0;
 
 
-
-    // Collects Power Info
-    //      1 - charging
-    //      0 - discharging
-    // Returns powerStructure
+    /**
+     * Collects power metrics
+     *
+     * @param metricCollectedTime Time indicating when the metric was collected
+     * @param hal OSHI Library HardwareAbstractionLayer object that provides methods to access hardware information
+     * @return powerStructure
+     */
     public MetricCollectionStructures.powerStructure getPower(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
 
         if (hasPowerTable()) {
@@ -57,10 +63,13 @@ public class MetricCollector {
         return null;
     }
 
-    // Collects CPU Info
-    //
-    //
-    // Returns cpuStructure
+    /**
+     * Collects CPU metrics
+     *
+     * @param metricCollectedTime Time indicating when the metric was collected
+     * @param hal OSHI Library HardwareAbstractionLayer object that provides methods to access hardware information
+     * @return cpuStructure
+     */
     public MetricCollectionStructures.cpuStructure getCPU(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsToGetCPU++;
 
@@ -69,11 +78,6 @@ public class MetricCollector {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             log.error("Failed when calculating ticks");
-//            try {
-//                throw new InterruptedException();
-//            } catch (InterruptedException e1) {
-//                e1.printStackTrace();
-//            }
         }
         long[] ticks = hal.getProcessor().getSystemCpuLoadTicks();
         long user = ticks[CentralProcessor.TickType.USER.getIndex()] - prevTicks[CentralProcessor.TickType.USER.getIndex()];
@@ -103,10 +107,13 @@ public class MetricCollector {
         return cS;
     }
 
-    // Collects Sensors Info
-    //
-    //
-    // Returns sensorsStructure
+    /**
+     * Collects Sensor metrics
+     *
+     * @param metricCollectedTime Time indicating when the metric was collected
+     * @param hal OSHI Library HardwareAbstractionLayer object that provides methods to access hardware information
+     * @return sensorsStructure
+     */
     public MetricCollectionStructures.sensorsStructure getSensors(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsToGetSensors++;
 
@@ -130,10 +137,13 @@ public class MetricCollector {
         return sS;
     }
 
-    // Collects Memory Info
-    //
-    //
-    // Returns memoryStructure
+    /**
+     * Collects Memory metrics
+     *
+     * @param metricCollectedTime Time indicating when the metric was collected
+     * @param hal OSHI Library HardwareAbstractionLayer object that provides methods to access hardware information
+     * @return memoryStructure
+     */
     public MetricCollectionStructures.memoryStructure getMemory(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsToGetMemory++;
 
@@ -150,10 +160,13 @@ public class MetricCollector {
         return mS;
     }
 
-    // Collects Network Info
-    //
-    //
-    // Returns networkStructure
+    /**
+     * Collects Network metrics
+     *
+     * @param metricCollectedTime Time indicating when the metric was collected
+     * @param hal OSHI Library HardwareAbstractionLayer object that provides methods to access hardware information
+     * @return networkStructure
+     */
     public MetricCollectionStructures.networkStructure getNetwork(final long metricCollectedTime, final HardwareAbstractionLayer hal) {
         noOfCallsToGetNetwork++;
 
@@ -186,10 +199,14 @@ public class MetricCollector {
         return nS;
     }
 
-    // Collect Process Info
-    //
-    //
-    // Returns processStructure
+    /**
+     * Collects Process metrics
+     *
+     * @param metricCollectedTime Time indicating when the metric was collected
+     * @param hal OSHI Library HardwareAbstractionLayer object that provides methods to access hardware information
+     * @param os OSHI Library OperatingSystem object that provides methods to access Operating System information
+     * @return processStructure
+     */
     public MetricCollectionStructures.processStructure getProcess(final long metricCollectedTime, final HardwareAbstractionLayer hal, final OperatingSystem os) {
         noOfCallsToGetProcesses++;
 
@@ -238,55 +255,64 @@ public class MetricCollector {
 
     }
 
-    // Return time remaining. Used by getPower method.
-    //
-    //
-    // Returns a double representing how much time the battery has until it is drained.
+    /**
+     * Returns time remaining. Used by getPower method.
+     *
+     * @param powerSources OSHI Library PowerSources object that provides methods to access power metrics
+     * @return A double representing how much time the battery has until it is drained.
+     */
     public double getTimeRemaining(PowerSource[] powerSources) {
         return powerSources[0].getTimeRemaining();
     }
 
 
-    // Return true if the PowerTable has been created
-    //
-    //
-    // Returns a Boolean representing if the Power table has been created or not.
+    /**
+     * Check if the PowerTable has been created
+     *
+     * @return A Boolean representing if the Power table has been created or not.
+     */
     public Boolean hasPowerTable() {
         return Main.hasPowerSource;
     }
 
 
-    // Return Cpu voltage
-    //
-    //
-    // Returns a double representing the voltage running through the CPU
+    /**
+     * Returns Cpu voltage
+     *
+     * @param hal OSHI Library HardwareAbstractionLayer object that provides methods to access hardware information
+     * @return A double representing the voltage running through the CPU
+     */
     public double getCpuVoltage(HardwareAbstractionLayer hal) {
         return TableCreationChecks.getCpuVoltage(hal.getSensors());
     }
 
 
-    // Return true if the PowerTable has been created
-    //
-    //
-    // Returns a Boolean representing if the Power table has been created or not.
+    /**
+     * Check if the PowerTable has been created
+     *
+     * @param hal OSHI Library HardwareAbstractionLayer object that provides methods to access hardware information
+     * @return A Boolean representing if the Power table has been created or not.
+     */
     public int getFans(HardwareAbstractionLayer hal) {
         return TableCreationChecks.getFans(hal.getSensors());
     }
 
 
-    // Used to fetch a start session time
-    //
-    //
-    // Returns the current time as a long value
+    /**
+     * Used to fetch a start session time
+     *
+     * @return The current time as a long value
+     */
     public long startSession() {
         return System.currentTimeMillis();
     }
 
 
-    // Used to fetch a end session time
-    //
-    //
-    // Returns the current time as a long value
+    /**
+     * Used to fetch an end session time
+     *
+     * @return The current time as a long value
+     */
     public long endSession() {
         return System.currentTimeMillis();
     }
