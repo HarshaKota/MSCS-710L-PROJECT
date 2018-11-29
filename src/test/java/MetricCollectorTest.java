@@ -291,12 +291,12 @@ public class MetricCollectorTest {
     }
 
     @Test
-    public void startSession() {
+    public void startSession_Successful() {
         assertTrue(testCollector.startSession() > 0);
     }
 
     @Test
-    public void endSession() {
+    public void endSession_Successful() {
         assertTrue(testCollector.endSession() > 0);
     }
 }

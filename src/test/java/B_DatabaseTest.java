@@ -58,122 +58,122 @@ public class B_DatabaseTest {
     }
 
     @Test(expected = Exception.class)
-    public void nullTimesInPowerMetrics() throws Exception {
+    public void powerMetrics_nullTimes() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         dbObj.getPowerMetrics(null,null);
     }
 
     @Test(expected = Exception.class)
-    public void failedToGetPowerMetrics() throws Exception {
+    public void powerMetrics_failedToRetreive() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         given(dbObj.getPowerMetrics(1L,1L)).willThrow(new Exception());
     }
 
     @Test(expected = Exception.class)
-    public void nullTimesInCpuMetrics() throws Exception {
+    public void cpuMetrics_nullTimes() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         dbObj.getCpuMetrics(null,null,"");
     }
 
     @Test(expected = Exception.class)
-    public void failedToGetCpuMetrics() throws Exception {
+    public void cpuMetrics_failedToRetreive() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         given(dbObj.getCpuMetrics(1L,1L,"")).willThrow(new Exception());
     }
 
     @Test(expected = Exception.class)
-    public void nullTimesInMemoryMetrics() throws Exception {
+    public void memoryMetrics_nullTimes() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         dbObj.getMemoryMetrics(null,null,"");
     }
 
     @Test(expected = Exception.class)
-    public void failedToGetMemoryMetrics() throws Exception {
+    public void memoryMetrics_failedToRetreive() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         given(dbObj.getMemoryMetrics(1L,1L,"")).willThrow(new Exception());
     }
 
     @Test(expected = Exception.class)
-    public void nullTimesInNetworkMetrics() throws Exception {
+    public void networkMetrics_nullTimes() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         dbObj.getNetworkMetrics(null,null,"");
     }
 
     @Test(expected = Exception.class)
-    public void failedToGetNetworkMetrics() throws Exception {
+    public void networkMetrics_failedToRetreive() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         given(dbObj.getNetworkMetrics(1L,1L,"")).willThrow(new Exception());
     }
 
     @Test(expected = Exception.class)
-    public void nullTimesInProcessMetrics() throws Exception {
+    public void processMetrics_nullTimes() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         dbObj.getProcessMetrics(null,null,"");
     }
 
     @Test(expected = Exception.class)
-    public void failedToGetProcessMetrics() throws Exception {
+    public void processMetrics_failedToRetreive() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         given(dbObj.getProcessMetrics(1L,1L,"")).willThrow(new Exception());
     }
 
     @Test(expected = Exception.class)
-    public void failedToGetSensorMetrics() throws Exception {
-        final Database dbObj = Mockito.spy(new Database());
-        given(dbObj.getSensorsMetrics(1L,1L,"")).willThrow(new Exception());
-    }
-
-    @Test(expected = Exception.class)
-    public void nullTimesInSensorMetrics() throws Exception {
+    public void sensorMetrics_nullTimes() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         dbObj.getSensorsMetrics(null,null,"");
     }
 
     @Test(expected = Exception.class)
-    public void failedToGetProcessInfoMetrics() throws Exception {
+    public void sensorMetrics_failedToRetreive() throws Exception {
+        final Database dbObj = Mockito.spy(new Database());
+        given(dbObj.getSensorsMetrics(1L,1L,"")).willThrow(new Exception());
+    }
+
+    @Test(expected = Exception.class)
+    public void processInfoMetrics_failedToRetreive() throws Exception {
         final Database dbObj = Mockito.spy(new Database());
         given(dbObj.getProcessinfoMetrics(1L,1L,"","")).willThrow(new Exception());
     }
 
     @Test(expected = Exception.class)
-    public void createPowerTable() throws Exception {
+    public void createPowerTable_Successful() throws Exception {
         Database dbObj = new Database();
         dbObj.createPowerTable();
     }
 
     @Test(expected = Exception.class)
-    public void createSensorsTable() throws Exception {
+    public void createSensorsTable_Successful() throws Exception {
         Database dbObj = new Database();
         dbObj.createSensorsTable();
     }
 
     @Test(expected = Exception.class)
-    public void createMemoryTable() throws Exception {
+    public void createMemoryTable_Successful() throws Exception {
         Database dbObj = new Database();
         dbObj.createMemoryTable();
     }
 
     @Test(expected = Exception.class)
-    public void createProcessTable() throws Exception {
+    public void createProcessTable_Successful() throws Exception {
         Database dbObj = new Database();
         dbObj.createProcessTable();
         dbObj.closeDatabaseConnection();
     }
 
     @Test(expected = Exception.class)
-    public void createCPUTable() throws Exception {
+    public void createCPUTable_Successful() throws Exception {
         Database dbObj = new Database();
         dbObj.createCPUTable();
     }
 
     @Test(expected = Exception.class)
-    public void createNetworkTable() throws Exception {
+    public void createNetworkTable_Successful() throws Exception {
         Database dbObj = new Database();
         dbObj.createNetworkTable();
     }
 
     @Test(expected = Exception.class)
-    public void createSessionTable() throws Exception {
+    public void createSessionTable_Successful() throws Exception {
         Database dbObj = new Database();
         dbObj.createSessionTable();
     }

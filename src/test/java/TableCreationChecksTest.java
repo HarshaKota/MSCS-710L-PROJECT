@@ -21,7 +21,7 @@ public class TableCreationChecksTest {
     }
 
     @Test
-    public void getLogicalCPUs() {
+    public void getLogicalCPUs_Successful() {
         assertTrue(TableCreationChecks.getLogicalCPUs(hal.getProcessor()) > 0);
     }
 
